@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eds-migrate"
+version = "0.1.0"
+description = "Migrate websites to AEM Edge Delivery Services using Claude Managed Agents"
+requires-python = ">=3.11"
+dependencies = [
+    "anthropic>=0.52.0",
+]
+
+[project.scripts]
+eds-migrate = "eds_migrate.__main__:main"
