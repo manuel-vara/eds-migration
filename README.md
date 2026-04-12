@@ -137,6 +137,7 @@ eds-migrate --site https://example.com --org my-org --repo my-site
 | `--verbose, -v` | Stream agent output to stdout |
 | `--run-id ID` | Custom run ID (default: auto-generated) |
 | `--log-level` | `DEBUG`, `INFO`, `WARNING`, or `ERROR` (default: `INFO`) |
+| `--cleanup` | Archive orphaned environments for a given `--run-id` (no migration) |
 
 ### What you get
 
@@ -174,7 +175,16 @@ eds_migrate/
 ├── __main__.py              CLI entry point
 ├── agents.py                Fleet creation and cleanup (CMA API)
 ├── session.py               Orchestrator session lifecycle and event streaming
-├── tier1.py                 Deterministic validation scripts (bash)
+├── tier1/                   Deterministic validation scripts (bash)
+│   ├── __init__.py          Re-exports TIER1_SCRIPTS lookup dict
+│   ├── phase1_discovery.py  Phase 1 — manifest validation
+│   ├── phase2a_scrape.py    Phase 2a — scrape artifact checks
+│   ├── phase2b_inventory.py Phase 2b — block inventory checks
+│   ├── phase2c_blueprint.py Phase 2c — blueprint schema validation
+│   ├── phase3_block_dev.py  Phase 3 — block code, lint, framework checks
+│   ├── phase35_pilot.py     Phase 3.5 — pilot page preview validation
+│   ├── phase5_config.py     Phase 5 — YAML, redirects, robots.txt
+│   └── phase6_qa.py         Phase 6 — QA report schema and thresholds
 ├── knowledge/
 │   ├── __init__.py          Knowledge bundle builder (tar+gzip+base64)
 │   ├── skills/              EDS development skills (15 × SKILL.md)
