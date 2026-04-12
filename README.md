@@ -1,4 +1,4 @@
-# EDS Migration Agent
+# Agentic EDS Migration Process 
 
 Automated migration of websites to [AEM Edge Delivery Services](https://www.aem.live/) using [Claude Managed Agents](https://platform.claude.com/docs/en/managed-agents/overview).
 
