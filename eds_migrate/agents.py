@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import time
 from dataclasses import dataclass, field
 
 from anthropic import Anthropic
@@ -40,6 +41,7 @@ class MigrationFleet:
     env_basic_id: str | None = None
     env_npm_id: str | None = None
     env_heavy_id: str | None = None
+    session_id: str | None = None
 
     @property
     def all_workers(self) -> list[AgentRef]:
@@ -55,6 +57,17 @@ class MigrationFleet:
             self.block_dev_verifier, self.pilot_verifier,
         ] if a is not None]
 
+    @property
+    def all_agents(self) -> list[AgentRef]:
+        agents = self.all_workers + self.all_verifiers
+        if self.orchestrator:
+            agents.append(self.orchestrator)
+        return agents
+
+    @property
+    def all_env_ids(self) -> list[str]:
+        return [e for e in [self.env_basic_id, self.env_npm_id, self.env_heavy_id] if e]
+
 
 def _create_agent(
     client: Anthropic, name: str, model: str, system: str,
@@ -68,7 +81,7 @@ def _create_agent(
         "tools": [TOOLSET],
     }
     if callable_agents:
-        params["callable_agents"] = callable_agents
+        params["extra_body"] = {"callable_agents": callable_agents}
     agent = client.beta.agents.create(**params)
     log.info("Created agent %s (%s v%d)", name, agent.id, agent.version)
     return AgentRef(id=agent.id, version=agent.version, name=name)
@@ -186,38 +199,113 @@ def create_fleet(
 
 
 ENV_NAME_PREFIXES = ("eds-basic-", "eds-npm-", "eds-heavy-")
+AGENT_NAME_PREFIXES = (
+    "Crawler-", "Analyzer-", "BlockDev-", "PageMigrator-", "Config-",
+    "IntegrationQA-", "CrawlerVerifier-", "AnalyzerVerifier-",
+    "BlockDevVerifier-", "PilotVerifier-", "Orchestrator-",
+)
 
 
 def cleanup_fleet(client: Anthropic, fleet: MigrationFleet) -> None:
-    """Archive all environments from an in-memory fleet."""
-    for env_id in [fleet.env_basic_id, fleet.env_npm_id, fleet.env_heavy_id]:
-        if env_id:
-            _archive_env(client, env_id)
+    """Tear down every resource in the fleet: sessions, agents, environments."""
+    cleaned = 0
+
+    if fleet.session_id:
+        cleaned += _stop_session(client, fleet.session_id)
+
+    for agent in fleet.all_agents:
+        cleaned += _archive_agent(client, agent.id, agent.name)
+
+    for env_id in fleet.all_env_ids:
+        cleaned += _archive_env(client, env_id)
+
+    log.info("Cleanup complete — %d resource(s) torn down.", cleaned)
 
 
 def cleanup_by_run_id(client: Anthropic, run_id: str) -> int:
     """
-    Find and archive orphaned environments matching a run ID.
+    Find and tear down orphaned resources matching a run ID.
 
-    Useful when the process crashed before the normal cleanup ran.
-    Returns the number of environments archived.
+    Searches for environments, agents, and their sessions by name suffix.
+    Useful when the process crashed before normal cleanup ran.
+    Returns the total number of resources cleaned up.
     """
     suffix = f"-{run_id}"
-    archived = 0
+    cleaned = 0
 
-    envs = client.beta.environments.list()
-    for env in envs:
+    # Agents (and their sessions) first, then environments
+    for agent in client.beta.agents.list():
+        if any(agent.name.startswith(p) for p in AGENT_NAME_PREFIXES) and agent.name.endswith(suffix):
+            for session in client.beta.sessions.list(agent_id=agent.id):
+                cleaned += _stop_session(client, session.id)
+            cleaned += _archive_agent(client, agent.id, agent.name)
+
+    for env in client.beta.environments.list():
         if any(env.name.startswith(p) for p in ENV_NAME_PREFIXES) and env.name.endswith(suffix):
-            _archive_env(client, env.id)
-            archived += 1
+            cleaned += _archive_env(client, env.id)
 
-    return archived
+    return cleaned
 
 
-def _archive_env(client: Anthropic, env_id: str) -> None:
-    """Archive a single environment, logging success or failure."""
+def _stop_session(client: Anthropic, session_id: str) -> int:
+    """Interrupt a session, wait briefly for it to go idle, then delete it.
+
+    A running CMA session that's mid-model-request may take a long time to
+    process an interrupt. We give it 10 seconds, then move on — the session
+    will eventually time out server-side. Agents and environments (the
+    billable resources) are cleaned up independently.
+    """
+    try:
+        client.beta.sessions.events.send(
+            session_id,
+            events=[{"type": "user.interrupt"}],
+        )
+        log.info("Sent interrupt to session %s", session_id)
+    except Exception as e:
+        log.debug("Interrupt send failed (session may already be idle): %s", e)
+
+    for _ in range(3):
+        time.sleep(3)
+        try:
+            session = client.beta.sessions.retrieve(session_id)
+            if session.status != "running":
+                log.info("Session %s is now %s", session_id, session.status)
+                break
+        except Exception:
+            break
+    else:
+        log.info("Session %s still running — it will time out server-side", session_id)
+
+    for action_name, action in [
+        ("delete", lambda: client.beta.sessions.delete(session_id)),
+        ("archive", lambda: client.beta.sessions.archive(session_id)),
+    ]:
+        try:
+            action()
+            log.info("%sd session %s", action_name.capitalize(), session_id)
+            return 1
+        except Exception:
+            continue
+
+    log.info("Session %s could not be deleted/archived (still running) — will expire on its own", session_id)
+    return 0
+
+
+def _archive_agent(client: Anthropic, agent_id: str, name: str = "") -> int:
+    try:
+        client.beta.agents.archive(agent_id)
+        log.info("Archived agent %s (%s)", name or agent_id, agent_id)
+        return 1
+    except Exception as e:
+        log.warning("Failed to archive agent %s: %s", agent_id, e)
+        return 0
+
+
+def _archive_env(client: Anthropic, env_id: str) -> int:
     try:
         client.beta.environments.archive(env_id)
         log.info("Archived environment %s", env_id)
+        return 1
     except Exception as e:
         log.warning("Failed to archive environment %s: %s", env_id, e)
+        return 0

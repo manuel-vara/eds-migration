@@ -110,21 +110,121 @@ The codebase directory `eds_migrate/knowledge/` mirrors this runtime structure e
 
 - Python 3.11+
 - An [Anthropic API key](https://console.anthropic.com/) with access to Claude Managed Agents (beta)
+- A **GitHub Personal Access Token** with `repo` scope (see [Credentials](#credentials) below)
 - A GitHub organization and empty repository for the migrated site
-- A [da.live](https://da.live) workspace for content authoring
+- (Optional) A **da.live IMS token** for content authoring (see [Credentials](#credentials) below)
 
 ## Installation
+
+### 1. Install Python 3.11+
+
+The project requires Python 3.11+. On macOS the system Python is 3.9, so install a newer version via Homebrew:
+
+```bash
+brew install python@3.11
+```
+
+### 2. Create and activate a virtual environment
+
+Use the full Homebrew path to ensure the venv is created with the right interpreter. If a `.venv` already exists from a previous attempt, delete it first:
+
+```bash
+rm -rf .venv
+/opt/homebrew/bin/python3.11 -m venv .venv
+source .venv/bin/activate
+```
+
+> On Windows use `.venv\Scripts\activate` instead.
+
+Confirm the venv is using the right Python:
+
+```bash
+python3 --version  # should print 3.11.x
+```
+
+### 3. Upgrade pip
+
+The bundled pip may be too old to handle `pyproject.toml`-based editable installs:
+
+```bash
+pip install --upgrade pip
+```
+
+### 4. Install the package
 
 ```bash
 pip install -e .
 ```
 
+To deactivate the environment when you're done:
+
+```bash
+deactivate
+```
+
+## Credentials
+
+### GitHub Token (required)
+
+A GitHub Personal Access Token (PAT) allows the agents to push code to the target repository.
+
+**Classic token:**
+
+1. Go to [github.com/settings/tokens](https://github.com/settings/tokens)
+2. Click **Generate new token (classic)**
+3. Select the **`repo`** scope (full control of private repositories)
+4. Click **Generate token** and copy it
+
+**Fine-grained token** (alternative):
+
+1. Go to [github.com/settings/tokens?type=beta](https://github.com/settings/tokens?type=beta)
+2. Select the target repository
+3. Grant **Contents: Read and write** permission
+4. Generate and copy the token
+
+Export it as an environment variable or pass it via `--github-token`:
+
+```bash
+export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
+```
+
+### da.live Token (optional)
+
+An Adobe IMS access token for [da.live](https://da.live) enables automated content authoring (creating pages, spreadsheets, and media in the EDS content repository). If omitted, the migration will push code to GitHub but skip content authoring — you can import content manually via the da.live UI afterward.
+
+To get the token:
+
+1. Sign in to [da.live](https://da.live) with your Adobe ID
+2. Open **Developer Tools** (F12) → **Application** tab → **Local Storage** → `da.live`
+3. Copy the `access_token` value (a long `eyJ...` JWT)
+
+Or from the **Network** tab: perform any action in da.live, find an API request, and copy the `Authorization: Bearer eyJ...` header value.
+
+```bash
+export DA_TOKEN=eyJhbGciOi...
+```
+
+> **Note:** IMS tokens are short-lived (typically 24 hours). For long migrations, you may need to refresh the token.
+
 ## Usage
 
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...
+export GITHUB_TOKEN=ghp_...
 
 eds-migrate --site https://example.com --org my-org --repo my-site
+```
+
+With all options:
+
+```bash
+eds-migrate \
+  --site https://example.com \
+  --org my-org \
+  --repo my-site \
+  --github-token ghp_... \
+  --da-token eyJ... \
+  --verbose
 ```
 
 ### Options
@@ -134,10 +234,12 @@ eds-migrate --site https://example.com --org my-org --repo my-site
 | `--site URL` | Source site URL to migrate (required) |
 | `--org NAME` | GitHub organization (required) |
 | `--repo NAME` | GitHub repository name (required) |
+| `--github-token` | GitHub PAT (default: `$GITHUB_TOKEN` env var, **required**) |
+| `--da-token` | da.live IMS token (default: `$DA_TOKEN` env var, optional) |
 | `--verbose, -v` | Stream agent output to stdout |
 | `--run-id ID` | Custom run ID (default: auto-generated) |
 | `--log-level` | `DEBUG`, `INFO`, `WARNING`, or `ERROR` (default: `INFO`) |
-| `--cleanup` | Archive orphaned environments for a given `--run-id` (no migration) |
+| `--cleanup` | Tear down orphaned resources for a given `--run-id` (no migration) |
 
 ### What you get
 

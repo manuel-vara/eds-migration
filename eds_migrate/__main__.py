@@ -5,12 +5,17 @@ Usage:
     eds-migrate --site https://example.com --org acme --repo site
     eds-migrate --site https://example.com --org acme --repo site --verbose
     eds-migrate --cleanup --run-id abc123
+
+Credentials can be passed via CLI flags or environment variables:
+    GITHUB_TOKEN   — GitHub PAT for pushing code (--github-token)
+    DA_TOKEN       — da.live IMS token for content authoring (--da-token)
 """
 
 from __future__ import annotations
 
 import argparse
 import logging
+import os
 import sys
 import uuid
 
@@ -32,6 +37,14 @@ def main() -> int:
     parser.add_argument("--verbose", "-v", action="store_true", help="Stream agent output to stdout")
     parser.add_argument("--cleanup", action="store_true", help="Only cleanup resources from a previous run")
     parser.add_argument(
+        "--github-token", default=os.environ.get("GITHUB_TOKEN"),
+        help="GitHub PAT (default: $GITHUB_TOKEN)",
+    )
+    parser.add_argument(
+        "--da-token", default=os.environ.get("DA_TOKEN"),
+        help="da.live IMS token (default: $DA_TOKEN)",
+    )
+    parser.add_argument(
         "--log-level", default="INFO",
         choices=["DEBUG", "INFO", "WARNING", "ERROR"],
     )
@@ -51,16 +64,23 @@ def main() -> int:
     if args.cleanup:
         if not args.run_id:
             parser.error("--cleanup requires --run-id")
-        log.info("Cleanup mode — archiving environments for run %s", args.run_id)
-        archived = cleanup_by_run_id(client, args.run_id)
-        if archived:
-            log.info("Archived %d environment(s).", archived)
+        log.info("Cleanup mode — tearing down resources for run %s", args.run_id)
+        cleaned = cleanup_by_run_id(client, args.run_id)
+        if cleaned:
+            log.info("Cleaned up %d resource(s).", cleaned)
         else:
-            log.info("No matching environments found for run ID %s.", args.run_id)
+            log.info("No matching resources found for run ID %s.", args.run_id)
         return 0
 
     if not args.site or not args.org or not args.repo:
         parser.error("--site, --org, and --repo are required for migration")
+
+    if not args.github_token:
+        parser.error(
+            "GitHub token required. Pass --github-token or set GITHUB_TOKEN env var."
+        )
+    if not args.da_token:
+        log.warning("No da.live token provided — content authoring steps will be skipped.")
 
     run_id = args.run_id or uuid.uuid4().hex[:8]
 
@@ -72,6 +92,8 @@ def main() -> int:
     log.info("Content     : da.live/%s/%s", args.org, args.repo)
     log.info("Preview     : https://main--%s--%s.aem.page/", args.repo, args.org)
     log.info("Run ID      : %s", run_id)
+    log.info("GitHub token: %s...%s", args.github_token[:4], args.github_token[-4:])
+    log.info("da.live token: %s", "provided" if args.da_token else "not provided")
     log.info("=" * 60)
 
     log.info("Step 1/3 — Creating agent fleet...")
@@ -81,6 +103,8 @@ def main() -> int:
     try:
         result = run_migration(
             client, fleet, args.site, args.org, args.repo,
+            github_token=args.github_token,
+            da_token=args.da_token,
             verbose=args.verbose,
         )
     except KeyboardInterrupt:
@@ -90,7 +114,7 @@ def main() -> int:
         log.exception("Migration failed")
         return 1
     finally:
-        log.info("Step 3/3 — Cleaning up environments...")
+        log.info("Step 3/3 — Cleaning up resources...")
         cleanup_fleet(client, fleet)
 
     log.info("=" * 60)
