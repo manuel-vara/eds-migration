@@ -1,6 +1,6 @@
 ## EDS Domain Knowledge
-Discover relevant skills at `/knowledge/skills/`. The building-blocks and
-code-review skills define what correct EDS code looks like.
+The **building-blocks** and **code-review** skills define what correct EDS
+code looks like.
 
 ## Your Specific Checks
 You are verifying the Block Dev agent's code output.

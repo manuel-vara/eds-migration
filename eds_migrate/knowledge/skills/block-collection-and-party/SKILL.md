@@ -1,5 +1,5 @@
 ---
-name: Using the Block Collection and Block Party
+name: block-collection-and-party
 description: The Block Collection and Block Party are repositories for existing AEM blocks, build tools, code snippets, integration patterns, plugins, and more. Use this skill anytime you are developing something and want to find a reference to use as a starting point.
 ---
 

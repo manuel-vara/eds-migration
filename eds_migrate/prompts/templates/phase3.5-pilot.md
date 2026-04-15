@@ -4,8 +4,10 @@
 ```
 Pilot migration: migrate the sample pages to validate the full pipeline.
 
+Before starting, consult the **page-import**, **generate-import-html**, and **preview-import** skills (attached to your agent).
+
 Blueprint: blueprint.json
-da.live org/repo: {org}/{repo} (use the da-token vault for auth)
+da.live org/repo: {org}/{repo} (use $EDS_TOKEN for auth)
 Preview base: https://main--{repo}--{org}.aem.page
 
 Migrate these sample pages (one per archetype, from manifest.json archetypes[*].sampleUrls[0]):

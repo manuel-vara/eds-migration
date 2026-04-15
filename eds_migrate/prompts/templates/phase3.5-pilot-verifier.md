@@ -5,6 +5,8 @@ Verify the Pilot Migration output. Sample pages have been uploaded to da.live an
 
 Status files are in status/. The original screenshots are in analysis/.
 
+Consult the **page-import** and **preview-import** skills to understand correct import structure and preview validation.
+
 Check:
 1. Pages render without JS errors (load preview URLs in Playwright)
 2. Visual diff scores: review any page with score < 0.8

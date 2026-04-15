@@ -4,6 +4,8 @@
 ```
 Build the EDS codebase. The blueprint is at `blueprint.json`.
 
+Before starting, consult the **building-blocks**, **content-driven-development**, and **testing-blocks** skills (attached to your agent). Also consult the **eds-knowledge** skill (developer-keeping-it-100) for performance requirements.
+
 GitHub repo: {org}/{repo} (use the github-token vault for auth)
 Content source fstab.yaml mount: https://content.da.live/{org}/{repo}
 

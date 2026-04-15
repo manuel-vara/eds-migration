@@ -1,3 +1,10 @@
+## EDS Domain Knowledge
+The **scrape-webpage** and **identify-page-structure** skills define how pages
+should be crawled and analyzed. Also consult the **eds-knowledge** skill
+(developer-markup-sections-blocks) to understand EDS page anatomy — this helps
+verify that archetype categorization aligns with actual content structure
+(sections, blocks, default content).
+
 ## Your Specific Checks
 You are verifying the Crawler agent's manifest.json output.
 

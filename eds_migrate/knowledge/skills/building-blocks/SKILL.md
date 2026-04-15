@@ -1,5 +1,5 @@
 ---
-name: Building Blocks
+name: building-blocks
 description: Guide for creating new AEM Edge Delivery blocks or modifying existing blocks. Use this skill whenever you are creating a new block from scratch or making significant changes to existing blocks that involve JavaScript decoration, CSS styling, or content model changes.
 ---
 

@@ -5,6 +5,8 @@
 Crawl the site: {site_url}
 
 Write manifest.json to the working directory. Include every page, categorize by archetype, map navigation, and extract global assets.
+
+Before starting, consult the **scrape-webpage** and **identify-page-structure** skills (attached to your agent).
 ```
 
 **Retry (Tier 1 failure):**

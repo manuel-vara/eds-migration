@@ -6,9 +6,9 @@ Usage:
     eds-migrate --site https://example.com --org acme --repo site --verbose
     eds-migrate --cleanup --run-id abc123
 
-Credentials can be passed via CLI flags or environment variables:
+Credentials can be passed via CLI flags, environment variables, or a .env file:
     GITHUB_TOKEN   — GitHub PAT for pushing code (--github-token)
-    DA_TOKEN       — da.live IMS token for content authoring (--da-token)
+    EDS_TOKEN      — Adobe EDS access token for content authoring (--eds-token)
 """
 
 from __future__ import annotations
@@ -19,9 +19,14 @@ import os
 import sys
 import uuid
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from anthropic import Anthropic
 
 from eds_migrate.agents import create_fleet, cleanup_fleet, cleanup_by_run_id
+from eds_migrate.knowledge.deploy import deploy_all, teardown as teardown_skills
 from eds_migrate.session import run_migration
 
 
@@ -41,8 +46,8 @@ def main() -> int:
         help="GitHub PAT (default: $GITHUB_TOKEN)",
     )
     parser.add_argument(
-        "--da-token", default=os.environ.get("DA_TOKEN"),
-        help="da.live IMS token (default: $DA_TOKEN)",
+        "--eds-token", default=os.environ.get("EDS_TOKEN"),
+        help="Adobe EDS access token (default: $EDS_TOKEN)",
     )
     parser.add_argument(
         "--log-level", default="INFO",
@@ -79,8 +84,8 @@ def main() -> int:
         parser.error(
             "GitHub token required. Pass --github-token or set GITHUB_TOKEN env var."
         )
-    if not args.da_token:
-        log.warning("No da.live token provided — content authoring steps will be skipped.")
+    if not args.eds_token:
+        log.warning("No EDS token provided — content authoring steps will be skipped.")
 
     run_id = args.run_id or uuid.uuid4().hex[:8]
 
@@ -93,18 +98,26 @@ def main() -> int:
     log.info("Preview     : https://main--%s--%s.aem.page/", args.repo, args.org)
     log.info("Run ID      : %s", run_id)
     log.info("GitHub token: %s...%s", args.github_token[:4], args.github_token[-4:])
-    log.info("da.live token: %s", "provided" if args.da_token else "not provided")
+    log.info("EDS token   : %s", "provided" if args.eds_token else "not provided")
     log.info("=" * 60)
 
-    log.info("Step 1/3 — Creating agent fleet...")
-    fleet = create_fleet(client, args.site, args.org, args.repo, run_id)
-
-    log.info("Step 2/3 — Launching orchestrator session...")
+    deployed_skills = None
+    fleet = None
     try:
+        log.info("Step 1/4 — Deploying knowledge skills...")
+        deployed_skills = deploy_all(client)
+
+        log.info("Step 2/4 — Creating agent fleet...")
+        fleet = create_fleet(
+            client, args.site, args.org, args.repo, run_id,
+            deployed_skills=deployed_skills,
+        )
+
+        log.info("Step 3/4 — Launching orchestrator session...")
         result = run_migration(
             client, fleet, args.site, args.org, args.repo,
             github_token=args.github_token,
-            da_token=args.da_token,
+            eds_token=args.eds_token,
             verbose=args.verbose,
         )
     except KeyboardInterrupt:
@@ -114,8 +127,11 @@ def main() -> int:
         log.exception("Migration failed")
         return 1
     finally:
-        log.info("Step 3/3 — Cleaning up resources...")
-        cleanup_fleet(client, fleet)
+        log.info("Step 4/4 — Cleaning up resources...")
+        if deployed_skills:
+            teardown_skills(client, deployed_skills)
+        if fleet:
+            cleanup_fleet(client, fleet)
 
     log.info("=" * 60)
     log.info("Migration complete!")

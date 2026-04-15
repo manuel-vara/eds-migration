@@ -4,6 +4,8 @@
 ```
 Run full integration QA on the completed migration.
 
+Consult the **eds-knowledge** skill before starting — especially the docs on Lighthouse performance targets (developer-keeping-it-100) and the go-live checklist (docs-go-live-checklist).
+
 Preview base: https://main--{repo}--{org}.aem.page
 manifest.json has all source pages.
 status/ has per-page migration results.

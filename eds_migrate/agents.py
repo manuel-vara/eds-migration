@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 
 from anthropic import Anthropic
 
+from eds_migrate.knowledge.deploy import DeployedSkill
 from eds_migrate.prompts import workers, verifiers
 from eds_migrate.prompts.orchestrator import build_orchestrator_prompt
 
@@ -38,10 +39,9 @@ class MigrationFleet:
     analyzer_verifier: AgentRef | None = None
     block_dev_verifier: AgentRef | None = None
     pilot_verifier: AgentRef | None = None
-    env_basic_id: str | None = None
-    env_npm_id: str | None = None
-    env_heavy_id: str | None = None
+    env_id: str | None = None
     session_id: str | None = None
+    deployed_skills: list[DeployedSkill] = field(default_factory=list)
 
     @property
     def all_workers(self) -> list[AgentRef]:
@@ -66,12 +66,13 @@ class MigrationFleet:
 
     @property
     def all_env_ids(self) -> list[str]:
-        return [e for e in [self.env_basic_id, self.env_npm_id, self.env_heavy_id] if e]
+        return [self.env_id] if self.env_id else []
 
 
 def _create_agent(
     client: Anthropic, name: str, model: str, system: str,
     callable_agents: list[dict] | None = None,
+    skills: list[dict] | None = None,
 ) -> AgentRef:
     """Create a single CMA agent."""
     params: dict = {
@@ -80,6 +81,8 @@ def _create_agent(
         "system": system,
         "tools": [TOOLSET],
     }
+    if skills:
+        params["skills"] = skills
     if callable_agents:
         params["extra_body"] = {"callable_agents": callable_agents}
     agent = client.beta.agents.create(**params)
@@ -108,28 +111,25 @@ def create_fleet(
     org: str,
     repo: str,
     run_id: str,
+    deployed_skills: list[DeployedSkill] | None = None,
 ) -> MigrationFleet:
     """
     Create all agents and environments for a migration run.
 
     The run_id is appended to names to avoid collisions between concurrent runs.
-    Each agent's system prompt points to /knowledge/ on the shared filesystem
-    where EDS skills and platform docs are available for progressive discovery.
-    The Orchestrator populates /knowledge/ at session start (Step 0).
+    Skills deployed via the Anthropic Skills API are attached to every agent so
+    the platform loads them on demand.
     """
-    fleet = MigrationFleet()
-    suffix = f"-{run_id}"
+    from eds_migrate.knowledge.deploy import skill_params
 
-    # ── Environments ──
-    fleet.env_basic_id = _create_env(
-        client, f"eds-basic{suffix}",
-    )
-    fleet.env_npm_id = _create_env(
-        client, f"eds-npm{suffix}",
-        packages={"npm": ["playwright", "pixelmatch", "pngjs"]},
-    )
-    fleet.env_heavy_id = _create_env(
-        client, f"eds-heavy{suffix}",
+    fleet = MigrationFleet()
+    fleet.deployed_skills = deployed_skills or []
+    suffix = f"-{run_id}"
+    sp = skill_params(fleet.deployed_skills) or None
+
+    # ── Environment ──
+    fleet.env_id = _create_env(
+        client, f"eds-env{suffix}",
         packages={"npm": [
             "@anthropic-ai/sdk", "playwright", "pixelmatch", "pngjs",
             "@adobe/aem-cli", "vitest",
@@ -139,45 +139,45 @@ def create_fleet(
     # ── Worker Agents ──
     fleet.crawler = _create_agent(
         client, f"Crawler{suffix}", "claude-sonnet-4-6",
-        workers.CRAWLER,
+        workers.CRAWLER, skills=sp,
     )
     fleet.analyzer = _create_agent(
         client, f"Analyzer{suffix}", "claude-opus-4-6",
-        workers.ANALYZER,
+        workers.ANALYZER, skills=sp,
     )
     fleet.block_dev = _create_agent(
         client, f"BlockDev{suffix}", "claude-opus-4-6",
-        workers.BLOCK_DEV,
+        workers.BLOCK_DEV, skills=sp,
     )
     fleet.page_migrator = _create_agent(
         client, f"PageMigrator{suffix}", "claude-sonnet-4-6",
-        workers.PAGE_MIGRATOR,
+        workers.PAGE_MIGRATOR, skills=sp,
     )
     fleet.config = _create_agent(
         client, f"Config{suffix}", "claude-sonnet-4-6",
-        workers.CONFIG,
+        workers.CONFIG, skills=sp,
     )
     fleet.integration_qa = _create_agent(
         client, f"IntegrationQA{suffix}", "claude-sonnet-4-6",
-        workers.INTEGRATION_QA,
+        workers.INTEGRATION_QA, skills=sp,
     )
 
     # ── Tier 2 Verifier Agents ──
     fleet.crawler_verifier = _create_agent(
         client, f"CrawlerVerifier{suffix}", "claude-sonnet-4-6",
-        verifiers.CRAWLER_VERIFIER,
+        verifiers.CRAWLER_VERIFIER, skills=sp,
     )
     fleet.analyzer_verifier = _create_agent(
         client, f"AnalyzerVerifier{suffix}", "claude-opus-4-6",
-        verifiers.ANALYZER_VERIFIER,
+        verifiers.ANALYZER_VERIFIER, skills=sp,
     )
     fleet.block_dev_verifier = _create_agent(
         client, f"BlockDevVerifier{suffix}", "claude-sonnet-4-6",
-        verifiers.BLOCK_DEV_VERIFIER,
+        verifiers.BLOCK_DEV_VERIFIER, skills=sp,
     )
     fleet.pilot_verifier = _create_agent(
         client, f"PilotVerifier{suffix}", "claude-sonnet-4-6",
-        verifiers.PILOT_VERIFIER,
+        verifiers.PILOT_VERIFIER, skills=sp,
     )
 
     # ── Orchestrator ──
@@ -189,16 +189,19 @@ def create_fleet(
         client, f"Orchestrator{suffix}", "claude-opus-4-6",
         build_orchestrator_prompt(site_url, org, repo),
         callable_agents=callable,
+        skills=sp,
     )
 
     log.info(
-        "Fleet created: %d workers, %d verifiers, 1 orchestrator, 3 environments",
+        "Fleet created: %d workers, %d verifiers, 1 orchestrator, "
+        "1 environment, %d skills attached",
         len(fleet.all_workers), len(fleet.all_verifiers),
+        len(fleet.deployed_skills),
     )
     return fleet
 
 
-ENV_NAME_PREFIXES = ("eds-basic-", "eds-npm-", "eds-heavy-")
+ENV_NAME_PREFIXES = ("eds-env-",)
 AGENT_NAME_PREFIXES = (
     "Crawler-", "Analyzer-", "BlockDev-", "PageMigrator-", "Config-",
     "IntegrationQA-", "CrawlerVerifier-", "AnalyzerVerifier-",

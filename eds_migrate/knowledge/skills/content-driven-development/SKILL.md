@@ -1,5 +1,5 @@
 ---
-name: Using Content Driven Development
+name: content-driven-development
 description: Apply a Content Driven Development process to AEM Edge Delivery Services development. Use for all development tasks, including building new blocks, modifying existing blocks, making changes to core decoration functionality, etc.
 ---
 
@@ -113,6 +113,7 @@ Would you like to:
 **Option 2: Local HTML Files (Temporary)**
 - Create HTML file(s) in `drafts/` folder matching the content model structure
 - Reference the [HTML Structure Guide](resources/html-structure.md) for proper file format
+- When generating drafts with images: Use https://picsum.photos/{width}/{height} (with `?random=N` for variety). If picsum.photos is unreachable, use https://placehold.co/{width}x{height} as fallback.
 - Remind user: "Restart your dev server with: `aem up --html-folder drafts`"
 - Note: "You will need to create actual CMS content before raising a PR"
 - Proceed to Phase 2

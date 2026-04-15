@@ -46,17 +46,6 @@ class SessionResult:
     events_received: int
 
 
-def _pick_env(fleet: MigrationFleet, phase: str) -> str:
-    """Select the right environment for a given phase."""
-    heavy_phases = {"3-build"}
-    npm_phases = {"1-discover", "3.5-pilot", "4-migrate", "6-qa"}
-    if phase in heavy_phases:
-        return fleet.env_heavy_id
-    if phase in npm_phases:
-        return fleet.env_npm_id
-    return fleet.env_basic_id
-
-
 def run_migration(
     client: Anthropic,
     fleet: MigrationFleet,
@@ -65,7 +54,7 @@ def run_migration(
     repo: str,
     *,
     github_token: str,
-    da_token: str | None = None,
+    eds_token: str | None = None,
     verbose: bool = False,
 ) -> SessionResult:
     """
@@ -81,12 +70,10 @@ def run_migration(
     goes idle.  If the SSE stream disconnects prematurely (timeout or
     network blip), we reconnect up to MAX_RECONNECTS times.
     """
-    env_id = fleet.env_heavy_id
-
     log.info("Creating orchestrator session...")
     session = client.beta.sessions.create(
         agent=fleet.orchestrator.id,
-        environment_id=env_id,
+        environment_id=fleet.env_id,
         title=f"EDS Migration: {site_url}",
     )
     fleet.session_id = session.id
@@ -95,7 +82,7 @@ def run_migration(
     task_message = _build_task_message(
         site_url, org, repo, fleet,
         github_token=github_token,
-        da_token=da_token,
+        eds_token=eds_token,
     )
 
     events_count = 0
@@ -195,10 +182,9 @@ def _build_task_message(
     fleet: MigrationFleet,
     *,
     github_token: str,
-    da_token: str | None = None,
+    eds_token: str | None = None,
 ) -> str:
     """Build the initial user message that kicks off the migration."""
-    from eds_migrate.knowledge import build_setup_script
     from eds_migrate.tier1 import TIER1_SCRIPTS
 
     tier1_block = ""
@@ -207,23 +193,21 @@ def _build_task_message(
         tier1_block += f"Save this to `tier1/{phase_key}.sh` and run with `bash tier1/{phase_key}.sh`:\n"
         tier1_block += f"```bash\n{script_fn()}\n```\n"
 
-    knowledge_script = build_setup_script()
-
-    da_token_block = ""
-    if da_token:
-        da_token_block = f"""\
-export DA_TOKEN="{da_token}"
-echo "da.live IMS token configured." """
+    eds_token_block = ""
+    if eds_token:
+        eds_token_block = f"""\
+export EDS_TOKEN="{eds_token}"
+echo "EDS access token configured." """
     else:
-        da_token_block = """\
-echo "WARNING: No da.live token provided — content authoring steps will use fallback (manual import)." """
+        eds_token_block = """\
+echo "WARNING: No EDS token provided — content authoring steps will use fallback (manual import)." """
 
     return f"""\
 # EDS Migration Task
 
 Migrate **{site_url}** to AEM Edge Delivery Services.
 
-## Step 0a — Configure Credentials
+## Step 0 — Configure Credentials
 
 **Before doing anything else**, run these commands to set up git credentials
 and API tokens. All subsequent git operations and API calls depend on this.
@@ -235,8 +219,8 @@ echo "https://x-access-token:{github_token}@github.com" > ~/.git-credentials
 git config --global user.email "eds-migrate@automation.local"
 git config --global user.name "EDS Migration Agent"
 
-# da.live IMS token — used for content authoring API calls
-{da_token_block}
+# EDS access token — used for da.live content authoring API calls
+{eds_token_block}
 
 echo "Credentials configured."
 ```
@@ -244,16 +228,13 @@ echo "Credentials configured."
 **Verify** by running: `git ls-remote https://github.com/{org}/{repo}.git`
 If this fails, stop and report the error.
 
-## Step 0b — Set Up Knowledge Base
+## Knowledge
 
-Run this script to populate `/knowledge/` with EDS skills and platform docs.
-All worker and verifier agents have catalogs in their system prompts
-pointing to these files — they will read them on demand during their tasks.
-
-Save this to `setup-knowledge.sh` and run it:
-```bash
-{knowledge_script}
-```
+EDS skills are attached to every agent in this session. The platform loads
+them on demand when relevant to the task — you and your workers do not need
+to download or install anything. Skills cover block development, content
+modeling, page import, code review, testing, web performance, and platform
+reference documentation (the **eds-knowledge** skill).
 
 ## Configuration
 - GitHub org: `{org}`
@@ -284,7 +265,7 @@ Verifiers: {', '.join(a.name for a in fleet.all_verifiers)}
 ## Tier 1 Validation Scripts
 {tier1_block}
 
-Begin with Step 0a (credentials), then Step 0b (knowledge setup), then Phase 1 — Discovery. Good luck.
+Begin with Step 0 (credentials), then Phase 1 — Discovery. Good luck.
 """
 
 
@@ -566,7 +547,7 @@ def _extract_text(content) -> str | None:
         return None
     parts = []
     for block in content:
-        if hasattr(block, "text"):
+        if hasattr(block, "text") and block.text is not None:
             parts.append(block.text)
     return "\n".join(parts) if parts else None
 

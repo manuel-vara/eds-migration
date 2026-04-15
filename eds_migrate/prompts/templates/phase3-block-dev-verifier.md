@@ -3,6 +3,8 @@
 ```
 Verify the Block Dev output. The code is in the GitHub repo {org}/{repo} and cloned in the working directory.
 
+Consult the **building-blocks** and **code-review** skills to ground your review in EDS code standards.
+
 Check:
 1. Each block decorates correctly (run `aem up`, load test content, check console)
 2. CSS is properly scoped (all selectors start with .{{block-name}})

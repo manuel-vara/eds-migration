@@ -4,8 +4,10 @@
 ```
 Migrate the following pages to da.live:
 
+Consult the **page-import** and **generate-import-html** skills if you haven't already.
+
 Blueprint: blueprint.json
-da.live: {org}/{repo} (use da-token vault)
+da.live: {org}/{repo} (use $EDS_TOKEN for auth)
 Preview base: https://main--{repo}--{org}.aem.page
 
 Pages to migrate:

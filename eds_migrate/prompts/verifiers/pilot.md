@@ -1,6 +1,6 @@
 ## EDS Domain Knowledge
-Discover relevant skills at `/knowledge/skills/`. The page-import skill defines
-what a correct import looks like — section structure, block tables, metadata, images.
+The **page-import** skill defines what a correct import looks like — section
+structure, block tables, metadata, images.
 
 ## Your Specific Checks
 You are verifying the Pilot Migration output — sample pages uploaded to da.live and

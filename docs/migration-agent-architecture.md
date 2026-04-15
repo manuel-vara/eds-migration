@@ -138,7 +138,7 @@ The orchestrator writes a `migration-state.json` file to the environment filesys
   "phase": "4-migrate",
   "status": "in-progress",
   "siteUrl": "https://example.com",
-  "config": { "org": "acme", "repo": "site", "daToken": "vault:da-token" },
+  "config": { "org": "acme", "repo": "site", "edsToken": "env:EDS_TOKEN" },
   "completedPhases": ["1-discover", "2a-scrape", "2b-inventory", "2c-blueprint", "3-build", "3.5-pilot"],
   "totalRegressions": 1,
   "sessionCost": { "llmSessions": 47, "budget": 500 }
@@ -836,7 +836,7 @@ Knowledge files live on the shared environment filesystem at `/knowledge/`, popu
 - **Role:** Top-level coordinator; gates phases, dispatches workers and verifiers, manages the feedback loop
 - **Tools:** `agent_toolset_20260401` (bash, file ops, web)
 - **Callable agents:** All workers and Tier 2 verifiers
-- **Vaults:** `github-token` (repo access), `da-token` (da.live Source API auth)
+- **Credentials:** `GITHUB_TOKEN` (repo access), `EDS_TOKEN` (da.live Source API auth)
 - **Responsibilities:**
   - Accept site URL, org, and repo from user
   - Write and maintain `migration-state.json` checkpoint

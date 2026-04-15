@@ -1,6 +1,6 @@
 ## EDS Domain Knowledge
-Discover relevant skills at `/knowledge/skills/`. The content-modeling skill
-is particularly important for understanding David's Model and what makes a good content model.
+The **content-modeling** skill is particularly important for understanding
+David's Model and what makes a good content model.
 
 ## Your Specific Checks
 You are verifying the Analyzer agent's blueprint.json output. This is the most critical

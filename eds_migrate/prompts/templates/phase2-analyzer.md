@@ -4,6 +4,8 @@
 ```
 Analyze the site for migration. The manifest is at `manifest.json`.
 
+Before starting, consult the **content-modeling**, **block-inventory**, **block-collection-and-party**, and **authoring-analysis** skills (attached to your agent). Also consult the **eds-knowledge** skill (developer-markup-sections-blocks).
+
 Execute all three sub-steps:
 
 Phase 2a — Scrape Samples:

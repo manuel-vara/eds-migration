@@ -87,32 +87,29 @@ All communication flows through the Orchestrator in a star topology. Workers and
 
 ## Knowledge base
 
-Agents discover EDS domain knowledge at runtime from a shared filesystem at `/knowledge/`:
+Agents receive EDS domain knowledge through the [Anthropic Skills API](https://docs.anthropic.com/en/api/skills-guide). During setup, every skill directory under `eds_migrate/knowledge/skills/` is uploaded as a custom skill and attached to all agents in the fleet. The platform loads them on demand — agents discover and read skills automatically when relevant to their task, without consuming context until needed.
 
 ```
 knowledge/
-├── skills/          ← "how to build" (from adobe/helix-website)
-│   ├── building-blocks/SKILL.md
-│   ├── content-modeling/SKILL.md
-│   ├── page-import/SKILL.md
-│   └── ... (15 skills)
-└── docs/            ← "how the platform works" (from aem.live)
-    ├── developer-markup-sections-blocks.md
-    ├── developer-keeping-it-100.md
-    └── ... (14 docs)
+└── skills/                          16 custom skills
+    ├── building-blocks/SKILL.md     creating and modifying EDS blocks
+    ├── content-modeling/SKILL.md    David's Model, author-friendly structures
+    ├── page-import/SKILL.md         end-to-end page import pipeline
+    ├── eds-knowledge/               platform reference docs (markup, performance,
+    │   ├── SKILL.md                 redirects, sitemaps, authoring, go-live, etc.)
+    │   └── references/*.md
+    └── ... (12 more skills)
 ```
 
-Skills follow the [agent skill specification](https://github.com/anthropics/anthropic-cookbook/tree/main/misc/prompt_caching) — each `SKILL.md` is self-describing with a `description:` field. Agents list the directory, read descriptions, and pull only the skills relevant to their current task (progressive disclosure).
-
-The codebase directory `eds_migrate/knowledge/` mirrors this runtime structure exactly.
+Each `SKILL.md` follows the [agent skill specification](https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills/overview) — self-describing with YAML frontmatter (`name`, `description`). Skills are uploaded at the start of a run and deleted during teardown.
 
 ## Prerequisites
 
 - Python 3.11+
 - An [Anthropic API key](https://console.anthropic.com/) with access to Claude Managed Agents (beta)
 - A **GitHub Personal Access Token** with `repo` scope (see [Credentials](#credentials) below)
-- A GitHub organization and empty repository for the migrated site
-- (Optional) A **da.live IMS token** for content authoring (see [Credentials](#credentials) below)
+- A GitHub organization and repository set up with AEM Code Sync (see [Repository setup](#repository-setup) below)
+- (Optional) An **Adobe EDS access token** for content authoring (see [Credentials](#credentials) below)
 
 ## Installation
 
@@ -162,7 +159,36 @@ To deactivate the environment when you're done:
 deactivate
 ```
 
+## Repository setup
+
+Before running the migration, you need a GitHub repository connected to AEM Code Sync. This is a one-time manual step per repository.
+
+### 1. Create an empty repository
+
+Create a new repository in your GitHub organization (e.g. `my-org/my-site`). It can be public or private.
+
+### 2. Install the AEM Code Sync GitHub App
+
+1. Visit [github.com/apps/aem-code-sync/installations/new](https://github.com/apps/aem-code-sync/installations/new)
+2. Select your organization
+3. Under **Repository access**, choose **Only select repositories** and pick the repository you just created
+4. Click **Save**
+
+If the app is already installed on your org, go to its installation settings and add the new repository instead.
+
+Once installed, any code pushed to the repository is automatically synced to the AEM code bus and becomes available at `https://main--{repo}--{org}.aem.page/`.
+
+> This follows the same process as the [AEM developer tutorial](https://www.aem.live/developer/tutorial). The migration tool handles everything after this point — pushing boilerplate code, blocks, content, and configuration.
+
 ## Credentials
+
+All credentials can be provided via CLI flags, environment variables, or a **`.env` file** in the project root. Copy the example to get started:
+
+```bash
+cp .env.example .env
+```
+
+Then fill in your values. The `.env` file is gitignored and will never be committed.
 
 ### GitHub Token (required)
 
@@ -182,35 +208,59 @@ A GitHub Personal Access Token (PAT) allows the agents to push code to the targe
 3. Grant **Contents: Read and write** permission
 4. Generate and copy the token
 
-Export it as an environment variable or pass it via `--github-token`:
+### EDS Token (optional)
+
+An Adobe EDS access token for [da.live](https://da.live) enables automated content authoring (creating pages, spreadsheets, and media in the EDS content repository). If omitted, the migration will push code to GitHub but skip content authoring — you can import content manually via the da.live UI afterward.
+
+#### How to generate the token
+
+1. Go to [Adobe Developer Console](https://developer.adobe.com/console/) and sign in
+2. Create a new **Project** (or use an existing one)
+3. Click **Add API** and select **Edge Delivery Services**
+4. Choose **OAuth Server-to-Server** as the credential type
+5. Select the appropriate product profiles and save
+6. On the credential overview page, note your **Client ID**, **Client Secret**, and **Scopes**
+7. Click **Generate access token** on the credential overview page, or generate one programmatically:
 
 ```bash
-export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
+curl -X POST 'https://ims-na1.adobelogin.com/ims/token/v3' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d 'client_id=YOUR_CLIENT_ID&client_secret=YOUR_CLIENT_SECRET&grant_type=client_credentials&scope=YOUR_SCOPES'
 ```
 
-### da.live Token (optional)
+The response contains your access token:
 
-An Adobe IMS access token for [da.live](https://da.live) enables automated content authoring (creating pages, spreadsheets, and media in the EDS content repository). If omitted, the migration will push code to GitHub but skip content authoring — you can import content manually via the da.live UI afterward.
+```json
+{
+  "access_token": "eyJ...",
+  "token_type": "bearer",
+  "expires_in": 86399
+}
+```
 
-To get the token:
-
-1. Sign in to [da.live](https://da.live) with your Adobe ID
-2. Open **Developer Tools** (F12) → **Application** tab → **Local Storage** → `da.live`
-3. Copy the `access_token` value (a long `eyJ...` JWT)
-
-Or from the **Network** tab: perform any action in da.live, find an API request, and copy the `Authorization: Bearer eyJ...` header value.
+Copy the `access_token` value and add it to your `.env` file or export it:
 
 ```bash
-export DA_TOKEN=eyJhbGciOi...
+export EDS_TOKEN=eyJ...
 ```
 
-> **Note:** IMS tokens are short-lived (typically 24 hours). For long migrations, you may need to refresh the token.
+> **Note:** Tokens expire after ~24 hours. For long migrations, regenerate and update the token as needed. Cache and reuse tokens — Adobe throttles excessive token generation.
 
 ## Usage
+
+With a `.env` file (recommended):
+
+```bash
+# .env already has ANTHROPIC_API_KEY, GITHUB_TOKEN, EDS_TOKEN
+eds-migrate --site https://example.com --org my-org --repo my-site
+```
+
+Or with environment variables:
 
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...
 export GITHUB_TOKEN=ghp_...
+export EDS_TOKEN=eyJ...
 
 eds-migrate --site https://example.com --org my-org --repo my-site
 ```
@@ -223,7 +273,7 @@ eds-migrate \
   --org my-org \
   --repo my-site \
   --github-token ghp_... \
-  --da-token eyJ... \
+  --eds-token eyJ... \
   --verbose
 ```
 
@@ -235,7 +285,7 @@ eds-migrate \
 | `--org NAME` | GitHub organization (required) |
 | `--repo NAME` | GitHub repository name (required) |
 | `--github-token` | GitHub PAT (default: `$GITHUB_TOKEN` env var, **required**) |
-| `--da-token` | da.live IMS token (default: `$DA_TOKEN` env var, optional) |
+| `--eds-token` | Adobe EDS access token (default: `$EDS_TOKEN` env var, optional) |
 | `--verbose, -v` | Stream agent output to stdout |
 | `--run-id ID` | Custom run ID (default: auto-generated) |
 | `--log-level` | `DEBUG`, `INFO`, `WARNING`, or `ERROR` (default: `INFO`) |
@@ -288,9 +338,9 @@ eds_migrate/
 │   ├── phase5_config.py     Phase 5 — YAML, redirects, robots.txt
 │   └── phase6_qa.py         Phase 6 — QA report schema and thresholds
 ├── knowledge/
-│   ├── __init__.py          Knowledge bundle builder (tar+gzip+base64)
-│   ├── skills/              EDS development skills (15 × SKILL.md)
-│   └── docs/                AEM platform documentation (14 × .md)
+│   ├── __init__.py          Skill directory discovery
+│   ├── deploy.py            Skills API upload/teardown (replaces GitHub bridge)
+│   └── skills/              EDS skills (16 × SKILL.md), uploaded via Skills API
 └── prompts/
     ├── orchestrator.md      Orchestrator system prompt
     ├── orchestrator.py      Prompt builder (assembles base + templates)
