@@ -34,7 +34,7 @@ function fetchUrl(url) {
   return new Promise((resolve, reject) => {
     https.get(url, {
       headers: {
-        'User-Agent': 'AEM-Block-Party-Search-Script'
+        'User-Agent': 'AdobeSkills/1.0 (https://github.com/adobe/skills; skill:block-collection-and-party)'
       }
     }, (res) => {
       let data = '';

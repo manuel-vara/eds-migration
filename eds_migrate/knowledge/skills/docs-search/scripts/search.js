@@ -9,6 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const CACHE_DIR = path.join(__dirname, '..', '.cache');
 const CACHE_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
+const USER_AGENT = 'AdobeSkills/1.0 (https://github.com/adobe/skills; skill:docs-search)';
 
 // Stop words to ignore in searches
 const STOP_WORDS = new Set([
@@ -44,7 +45,7 @@ async function fetchWithCache(url, cacheFileName) {
 
   // Fetch fresh data
   return new Promise((resolve, reject) => {
-    https.get(url, (res) => {
+    https.get(url, { headers: { 'User-Agent': USER_AGENT } }, (res) => {
       let data = '';
       res.on('data', (chunk) => data += chunk);
       res.on('end', () => {

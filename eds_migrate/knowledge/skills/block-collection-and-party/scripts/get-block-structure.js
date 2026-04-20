@@ -30,6 +30,7 @@
 import { JSDOM } from 'jsdom';
 
 const BLOCK_COLLECTION_BASE = 'https://main--aem-block-collection--adobe.aem.live';
+const USER_AGENT = 'AdobeSkills/1.0 (https://github.com/adobe/skills; skill:block-collection-and-party)';
 
 /**
  * Simplify HTML by removing optimized picture elements and showing essential structure
@@ -104,7 +105,9 @@ async function getBlockStructure(blockName) {
   const url = `${BLOCK_COLLECTION_BASE}/block-collection/${blockName}.plain.html`;
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: { 'User-Agent': USER_AGENT },
+    });
 
     if (!response.ok) {
       if (response.status === 404) {

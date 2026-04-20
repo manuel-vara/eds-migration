@@ -39,6 +39,8 @@ class MigrationFleet:
     analyzer_verifier: AgentRef | None = None
     block_dev_verifier: AgentRef | None = None
     pilot_verifier: AgentRef | None = None
+    migration_verifier: AgentRef | None = None
+    config_verifier: AgentRef | None = None
     env_id: str | None = None
     session_id: str | None = None
     deployed_skills: list[DeployedSkill] = field(default_factory=list)
@@ -55,6 +57,7 @@ class MigrationFleet:
         return [a for a in [
             self.crawler_verifier, self.analyzer_verifier,
             self.block_dev_verifier, self.pilot_verifier,
+            self.migration_verifier, self.config_verifier,
         ] if a is not None]
 
     @property
@@ -71,20 +74,25 @@ class MigrationFleet:
 
 def _create_agent(
     client: Anthropic, name: str, model: str, system: str,
-    callable_agents: list[dict] | None = None,
+    tools: list[dict] | None = None,
     skills: list[dict] | None = None,
 ) -> AgentRef:
-    """Create a single CMA agent."""
+    """Create a single CMA agent.
+
+    If ``tools`` is None, the standard built-in toolset is attached so the
+    agent can run bash, read/write files, fetch the web, etc.  Pass an
+    explicit list to override — the Orchestrator uses this to run with
+    only custom tools (no bash, no filesystem, no network) so it cannot
+    silently do the work itself.
+    """
     params: dict = {
         "name": name,
         "model": model,
         "system": system,
-        "tools": [TOOLSET],
+        "tools": tools if tools is not None else [TOOLSET],
     }
     if skills:
         params["skills"] = skills
-    if callable_agents:
-        params["extra_body"] = {"callable_agents": callable_agents}
     agent = client.beta.agents.create(**params)
     log.info("Created agent %s (%s v%d)", name, agent.id, agent.version)
     return AgentRef(id=agent.id, version=agent.version, name=name)
@@ -162,7 +170,7 @@ def create_fleet(
         workers.INTEGRATION_QA, skills=sp,
     )
 
-    # ── Tier 2 Verifier Agents ──
+    # ── Verifier Agents ──
     fleet.crawler_verifier = _create_agent(
         client, f"CrawlerVerifier{suffix}", "claude-sonnet-4-6",
         verifiers.CRAWLER_VERIFIER, skills=sp,
@@ -179,24 +187,33 @@ def create_fleet(
         client, f"PilotVerifier{suffix}", "claude-sonnet-4-6",
         verifiers.PILOT_VERIFIER, skills=sp,
     )
+    fleet.migration_verifier = _create_agent(
+        client, f"MigrationVerifier{suffix}", "claude-sonnet-4-6",
+        verifiers.MIGRATION_VERIFIER, skills=sp,
+    )
+    fleet.config_verifier = _create_agent(
+        client, f"ConfigVerifier{suffix}", "claude-sonnet-4-6",
+        verifiers.CONFIG_VERIFIER, skills=sp,
+    )
 
     # ── Orchestrator ──
-    callable = [
-        {"type": "agent", "id": a.id, "version": a.version}
-        for a in fleet.all_workers + fleet.all_verifiers
-    ]
+    # The Orchestrator gets the standard toolset AND the custom dispatch
+    # tools.  The toolset has to be present because skills require the
+    # built-in ``read`` tool to be available on the session.  The
+    # orchestrator's system prompt enforces that it MUST delegate via the
+    # custom tools and never use bash/filesystem/web directly.
+    from eds_migrate.router import build_custom_tools
     fleet.orchestrator = _create_agent(
         client, f"Orchestrator{suffix}", "claude-opus-4-6",
         build_orchestrator_prompt(site_url, org, repo),
-        callable_agents=callable,
+        tools=[TOOLSET, *build_custom_tools()],
         skills=sp,
     )
 
     log.info(
         "Fleet created: %d workers, %d verifiers, 1 orchestrator, "
         "1 environment, %d skills attached",
-        len(fleet.all_workers), len(fleet.all_verifiers),
-        len(fleet.deployed_skills),
+        len(fleet.all_workers), len(fleet.all_verifiers), len(fleet.deployed_skills),
     )
     return fleet
 
@@ -205,7 +222,8 @@ ENV_NAME_PREFIXES = ("eds-env-",)
 AGENT_NAME_PREFIXES = (
     "Crawler-", "Analyzer-", "BlockDev-", "PageMigrator-", "Config-",
     "IntegrationQA-", "CrawlerVerifier-", "AnalyzerVerifier-",
-    "BlockDevVerifier-", "PilotVerifier-", "Orchestrator-",
+    "BlockDevVerifier-", "PilotVerifier-", "MigrationVerifier-",
+    "ConfigVerifier-", "Orchestrator-",
 )
 
 

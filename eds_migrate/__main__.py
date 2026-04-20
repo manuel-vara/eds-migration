@@ -116,6 +116,7 @@ def main() -> int:
         log.info("Step 3/4 — Launching orchestrator session...")
         result = run_migration(
             client, fleet, args.site, args.org, args.repo,
+            run_id=run_id,
             github_token=args.github_token,
             eds_token=args.eds_token,
             verbose=args.verbose,

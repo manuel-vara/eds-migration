@@ -1,9 +1,15 @@
 """
 Session management — starting, streaming, and interacting with CMA sessions.
 
-This module provides the core loop that the orchestrator uses to drive the
-migration. It creates a session for the orchestrator agent, sends the initial
-task message, and streams events back to the caller.
+This module runs the Orchestrator session and acts as the dispatch router
+for its custom tools.  Multi-agent delegation via ``callable_agents`` is
+a gated research-preview feature, so we replace it with a Python-side
+fan-out: whenever the Orchestrator calls one of its custom ``invoke_*``
+or ``verify_*`` tools, we spin up a brand-new worker/verifier session,
+stream it to idle, and return its final text to the Orchestrator as a
+``user.custom_tool_result`` event.  All worker sessions share state
+through a common ``migration-state/{run_id}`` branch on the target
+GitHub repo (see ``eds_migrate.state_workspace``).
 """
 
 from __future__ import annotations
@@ -20,6 +26,8 @@ import httpx
 from anthropic import Anthropic
 
 from eds_migrate.agents import MigrationFleet
+from eds_migrate import router
+from eds_migrate.state_workspace import StateWorkspace, create_workspace
 
 log = logging.getLogger(__name__)
 
@@ -53,23 +61,27 @@ def run_migration(
     org: str,
     repo: str,
     *,
+    run_id: str,
     github_token: str,
     eds_token: str | None = None,
     verbose: bool = False,
 ) -> SessionResult:
-    """
-    Launch the orchestrator session and stream it to completion.
+    """Launch the Orchestrator session and drive it through custom tools.
 
-    The orchestrator agent handles all phase gating, worker dispatch,
-    Tier 1/Tier 2 verification loops, feedback loops, and fallback
-    logic internally — it's all encoded in its system prompt and the
-    callable_agents it has access to.
-
-    This function creates the session, sends the initial user message
-    containing the migration task, and streams events until the session
-    goes idle.  If the SSE stream disconnects prematurely (timeout or
-    network blip), we reconnect up to MAX_RECONNECTS times.
+    The Orchestrator has no bash/filesystem/web tools of its own — it
+    delegates everything through custom tools that this function
+    handles via the router, which spins up fresh worker/verifier
+    sessions as needed.
     """
+    log.info("Initialising migration-state workspace...")
+    workspace = create_workspace(
+        org=org, repo=repo, run_id=run_id, github_token=github_token,
+    )
+    router.bind_env(workspace, fleet.env_id)
+    log.info(
+        "Workspace ready at %s on branch %s", workspace.root, workspace.branch,
+    )
+
     log.info("Creating orchestrator session...")
     session = client.beta.sessions.create(
         agent=fleet.orchestrator.id,
@@ -80,15 +92,18 @@ def run_migration(
     log.info("Session created: %s", session.id)
 
     task_message = _build_task_message(
-        site_url, org, repo, fleet,
-        github_token=github_token,
+        site_url, org, repo, workspace, fleet,
         eds_token=eds_token,
     )
 
     events_count = 0
-    reached_idle = False
     start = time.monotonic()
     event_logger = EventLogger(fleet, verbose=verbose)
+
+    # Pending custom tool calls we still owe the orchestrator a result for
+    pending_tool_uses: dict[str, dict] = {}
+    end_turn_reached = False
+    retries_exhausted = False
 
     client.beta.sessions.events.send(
         session.id,
@@ -100,25 +115,75 @@ def run_migration(
     log.info("Task message sent. Streaming events...")
 
     reconnects = 0
+    # When the orchestrator session goes idle with requires_action we service
+    # the pending custom tools, send the results, and reopen the SSE stream.
+    # That's the happy path, not a disconnect — so we don't count it as a
+    # reconnect attempt.
+    resume_after_tools = False
 
-    while not reached_idle:
+    while not end_turn_reached and not retries_exhausted:
         try:
             if reconnects:
                 log.info("Reconnecting to stream (attempt %d/%d)...",
                          reconnects, MAX_RECONNECTS)
+            elif resume_after_tools:
+                log.info("Reopening stream after servicing custom tools.")
+
+            resume_after_tools = False
 
             with client.beta.sessions.events.stream(
                 session.id,
                 timeout=_STREAM_TIMEOUT,
             ) as stream:
+                stopped_for_action = False
                 for event in stream:
                     events_count += 1
                     event_logger.handle(event)
 
-                    if event.type == "session.status_idle":
-                        log.info("Session reached idle state.")
-                        reached_idle = True
-                        break
+                    etype = getattr(event, "type", "?")
+
+                    if etype == "agent.custom_tool_use":
+                        pending_tool_uses[event.id] = {
+                            "name": event.name,
+                            "input": dict(event.input or {}),
+                        }
+
+                    elif etype == "session.status_idle":
+                        stop_reason = getattr(event, "stop_reason", None)
+                        stop_type = getattr(stop_reason, "type", None)
+                        if stop_type == "end_turn":
+                            end_turn_reached = True
+                            break
+                        if stop_type == "retries_exhausted":
+                            retries_exhausted = True
+                            break
+                        if stop_type == "requires_action":
+                            expected_ids = list(
+                                getattr(stop_reason, "event_ids", None) or []
+                            )
+                            _service_pending_tools(
+                                client=client,
+                                session_id=session.id,
+                                fleet=fleet,
+                                workspace=workspace,
+                                pending=pending_tool_uses,
+                                expected_ids=expected_ids,
+                                eds_token=eds_token,
+                                event_reporter=event_logger.report_router,
+                            )
+                            stopped_for_action = True
+                            resume_after_tools = True
+                            # The server closes the SSE stream when the
+                            # session is idle.  Leave the inner loop and
+                            # reopen in the next iteration of `while`.
+                            break
+
+                # If we broke out for end_turn / retries_exhausted / action,
+                # skip the stream-ended reconnect path.
+                if end_turn_reached or retries_exhausted or stopped_for_action:
+                    reconnects = 0
+                    event_logger.reset_heartbeat()
+                    continue
 
         except (httpx.ReadTimeout, httpx.RemoteProtocolError, httpx.ReadError) as exc:
             reconnects += 1
@@ -129,40 +194,53 @@ def run_migration(
             log.warning("Stream interrupted (%s), reconnecting in %.0fs... (%d/%d)",
                         type(exc).__name__, backoff, reconnects, MAX_RECONNECTS)
             time.sleep(backoff)
-            replayed = _catch_up(client, session.id, event_logger)
+            replayed = _catch_up(client, session.id, event_logger, pending_tool_uses)
             events_count += replayed
             if replayed:
                 log.info("Replayed %d missed events.", replayed)
             event_logger.reset_heartbeat()
             continue
 
-        if not reached_idle:
-            reconnects += 1
-            if reconnects > MAX_RECONNECTS:
-                break
-            backoff = RECONNECT_BACKOFF_BASE ** reconnects
-            log.warning("Stream ended without idle state, reconnecting in %.0fs... (%d/%d)",
-                        backoff, reconnects, MAX_RECONNECTS)
-            time.sleep(backoff)
-            replayed = _catch_up(client, session.id, event_logger)
-            events_count += replayed
-            if replayed:
-                log.info("Replayed %d missed events.", replayed)
-            event_logger.reset_heartbeat()
+        # Stream ended without end_turn AND we didn't stop for action — treat
+        # as a transient disconnect and reconnect with backoff.
+        reconnects += 1
+        if reconnects > MAX_RECONNECTS:
+            break
+        backoff = RECONNECT_BACKOFF_BASE ** reconnects
+        log.warning("Stream ended without end_turn, reconnecting in %.0fs... (%d/%d)",
+                    backoff, reconnects, MAX_RECONNECTS)
+        time.sleep(backoff)
+        replayed = _catch_up(client, session.id, event_logger, pending_tool_uses)
+        events_count += replayed
+        if replayed:
+            log.info("Replayed %d missed events.", replayed)
+        event_logger.reset_heartbeat()
 
     event_logger.stop()
     elapsed = time.monotonic() - start
 
-    if not reached_idle:
+    # Best-effort final checkpoint — not fatal if it fails
+    try:
+        workspace.pull()
+        workspace.push_checkpoint(
+            "completed" if end_turn_reached else "interrupted",
+            extra={"events": events_count, "duration_s": round(elapsed, 1)},
+        )
+    except Exception as exc:
+        log.warning("Failed to write final checkpoint: %s", exc)
+
+    if retries_exhausted:
+        raise RuntimeError(
+            f"Orchestrator session {session.id} ended with retries_exhausted."
+        )
+    if not end_turn_reached:
         log.error(
-            "Session %s stream ended after %.1fs (%d events) WITHOUT reaching idle state. "
-            "The migration did not complete successfully.",
+            "Session %s stream ended after %.1fs (%d events) WITHOUT end_turn.",
             session.id, elapsed, events_count,
         )
         raise RuntimeError(
-            f"Session {session.id} never reached idle state after {events_count} events "
-            f"and {reconnects} reconnect attempts. The orchestrator may have stalled or "
-            f"the stream timed out. Check the session in the Anthropic dashboard."
+            f"Session {session.id} never completed normally after "
+            f"{events_count} events and {reconnects} reconnect attempts."
         )
 
     log.info("Session %s completed in %.1fs (%d events)", session.id, elapsed, events_count)
@@ -175,33 +253,107 @@ def run_migration(
     )
 
 
+# ---------------------------------------------------------------------------
+# Dispatch-to-worker plumbing
+
+
+def _service_pending_tools(
+    *,
+    client: Anthropic,
+    session_id: str,
+    fleet: MigrationFleet,
+    workspace: StateWorkspace,
+    pending: dict[str, dict],
+    expected_ids: list[str],
+    eds_token: str | None,
+    event_reporter,
+) -> None:
+    """Dispatch every pending custom tool call and send results back."""
+    # If the session tells us which IDs it's blocked on, service exactly those;
+    # otherwise service everything we've seen.
+    ids_to_service = expected_ids or list(pending.keys())
+    if not ids_to_service:
+        return
+
+    for tool_use_id in ids_to_service:
+        spec = pending.pop(tool_use_id, None)
+        if spec is None:
+            log.warning(
+                "orchestrator blocked on unknown tool_use_id=%s; "
+                "sending empty error result",
+                tool_use_id,
+            )
+            _send_custom_tool_result(
+                client, session_id, tool_use_id,
+                text=f"router could not find pending spec for {tool_use_id}",
+                is_error=True,
+            )
+            continue
+
+        name = spec["name"]
+        tinput = spec["input"]
+        event_reporter(
+            f"dispatching custom tool {name} (id={tool_use_id[:10]})"
+        )
+
+        if not router.is_custom_tool(name):
+            _send_custom_tool_result(
+                client, session_id, tool_use_id,
+                text=f"unknown custom tool: {name}", is_error=True,
+            )
+            continue
+
+        result = router.dispatch(
+            client=client,
+            fleet=fleet,
+            workspace=workspace,
+            tool_name=name,
+            tool_input=tinput,
+            eds_token=eds_token,
+            event_reporter=event_reporter,
+        )
+        _send_custom_tool_result(
+            client, session_id, tool_use_id,
+            text=result.text, is_error=result.is_error,
+        )
+
+
+def _send_custom_tool_result(
+    client: Anthropic,
+    session_id: str,
+    tool_use_id: str,
+    *,
+    text: str,
+    is_error: bool,
+) -> None:
+    """Post a ``user.custom_tool_result`` event back to the orchestrator."""
+    # Cap length to something the model can reasonably absorb
+    capped = text if len(text) <= 16000 else (text[:16000] + "\n… [truncated]")
+    client.beta.sessions.events.send(
+        session_id,
+        events=[{
+            "type": "user.custom_tool_result",
+            "custom_tool_use_id": tool_use_id,
+            "content": [{"type": "text", "text": capped}],
+            "is_error": is_error,
+        }],
+    )
+
+
+# ---------------------------------------------------------------------------
+# Initial task message
+
+
 def _build_task_message(
     site_url: str,
     org: str,
     repo: str,
+    workspace: StateWorkspace,
     fleet: MigrationFleet,
     *,
-    github_token: str,
     eds_token: str | None = None,
 ) -> str:
     """Build the initial user message that kicks off the migration."""
-    from eds_migrate.tier1 import TIER1_SCRIPTS
-
-    tier1_block = ""
-    for phase_key, script_fn in TIER1_SCRIPTS.items():
-        tier1_block += f"\n### Tier 1 script for {phase_key}\n"
-        tier1_block += f"Save this to `tier1/{phase_key}.sh` and run with `bash tier1/{phase_key}.sh`:\n"
-        tier1_block += f"```bash\n{script_fn()}\n```\n"
-
-    eds_token_block = ""
-    if eds_token:
-        eds_token_block = f"""\
-export EDS_TOKEN="{eds_token}"
-echo "EDS access token configured." """
-    else:
-        eds_token_block = """\
-echo "WARNING: No EDS token provided — content authoring steps will use fallback (manual import)." """
-
     from eds_migrate.prompts import _load
 
     template = _load("templates/lead-task.md")
@@ -209,12 +361,16 @@ echo "WARNING: No EDS token provided — content authoring steps will use fallba
         site_url=site_url,
         org=org,
         repo=repo,
-        github_token=github_token,
-        eds_token_block=eds_token_block,
-        tier1_block=tier1_block,
+        run_id=workspace.run_id,
+        state_branch=workspace.branch,
+        eds_token_status="provided" if eds_token else "NOT PROVIDED",
         workers=", ".join(a.name for a in fleet.all_workers),
         verifiers=", ".join(a.name for a in fleet.all_verifiers),
     )
+
+
+# ---------------------------------------------------------------------------
+# Event catch-up on reconnect
 
 
 _TOOL_OUTPUT_LIMIT = 2000
@@ -225,12 +381,11 @@ def _catch_up(
     client: Anthropic,
     session_id: str,
     event_logger: "EventLogger",
+    pending_tool_uses: dict[str, dict],
 ) -> int:
     """Fetch historical events via list API and replay any missed ones.
 
-    Returns the number of new events replayed.  The EventLogger's dedup
-    set ensures we never process the same event twice, so it's safe to
-    call this even if some events were already consumed from the stream.
+    Returns the number of new events replayed.
     """
     new_count = 0
     try:
@@ -241,25 +396,31 @@ def _catch_up(
             if eid and eid not in event_logger._seen_ids:
                 new_count += 1
                 event_logger.handle(event)
+                if getattr(event, "type", None) == "agent.custom_tool_use":
+                    pending_tool_uses[event.id] = {
+                        "name": event.name,
+                        "input": dict(event.input or {}),
+                    }
     except Exception as exc:
         log.warning("Failed to catch up on missed events: %s", exc)
     return new_count
+
+
+# ---------------------------------------------------------------------------
+# Event logging
 
 
 _HEARTBEAT_INTERVAL = 30  # seconds
 
 
 class EventLogger:
-    """Stateful event logger that tracks agent dispatch nesting and heartbeat."""
+    """Stateful event logger for the Orchestrator stream."""
 
     def __init__(self, fleet: MigrationFleet, verbose: bool = False):
         self.verbose = verbose
-        self._agent_stack: list[str] = ["Orchestrator"]
-        self._pending_agent_calls: dict[str, str] = {}
-        self._id_to_name: dict[str, str] = {}
-        for agent in fleet.all_agents:
-            self._id_to_name[agent.id] = agent.name
-
+        self._id_to_name: dict[str, str] = {
+            agent.id: agent.name for agent in fleet.all_agents
+        }
         self._seen_ids: set[str] = set()
         self._last_event_time = time.monotonic()
         self._in_model_request = False
@@ -273,7 +434,6 @@ class EventLogger:
         self._heartbeat_stop.set()
 
     def reset_heartbeat(self):
-        """Reset heartbeat timer after reconnection so elapsed time restarts."""
         self._last_event_time = time.monotonic()
         self._in_model_request = False
 
@@ -281,16 +441,11 @@ class EventLogger:
         while not self._heartbeat_stop.wait(_HEARTBEAT_INTERVAL):
             if self._in_model_request:
                 elapsed = int(time.monotonic() - self._last_event_time)
-                _status(f"{self._indent}[{self._who}] ⏳ model request running ({elapsed}s)")
+                _status(f"[Orchestrator] ⏳ model request running ({elapsed}s)")
 
-    @property
-    def _who(self) -> str:
-        return self._agent_stack[-1] if self._agent_stack else "?"
-
-    @property
-    def _indent(self) -> str:
-        depth = max(0, len(self._agent_stack) - 1)
-        return "│ " * depth
+    def report_router(self, msg: str) -> None:
+        """Bridge the router's progress messages into the status stream."""
+        _status(f"[router] {msg}")
 
     def handle(self, event) -> None:
         eid = getattr(event, "id", None)
@@ -302,24 +457,23 @@ class EventLogger:
         self._last_event_time = time.monotonic()
         etype = event.type
 
-        # ── Session lifecycle ──
         if etype == "session.status_running":
             _status("[session] running")
         elif etype == "session.status_idle":
-            _status("[session] idle — migration complete")
+            stop_reason = getattr(event, "stop_reason", None)
+            stop_type = getattr(stop_reason, "type", "?")
+            _status(f"[session] idle — stop_reason={stop_type}")
         elif etype == "session.status_terminated":
             _status("[session] TERMINATED")
         elif etype == "session.status_rescheduled":
             _status("[session] rescheduled (will resume)")
 
-        # ── Errors ──
         elif etype == "session.error":
             err = event.error
             msg = getattr(err, "message", str(err))
             err_type = getattr(err, "type", "unknown")
-            _status(f"{self._indent}[ERROR] {err_type}: {msg}")
+            _status(f"[ERROR] {err_type}: {msg}")
 
-        # ── Agent messages ──
         elif etype == "agent.message":
             for block in event.content:
                 if hasattr(block, "text"):
@@ -328,101 +482,43 @@ class EventLogger:
                         continue
                     if self.verbose:
                         for line in text.split("\n"):
-                            _status(f"{self._indent}[{self._who}] {line}")
+                            _status(f"[Orchestrator] {line}")
                     else:
                         preview = text[:500]
                         if len(text) > 500:
                             preview += "..."
-                        _status(f"{self._indent}[{self._who}] {preview}")
+                        _status(f"[Orchestrator] {preview}")
 
-        # ── Thinking (progress signal, no content) ──
         elif etype == "agent.thinking":
-            _status(f"{self._indent}[{self._who}] thinking...")
+            _status("[Orchestrator] thinking...")
 
-        # ── Built-in tool use ──
-        elif etype == "agent.tool_use":
+        elif etype == "agent.custom_tool_use":
             tool = getattr(event, "name", "unknown")
-            inp = getattr(event, "input", {})
-            eid = getattr(event, "id", "")
+            tinput = getattr(event, "input", {}) or {}
+            eid = getattr(event, "id", "")[:10]
+            summary = _summarize_custom_tool_input(tool, tinput)
+            _status(f"[Orchestrator] ▶ {tool} ({eid}) — {summary}")
 
-            if tool == "agent":
-                agent_id = str(inp.get("agent_id", ""))
-                agent_name = self._id_to_name.get(agent_id, agent_id[:20])
-                self._pending_agent_calls[eid] = agent_name
-                msg_text = str(inp.get("message", ""))
-                _status(f"{self._indent}┌─ DISPATCH {self._who} → {agent_name}")
-                if self.verbose and msg_text:
-                    for line in _redact(msg_text[:_AGENT_MSG_LIMIT]).split("\n"):
-                        _status(f"{self._indent}│  {line}")
-                elif msg_text:
-                    preview = _redact(msg_text.strip()[:300])
-                    _status(f"{self._indent}│  {preview}")
-                self._agent_stack.append(agent_name)
-            else:
-                summary = _summarize_tool_input(tool, inp)
-                tag = f"{self._indent}[{self._who}] {tool}"
-                if summary:
-                    _status(f"{tag} — {summary}")
-                else:
-                    _status(tag)
+        elif etype == "agent.tool_use":
+            # Orchestrator has no built-in tools in the new design, but we
+            # still log them defensively in case that changes.
+            tool = getattr(event, "name", "unknown")
+            tinput = getattr(event, "input", {}) or {}
+            _status(f"[Orchestrator] (builtin) {tool} "
+                    f"— {_redact(json.dumps(tinput, default=str)[:200])}")
 
-        # ── Built-in tool result ──
         elif etype == "agent.tool_result":
             is_error = getattr(event, "is_error", False)
-            tool_use_id = getattr(event, "tool_use_id", "")
+            label = "result ERROR" if is_error else "result"
+            content = getattr(event, "content", None)
+            text = _extract_text(content)
+            if text:
+                preview = _redact(text.strip()[:500])
+                _status(f"[Orchestrator] {label}: {preview}")
 
-            if tool_use_id in self._pending_agent_calls:
-                agent_name = self._pending_agent_calls.pop(tool_use_id)
-                if self._agent_stack and self._agent_stack[-1] == agent_name:
-                    self._agent_stack.pop()
-                content = getattr(event, "content", None)
-                text = _extract_text(content)
-                status = "ERROR" if is_error else "done"
-                _status(f"{self._indent}└─ RETURN {agent_name} ({status})")
-                if text:
-                    preview = _redact(text[:500 if not self.verbose else _AGENT_MSG_LIMIT])
-                    for line in preview.split("\n")[:20]:
-                        _status(f"{self._indent}   {line}")
-                    if len(text) > (500 if not self.verbose else _AGENT_MSG_LIMIT):
-                        _status(f"{self._indent}   ... ({len(text)} chars total)")
-            else:
-                prefix = f"{self._indent}[{self._who}] result"
-                if is_error:
-                    prefix += " ERROR"
-                content = getattr(event, "content", None)
-                text = _extract_text(content)
-                if self.verbose:
-                    if text:
-                        truncated = _redact(text[:_TOOL_OUTPUT_LIMIT])
-                        if len(text) > _TOOL_OUTPUT_LIMIT:
-                            truncated += f"\n  ... ({len(text) - _TOOL_OUTPUT_LIMIT} chars truncated)"
-                        _status(f"{prefix}\n{truncated}")
-                    else:
-                        _status(f"{prefix} (no text content)")
-                else:
-                    if text:
-                        preview = _redact(text.strip()[:500])
-                        _status(f"{prefix}\n{preview}")
-                    elif is_error:
-                        _status(f"{prefix} (no details)")
-
-        # ── MCP tool use/result ──
-        elif etype == "agent.mcp_tool_use":
-            server = getattr(event, "server_name", "?")
-            tool = getattr(event, "name", "unknown")
-            _status(f"{self._indent}[{self._who}] mcp {server}/{tool}")
-        elif etype == "agent.mcp_tool_result":
-            is_error = getattr(event, "is_error", False)
-            label = "mcp_result ERROR" if is_error else "mcp_result"
-            if self.verbose:
-                content = getattr(event, "content", None)
-                text = _extract_text(content)
-                _status(f"{self._indent}[{self._who}] {label}: {(text or '')[:500]}")
-
-        # ── Model request spans ──
         elif etype == "span.model_request_start":
             self._in_model_request = True
-            _status(f"{self._indent}[{self._who}] model request started")
+            _status("[Orchestrator] model request started")
         elif etype == "span.model_request_end":
             self._in_model_request = False
             usage = getattr(event, "model_usage", None)
@@ -431,25 +527,27 @@ class EventLogger:
                 inp = usage.input_tokens
                 out = usage.output_tokens
                 cached = usage.cache_read_input_tokens
-                _status(f"{self._indent}[{self._who}] model — {inp} in / {out} out / {cached} cached"
-                         + (" [ERROR]" if is_error else ""))
+                _status(
+                    f"[Orchestrator] model — {inp} in / {out} out / "
+                    f"{cached} cached" + (" [ERROR]" if is_error else "")
+                )
             elif is_error:
-                _status(f"{self._indent}[{self._who}] model request failed")
+                _status("[Orchestrator] model request failed")
 
-        # ── Context compaction ──
         elif etype == "agent.thread_context_compacted":
-            _status(f"{self._indent}[{self._who}] context compacted")
+            _status("[Orchestrator] context compacted")
 
-        # ── User events ──
         elif etype == "user.message":
             if self.verbose:
                 _status("[user.message] (echo)")
+        elif etype == "user.custom_tool_result":
+            if self.verbose:
+                tid = getattr(event, "custom_tool_use_id", "?")[:10]
+                _status(f"[router→orchestrator] custom_tool_result ({tid})")
         elif etype == "user.interrupt":
             _status("[user.interrupt]")
-
-        # ── Catch-all ──
         else:
-            _status(f"{self._indent}[event] {etype}")
+            _status(f"[event] {etype}")
 
 
 _SECRET_PATTERN = re.compile(
@@ -473,19 +571,18 @@ def _redact(text: str) -> str:
     return _SECRET_PATTERN.sub(_repl, text)
 
 
-def _summarize_tool_input(tool: str, inp: dict) -> str:
-    """One-line summary of a tool invocation's input."""
-    if tool == "bash" and "command" in inp:
-        cmd = str(inp["command"]).strip()
-        if len(cmd) > 200:
-            cmd = cmd[:200] + "..."
-        return _redact(cmd)
-    if tool == "file" and "path" in inp:
-        action = inp.get("action", "read")
-        return f"{action} {inp['path']}"
-    if tool == "agent" and "agent_id" in inp:
-        msg = str(inp.get("message", ""))[:120]
-        return f"→ {inp['agent_id'][:20]}... | {_redact(msg)}"
+def _summarize_custom_tool_input(tool: str, inp: dict) -> str:
+    """One-line summary of a custom tool invocation's input."""
+    if tool == "invoke_page_migrator":
+        urls = inp.get("urls") or []
+        task = str(inp.get("task", ""))
+        return f"{len(urls)} urls | {_redact(task[:120])}"
+    if tool == "invoke_analyzer":
+        phase = inp.get("phase", "?")
+        task = str(inp.get("task", ""))
+        return f"phase={phase} | {_redact(task[:120])}"
+    if "task" in inp:
+        return _redact(str(inp["task"])[:200])
     return _redact(json.dumps(inp, default=str)[:200])
 
 

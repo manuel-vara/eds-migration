@@ -1,9 +1,0 @@
-{
-	"id": "bqnVDUE4NuByUKC",
-	"json": "{\"id\":\"bqnVDUE4NuByUKC\",\"url\":\"https://www.astrazeneca.com/\",\"loadedUrl\":\"https://www.astrazeneca.com/\",\"uniqueKey\":\"https://www.astrazeneca.com\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"state\":4}},\"handledAt\":\"2026-04-08T20:45:52.734Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://www.astrazeneca.com",
-	"url": "https://www.astrazeneca.com/"
-}

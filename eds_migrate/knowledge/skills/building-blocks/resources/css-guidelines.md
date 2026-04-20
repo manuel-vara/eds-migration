@@ -75,11 +75,7 @@ main .my-block .item-title {
   /* item title styles */
 }
 
-/* Modifier/variant — short tokens on the block root (scope with .my-block.*) */
-main .my-block.reversed {
-  /* layout variant, e.g. flip column order */
-}
-
+/* Modifier/variant */
 main .my-block.dark {
   /* dark variant styles */
 }

@@ -40,3 +40,6 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+
+# Local migration-state workspaces (cloned per run_id)
+.migration-workspaces/

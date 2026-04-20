@@ -6,9 +6,9 @@ Given a source site URL, this tool spins up a fleet of specialized AI agents tha
 
 ## How it works
 
-The tool creates 11 agents on the Claude Managed Agents platform.
+The tool creates 13 agents on the Claude Managed Agents platform.
 
-**Orchestrator** — the top-level coordinator. Dispatches workers, runs verification loops, gates phase transitions. The only agent that can call other agents.
+**Orchestrator** — the top-level coordinator. It has **no bash, no filesystem, no network** — only a set of custom tools (`invoke_crawler`, `verify_analyzer`, …) that a Python-side router turns into fresh worker/verifier sessions. This makes it physically incapable of silently doing the work itself.
 
 ### Workers
 
@@ -25,65 +25,66 @@ The tool creates 11 agents on the Claude Managed Agents platform.
 
 | Agent | Role |
 |---|---|
-| **Crawler Verifier** | Tier 2 judgment check on the Crawler's manifest |
-| **Analyzer Verifier** | Tier 2 judgment check on the Analyzer's blueprint |
-| **Block Dev Verifier** | Tier 2 judgment check on the Block Dev's code |
-| **Pilot Verifier** | Tier 2 judgment check on pilot page migrations |
+| **Crawler Verifier** | Judgment check on the Crawler's manifest |
+| **Analyzer Verifier** | Judgment check on the Analyzer's blueprint |
+| **Block Dev Verifier** | Judgment check on the Block Dev's code |
+| **Pilot Verifier** | Judgment check on pilot page migrations |
+| **Migration Verifier** | Judgment check on the full batch page migration |
+| **Config Verifier** | Judgment check on redirects, metadata, sitemaps, robots.txt |
 
 ### Architecture
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │                      Migration Orchestrator                      │
-│   (top-level agent — owns the session, gates phases, delegates)  │
+│     (custom tools only — no bash / read / write / network)       │
+└──┬────────┬──────────┬──────────┬─────────┬──────────┬───────────┘
+   │ invoke_* / verify_* tool calls
+   ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                   Python dispatch router                         │
+│  turns each custom tool call into a fresh worker/verifier        │
+│  session; runs up to 4 Page Migrators in parallel in Phase 4.    │
+│  Pure dispatcher — all fidelity gates live in verifier prompts   │
+│  (screenshot-pair evidence, source-bundle comparison).           │
 └──┬────────┬──────────┬──────────┬─────────┬──────────┬───────────┘
    │        │          │          │         │          │
    ▼        ▼          ▼          ▼         ▼          ▼
 Phase 1  Phase 2    Phase 3   Phase 3.5  Phase 4    Phase 5   Phase 6
 Discover Analyze    Build     Pilot      Migrate    Configure Int. QA
-   │     (3 subs)  Blocks    Migration  (threads)     │         │
-   │        │          │          │         │          │         │
-   ▼        ▼          ▼          ▼         ▼          ▼         ▼
- ┌─────────────────────────────────────────────────────────────────┐
- │              Tier 1: Deterministic Validation Scripts           │
- │  (runs after every worker step — fast, free, no LLM needed)     │
- └─────────────────────────────┬───────────────────────────────────┘
-                               │ only if Tier 1 passes
-                               ▼
- ┌─────────────────────────────────────────────────────────────────┐
- │              Tier 2: Verifier Agents (judgment calls)           │
- │  Crawler │ Analyzer │ Block Dev │ Pilot │                       │
- │  Verifier│ Verifier │ Verifier  │ Vrfier│                       │
- └─────────────────────────────────────────────────────────────────┘
 ```
 
 Each phase follows a verification loop:
 
 ```
 ┌──────────────┐
-│    Worker     │
-│  (does work)  │
+│    Worker     │──┐
+│  (does work)  │  │ commits artifacts
+└──────┬────────┘  │ to migration-state/
+       │           │ {run_id} branch
+       ▼           ▼
+┌──────────────┐  .eds-migration/state/
+│   Verifier   │     manifest.json, blueprint.json,
+│   writes its │     source-bundle/ (rendered ground truth),
+│   own        │     status/*.json, qa-report.json,
+│   comparison │     verifier-results/*.json
+│   script +   │     verifier-results/*/screenshots/
+│   cites      │
+│   screenshot │
+│   pairs      │
 └──────┬───────┘
-       │ output
+       │ PASS / FAIL verdict with `evidence` array
        ▼
-┌──────────────┐     FAIL: structured errors
-│   Tier 1     │ ──────────────────────────────► Worker retries
-│  (scripts)   │                                 (no LLM cost)
-└──────┬───────┘
-       │ PASS
-       ▼
-┌──────────────┐     FAIL: structured feedback
-│   Tier 2     │ ──────────────────────────────► Worker retries
-│  (verifier   │                                 (with feedback)
-│   agent)     │
-└──────┬───────┘
-       │ PASS
-       ▼
-  Phase complete
-  → Orchestrator advances
+  Router returns user.custom_tool_result to the Orchestrator
 ```
 
-All communication flows through the Orchestrator in a star topology. Workers and verifiers cannot talk to each other directly. After max retries, the system degrades gracefully before escalating to a human.
+The **source-of-truth bundle** produced by the Crawler (rendered HTML and multi-viewport screenshots per page, plus header/footer chrome) is the ground truth every downstream verifier compares migrated previews against. Verifiers default-deny: a PASS verdict without screenshot-pair evidence per checked page is treated as FAIL.
+
+All workers share state through a dedicated `migration-state/{run_id}` branch on the target GitHub repo, under `.eds-migration/state/`. This is how they coordinate when CMA sessions don't share a filesystem.
+
+The branch is left in place after the run completes, so you can `git checkout migration-state/{run_id}` on the target repo and inspect exactly what each agent wrote.
+
+After max retries, the system degrades gracefully before escalating to a human.
 
 ## Knowledge base
 
@@ -91,14 +92,14 @@ Agents receive EDS domain knowledge through the [Anthropic Skills API](https://d
 
 ```
 knowledge/
-└── skills/                          16 custom skills
+└── skills/                          20 custom skills
     ├── building-blocks/SKILL.md     creating and modifying EDS blocks
     ├── content-modeling/SKILL.md    David's Model, author-friendly structures
     ├── page-import/SKILL.md         end-to-end page import pipeline
     ├── eds-knowledge/               platform reference docs (markup, performance,
     │   ├── SKILL.md                 redirects, sitemaps, authoring, go-live, etc.)
     │   └── references/*.md
-    └── ... (12 more skills)
+    └── ... (16 more skills)
 ```
 
 Each `SKILL.md` follows the [agent skill specification](https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills/overview) — self-describing with YAML frontmatter (`name`, `description`). Skills are uploaded at the start of a run and deleted during teardown.
@@ -326,33 +327,26 @@ These are pushed to the GitHub repo alongside the code, so they're always availa
 eds_migrate/
 ├── __main__.py              CLI entry point
 ├── agents.py                Fleet creation and cleanup (CMA API)
-├── session.py               Orchestrator session lifecycle and event streaming
-├── tier1/                   Deterministic validation scripts (bash)
-│   ├── __init__.py          Re-exports TIER1_SCRIPTS lookup dict
-│   ├── phase1_discovery.py  Phase 1 — manifest validation
-│   ├── phase2a_scrape.py    Phase 2a — scrape artifact checks
-│   ├── phase2b_inventory.py Phase 2b — block inventory checks
-│   ├── phase2c_blueprint.py Phase 2c — blueprint schema validation
-│   ├── phase3_block_dev.py  Phase 3 — block code, lint, framework checks
-│   ├── phase35_pilot.py     Phase 3.5 — pilot page preview validation
-│   ├── phase5_config.py     Phase 5 — YAML, redirects, robots.txt
-│   └── phase6_qa.py         Phase 6 — QA report schema and thresholds
+├── session.py               Orchestrator session lifecycle + dispatch loop
+├── router.py                Custom-tool registry, worker dispatch, Phase-4 parallelism
+├── state_workspace.py       Local git clone of the migration-state branch
 ├── knowledge/
 │   ├── __init__.py          Skill directory discovery
-│   ├── deploy.py            Skills API upload/teardown (replaces GitHub bridge)
-│   └── skills/              EDS skills (16 × SKILL.md), uploaded via Skills API
+│   ├── deploy.py            Skills API upload/teardown
+│   └── skills/              EDS skills (SKILL.md files), uploaded via Skills API
 └── prompts/
-    ├── orchestrator.md      Orchestrator system prompt
-    ├── orchestrator.py      Prompt builder (assembles base + templates)
-    ├── workers.py            Worker prompt loader
-    ├── workers/              Worker system prompts (1 per agent)
-    ├── verifiers.py          Verifier prompt loader
-    ├── verifiers/            Verifier system prompts (preamble + 1 per agent)
-    └── templates/            Dispatch templates (Orchestrator → subagent messages)
+    ├── __init__.py          Shared prompt-file loader
+    ├── orchestrator.md      Orchestrator base system prompt
+    ├── orchestrator.py      Prompt builder ({site_url}/{org}/{repo} substitution)
+    ├── workers.py           Worker prompt loader
+    ├── workers/             Worker system prompts (1 per agent)
+    ├── verifiers.py         Verifier prompt loader
+    ├── verifiers/           Verifier system prompts (shared preamble.md + 1 per agent)
+    └── templates/
+        └── lead-task.md     Initial user message kicking off the orchestrator session
 ```
 
-## Architecture documentation
-
-See [`docs/migration-agent-architecture.md`](docs/migration-agent-architecture.md) for the full architecture specification, including shared state schemas, retry policies, fallback rules, and the verification matrix.
-
-Open [`docs/migration-architecture-diagram.html`](docs/migration-architecture-diagram.html) in a browser for a visual diagram of the agent topology and phase pipeline.
+During a run, the router also maintains a **local git workspace** at
+`./.migration-workspaces/{run_id}/` tracking the `migration-state/{run_id}`
+branch. It's not committed to the project itself — feel free to delete
+it once you're done inspecting a run.

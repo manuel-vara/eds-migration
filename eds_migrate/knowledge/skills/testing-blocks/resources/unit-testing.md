@@ -255,38 +255,6 @@ it('should throw error for invalid input', () => {
 });
 ```
 
-### Testing timers and time-based logic
-
-Use Vitest's fake timers to control `setTimeout`, `setInterval`, and `Date` in tests:
-
-```javascript
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-
-describe('timer-based logic', () => {
-  beforeEach(() => {
-    vi.useFakeTimers();
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
-  it('should update state after delay', () => {
-    startCountdown();
-    vi.advanceTimersByTime(1000);
-    expect(getCount()).toBe(9);
-  });
-
-  it('should stop polling when condition is met', () => {
-    startPolling();
-    vi.advanceTimersByTime(5000);
-    expect(stopSpy).toHaveBeenCalledOnce();
-  });
-});
-```
-
-**When to use fake timers:** Any logic using `setTimeout`, `setInterval`, `Date.now()`, or `performance.now()`. Without fake timers, tests either wait for real time (slow) or race conditions cause flakiness.
-
 ## Next Steps
 
 Once you've written unit tests:
