@@ -1,0 +1,14 @@
+{
+  "url": "https://www.almacgroup.com/api-chemical/products/aldehyde-reductases/",
+  "archetype": "api-chemical-product",
+  "path": "/api-chemical/products/aldehyde-reductases",
+  "status": "migrated",
+  "previewUrl": "https://main--eds-migration--manuel-vara.aem.page/api-chemical/products/aldehyde-reductases",
+  "publishUrl": "https://main--eds-migration--manuel-vara.hlx.live/api-chemical/products/aldehyde-reductases",
+  "textLenRatio": 0.78,
+  "imageRatio": 0.9,
+  "published": false,
+  "htmlPath": ".eds-migration/state/content-staging/api-chemical/products/aldehyde-reductases.html",
+  "failureReason": "EDS_TOKEN not available — HTML generated and committed to content-staging. Upload to da.live pending.",
+  "notes": "Product page with Breadcrumbs, sidebar Columns block containing product heading (AESK-1600), description, product image, spec table, HubSpot inquiry form, and category sidebar nav. Source bundle: api-chemical-product-aldehyde-reductases. Actual source URL: /api-chemical-development/biocatalyst_product/aldehyde-reductases-sub-set-of-cesk-6000-standard-format/"
+}

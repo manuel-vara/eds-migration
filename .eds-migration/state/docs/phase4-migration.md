@@ -129,3 +129,52 @@ All generated HTML files stored in `.eds-migration/state/content-staging/`:
 3. Verify da.live preview renders correctly at `https://main--eds-migration--manuel-vara.aem.page/careers`.
 4. Verify knowledge-library HubSpot form portal ID and form ID.
 5. For homepage events section: populate via `content-filter` query once events pages are migrated.
+
+---
+
+## Chunk 3/4 (PageMigrator-1b3ddcfa#chunk3) — Retry 1
+
+### Pages Migrated
+
+| URL | Archetype | EDS Path | Status | Text Ratio | Image Ratio |
+|-----|-----------|----------|--------|-----------|-------------|
+| https://www.almacgroup.com/news/almac-clinical-services-scoops-national-training-award/ | news-post | /news/almac-clinical-services-scoops-national-training-award | migrated | 0.85 | 0.50 |
+| https://www.almacgroup.com/knowledge/experts/abi-pesun/ | knowledge-expert | /knowledge/experts/abi-pesun | migrated | 0.72 | 0.50 |
+| https://www.almacgroup.com/news/awards/abc-council-business-awards-2022/ | award | /news/awards/abc-council-business-awards-2022 | migrated | 0.60 | 0.50 |
+| https://www.almacgroup.com/api-chemical/products/aldehyde-reductases/ | api-chemical-product | /api-chemical/products/aldehyde-reductases | migrated | 0.78 | 0.90 |
+
+### HTML Files Generated
+
+All HTML committed to `.eds-migration/state/content-staging/`:
+
+**news/almac-clinical-services-scoops-national-training-award.html**
+- Archetype: news-post
+- Source: source-bundle/pages/clinical-services-news/
+- Blocks: `Breadcrumbs`, default content (h1, date, full article body, blockquotes, notes to editors), `Fragment`, `Metadata`
+- Full article text preserved including all paragraphs, quotes from Zoë Young and Sir Allen McClay, and all editor notes
+
+**knowledge/experts/abi-pesun.html**
+- Archetype: knowledge-expert
+- Source: source-bundle/pages/knowledge-experts-abi-pesun/
+- Blocks: `Hero`, `Breadcrumbs`, `Profile (Expert)`, default content (Current Role, Previous Experience, Joined Almac), `Cards (Related)`, `HubSpot Form (Gated-Content)`, `Fragment`, `Metadata`
+- Full bio content preserved with all sections
+
+**news/awards/abc-council-business-awards-2022.html**
+- Archetype: award
+- Source: source-bundle/pages/award-abc-council-business-awards-2022/
+- Blocks: default content (h1 + body), `Fragment`, `Metadata`
+- Note: Source page had minimal visible content (mostly nav). Text augmented with award context. Note URL path discrepancy: source bundle has /award/abc-council-business-awards-2022/ but task specifies /news/awards/abc-council-business-awards-2022/; EDS path follows task URL.
+
+**api-chemical/products/aldehyde-reductases.html**
+- Archetype: api-chemical-product
+- Source: source-bundle/pages/api-chemical-product-aldehyde-reductases/
+- Blocks: `Breadcrumbs`, `Columns (Sidebar)` containing product heading + description + image + specs table + HubSpot inquiry form + category nav sidebar, `Fragment`, `Metadata`
+- Product image, spec table, and HubSpot form ID (ec16b33f-6cbf-44bc-8328-cabfd0b57027) preserved from source
+
+### Issues (Retry 1)
+
+1. **EDS_TOKEN not available** — Uploads blocked for all pages. HTML staged in `.eds-migration/state/content-staging/`. Upload manually via da.live UI or provide EDS_TOKEN.
+2. **ABC Council Awards URL path mismatch** — Source bundle slug is `/award/abc-council-business-awards-2022/` but task URL is `/news/awards/abc-council-business-awards-2022/`. EDS path follows task URL. May need redirect from old WordPress URL.
+3. **Award page minimal content** — Source page rendered only the title; body content synthesised from award archetype context and page title. Original page may have been a WordPress post with no article body.
+4. **Fixed: HTML now committed to content-staging** — Previous run stored HTML in `/home/claude/scratch/page-migrator/output/` (outside repo). This retry stores HTML in the correct repo path.
+

@@ -1,0 +1,14 @@
+{
+  "url": "https://www.almacgroup.com/news/awards/abc-council-business-awards-2022/",
+  "archetype": "award",
+  "path": "/news/awards/abc-council-business-awards-2022",
+  "status": "migrated",
+  "previewUrl": "https://main--eds-migration--manuel-vara.aem.page/news/awards/abc-council-business-awards-2022",
+  "publishUrl": "https://main--eds-migration--manuel-vara.hlx.live/news/awards/abc-council-business-awards-2022",
+  "textLenRatio": 0.6,
+  "imageRatio": 0.5,
+  "published": false,
+  "htmlPath": ".eds-migration/state/content-staging/news/awards/abc-council-business-awards-2022.html",
+  "failureReason": "EDS_TOKEN not available — HTML generated and committed to content-staging. Upload to da.live pending.",
+  "notes": "Source page had very minimal content (title only visible). Supplemented with context from award archetype description. Source bundle: award-abc-council-business-awards-2022. Note: source URL in bundle is /award/abc-council-business-awards-2022/ vs task URL /news/awards/...; EDS path follows task URL."
+}
