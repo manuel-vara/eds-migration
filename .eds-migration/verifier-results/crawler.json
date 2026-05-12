@@ -3,130 +3,108 @@
   "issues": [
     {
       "severity": "medium",
-      "criterion": "careers-resource archetype sample is a login-redirect page",
-      "details": "careers-resource-bioinformatics-scientist/meta.json title='Login - Almac'. URL https://www.almacgroup.com/careers/resources/a-day-in-the-life-of-a-bioinformatics-scientist/ redirects to https://www.almacgroup.com/careers/almac-work-experience-hub/login/. Live spot-check confirmed same behavior. Screenshot captures login form, not archetype content.",
-      "remediation": "Downstream agents should be aware careers-resource sample represents a gated page. Consider substituting with a publicly accessible careers-resource URL if one exists, or note the archetype is fully gated."
+      "criterion": "careers-resource archetype has no content analysis (fully gated)",
+      "details": "careers-resource-bioinformatics-scientist page entry in sample-scrape.json has null url, null title, null cleaned_html_size, null content_sections, and null block_candidates. The URL https://www.almacgroup.com/careers/resources/a-day-in-the-life-of-a-bioinformatics-scientist/ redirects to a login page. All 36 careers-resource pages appear auth-gated. The archetype is omitted from archetypes_analyzed in sample-scrape.json (correctly flagged as gated). README documents this as a 'Partial Capture'. Downstream migration agents cannot determine content structure or block patterns for this archetype.",
+      "remediation": "Downstream agents should treat careers-resource as a gated archetype and skip or stub content analysis. If any public careers-resource URLs can be identified via sitemap or search, substitute one as the sample."
     },
     {
       "severity": "medium",
-      "criterion": "knowledge-library-a-phase-ii bundle page captures a 404 error page",
-      "details": "knowledge-library-a-phase-ii-study-evaluating-the-safety-and-efficacy-of-two-amg/meta.json title='Page not found - Almac', text_length=9619. Live spot-check confirmed 404. Screenshots exist but show an error page. Documented in README partial captures.",
-      "remediation": "The primary knowledge-library sample (knowledge-library/ slug) is valid. Downstream agents should use that sample as the archetype reference and disregard the 404 bundle page."
+      "criterion": "knowledge-library-a-phase-ii page captures a 404 error page with empty content analysis",
+      "details": "The page slug 'knowledge-library-a-phase-ii-study-evaluating-the-safety-and-efficacy-of-two-amg' has null content_sections, null block_candidates, null cleaned_html_size. The README documents this as a 404 capture. Screenshots exist but show an error page. This page should not be used as a knowledge-library archetype reference.",
+      "remediation": "The primary knowledge-library sample (slug 'knowledge-library', URL ...2019-investments-centered-around-cell-and-gene-therapies/) is a valid 200 capture with 27KB cleaned HTML and 4 content sections. Downstream agents should use that as the archetype reference."
     },
     {
       "severity": "low",
-      "criterion": "careers-careers and careers-news-almac-recognised-at-the-nus-2023-awards have identical screenshots",
-      "details": "Both page directories have the same desktop.png and mobile.png MD5 hashes (desktop: 30c0daa6ab010ec173142324419ba9b8). Both return title '- Almac' and textLen=10238 on live spot-check. The careers subdomain appears to serve identical content for these URLs regardless of path.",
-      "remediation": "This is a site-specific behavior: the careers WordPress sub-site serves a blank template for both URLs. The crawler correctly captured the live state. Both pages map to different archetypes (job-listing and news-post) but have no real distinguishable content."
+      "criterion": "award and careers-story sample pages have very thin cleaned HTML",
+      "details": "award-abc-council-business-awards-2022 has cleaned_html_size=392 bytes (only a HubSpot form extracted). careers-story-curtis-campbell has cleaned_html_size=84 bytes. Both have raw_html_size ~200-300KB and metadata.text_length ~10K, indicating real content exists on the live site but was not extracted into the cleaned_html. Award pages appear to be primarily form-gated content; careers-story is on the careers sub-site which requires login for some paths.",
+      "remediation": "The award archetype's block pattern (form-embed/HubSpot) is still accurately captured. careers-story block pattern (sidebar + form) is captured. Downstream agents can proceed with these patterns while noting cleaned content will be sparse."
     },
     {
       "severity": "low",
-      "criterion": "sourceTruthBundle.capturedPages count mismatch",
-      "details": "manifest.json sourceTruthBundle.capturedPages=25 but actual page directories in source-bundle/pages/ = 32. README claims 34 total. Three-way inconsistency.",
-      "remediation": "Update manifest.json sourceTruthBundle.capturedPages to 32 and README page count to 32."
+      "criterion": "job-listing archetype present in sample but not in manifest",
+      "details": "sample-scrape.json archetypes_analyzed contains 'job-listing' (mapped to careers-careers slug, page_count=1) but manifest.json has no 'job-listing' archetype — the careers-careers page is subsumed under the 'careers' archetype in the manifest (count=157). This is a minor categorization difference introduced during Phase 2a analysis.",
+      "remediation": "Downstream agents should note that 'job-listing' in the sample corresponds to the 'careers' archetype in the manifest. The careers-careers slug covers job listing pages."
     },
     {
       "severity": "low",
-      "criterion": "manifest.totalPages vs manifest.pages.length mismatch",
-      "details": "manifest.totalPages=3605 but manifest.pages array contains 3615 entries — 10-page discrepancy.",
-      "remediation": "Recalculate or synchronise totalPages with actual pages array length."
-    },
-    {
-      "severity": "low",
-      "criterion": "Archetype-level sampleUrl and http_status fields are all null",
-      "details": "All 27 archetypes have sampleUrl: null and http_status: null at the archetype object level. The actual sample URLs are in the sampleUrls array (plural). Downstream agents expecting a sampleUrl (singular) field will find null.",
-      "remediation": "Populate sampleUrl (singular) from sampleUrls[0] for each archetype, or document that downstream agents should use sampleUrls array."
+      "criterion": "careers-news-almac sample (news-post #1) has zero headings and 7143 bytes cleaned HTML",
+      "details": "The first news-post sample (careers-news-almac-recognised-at-the-nus-2023-awards, URL https://www.almacgroup.com/careers/news/almac-recognised-at-the-nus-2023-awards/) has 0 headings extracted and only 7143 bytes cleaned HTML. The second news-post sample (clinical-services-news) is richer: 4 headings, 10108 bytes, and identifies related-content cards block. The careers subdomain may have a different template that prevents heading extraction.",
+      "remediation": "Use clinical-services-news as the primary news-post archetype reference. The careers-news sample is secondary and likely represents a sub-site variant."
     }
   ],
   "evidence": [
     {
+      "page": "sample-scrape.json structure",
+      "source_artifact": ".eds-migration/state/sample-scrape.json",
+      "preview_artifact": "N/A",
+      "render_strategy": "Python json.load() structural analysis",
+      "finding": "File exists at 248271 bytes, is valid JSON. Top-level keys: generated_at, source_site, total_pages_crawled, archetypes_analyzed, pages, archetype_summary. Contains 32 page entries matching all 32 source-bundle page directories exactly. archetypes_analyzed covers 27 archetypes (all manifest archetypes present except careers-resource, which is documented as gated). archetype_summary is a simple count dict with 28 entries.",
+      "viewports": []
+    },
+    {
+      "page": "archetype coverage cross-check",
+      "source_artifact": ".eds-migration/state/manifest.json",
+      "preview_artifact": ".eds-migration/state/sample-scrape.json",
+      "render_strategy": "Python set comparison of manifest.archetypes[].name vs sample.archetypes_analyzed.keys()",
+      "finding": "27 manifest archetypes vs 27 sample archetypes. Difference: careers-resource missing from sample (expected — gated archetype, documented). Extra in sample: job-listing (careers sub-categorization). All other 26 archetypes covered in both.",
+      "viewports": []
+    },
+    {
+      "page": "source-bundle page completeness",
+      "source_artifact": "source-bundle/pages/",
+      "preview_artifact": ".eds-migration/state/sample-scrape.json pages dict",
+      "render_strategy": "os.listdir cross-check + file existence + file size validation",
+      "finding": "All 32 page slugs in sample-scrape.json have corresponding directories in source-bundle/pages/ with index.html, desktop.png, mobile.png, and meta.json. No missing or zero-byte files. Source-bundle and sample-scrape page sets are identical.",
+      "viewports": []
+    },
+    {
+      "page": "https://www.almacgroup.com/events/",
+      "source_artifact": "source-bundle/pages/events/index.html",
+      "preview_artifact": "https://www.almacgroup.com/events/",
+      "render_strategy": "File inspection of sample-scrape.json events page entry",
+      "finding": "events archetype: 4 content sections (breadcrumbs, content-slider/carousel, filter/facet, hubspot-form), 2 block candidates (filter custom high confidence, form-embed hubspot high confidence), 25 headings, cleaned_html=43625 bytes, raw_html=408343 bytes. Thorough analysis — filter block is high-confidence EDS pattern identification.",
+      "viewports": []
+    },
+    {
       "page": "https://www.almacgroup.com/knowledge/library/2019-investments-centered-around-cell-and-gene-therapies/",
       "source_artifact": "source-bundle/pages/knowledge-library/index.html",
       "preview_artifact": "https://www.almacgroup.com/knowledge/library/2019-investments-centered-around-cell-and-gene-therapies/",
-      "render_strategy": "Playwright headless Chromium, domcontentloaded + networkidle + body.innerText stable 500ms x2, dismissed #onetrust-accept-btn-handler, viewport 1440x900",
-      "finding": "Valid real-content page. Title: '2019 Investments Centered around Cell and Gene Therapies - Almac'. Live text_length=11589, bundle text_length=11223 (delta=366, ~3%). Bundle is NOT pre-hydration.",
-      "viewports": [
-        {
-          "name": "desktop",
-          "source_screenshot": "source-bundle/pages/knowledge-library/desktop.png",
-          "preview_screenshot": ".eds-migration/verifier-results/crawler/screenshots/knowledge-library-live-fullpage-desktop.png",
-          "similarity": 1.0,
-          "method": "pHash (DCT 8x8, hamming distance)",
-          "threshold": 0.65,
-          "passed": true
-        }
-      ]
-    },
-    {
-      "page": "https://www.almacgroup.com/news/almac-clinical-services-scoops-national-training-award/",
-      "source_artifact": "source-bundle/pages/clinical-services-news/index.html",
-      "preview_artifact": "https://www.almacgroup.com/news/almac-clinical-services-scoops-national-training-award/",
-      "render_strategy": "Playwright headless Chromium, domcontentloaded + networkidle + body.innerText stable 500ms x2, dismissed #onetrust-accept-btn-handler, viewport 1440x900",
-      "finding": "Valid substitute for clinical-services-news (original /clinical-services/news/ timed out). Title: 'Almac Clinical Services Scoops National Training Award - Almac'. Live text_length=14450, bundle text_length=14084 (delta=366, ~2.6%). Full-page screenshot pHash identical to bundle.",
-      "viewports": [
-        {
-          "name": "desktop",
-          "source_screenshot": "source-bundle/pages/clinical-services-news/desktop.png",
-          "preview_screenshot": ".eds-migration/verifier-results/crawler/screenshots/clinical-services-news-live-fullpage-desktop.png",
-          "similarity": 1.0,
-          "method": "pHash (DCT 8x8, hamming distance)",
-          "threshold": 0.65,
-          "passed": true
-        }
-      ]
-    },
-    {
-      "page": "https://www.almacgroup.com/knowledge/experts/abi-pesun/",
-      "source_artifact": "source-bundle/pages/knowledge-experts-abi-pesun/index.html",
-      "preview_artifact": "https://www.almacgroup.com/knowledge/experts/abi-pesun/",
-      "render_strategy": "Playwright headless Chromium, domcontentloaded + networkidle + body.innerText stable 500ms x2, dismissed #onetrust-accept-btn-handler, viewport 1440x900",
-      "finding": "Valid knowledge-expert archetype page. Title: 'Abi Pesun - Almac'. Full-page screenshot pHash identical to bundle (similarity=1.0).",
-      "viewports": [
-        {
-          "name": "desktop",
-          "source_screenshot": "source-bundle/pages/knowledge-experts-abi-pesun/desktop.png",
-          "preview_screenshot": ".eds-migration/verifier-results/crawler/screenshots/knowledge-experts-abi-pesun-live-fullpage-desktop.png",
-          "similarity": 1.0,
-          "method": "pHash (DCT 8x8, hamming distance)",
-          "threshold": 0.65,
-          "passed": true
-        }
-      ]
-    },
-    {
-      "page": "https://www.almacgroup.com/careers/resources/a-day-in-the-life-of-a-bioinformatics-scientist/",
-      "source_artifact": "source-bundle/pages/careers-resource-bioinformatics-scientist/index.html",
-      "preview_artifact": "https://www.almacgroup.com/careers/resources/a-day-in-the-life-of-a-bioinformatics-scientist/",
-      "render_strategy": "Playwright headless Chromium, domcontentloaded + networkidle, dismissed #onetrust-accept-btn-handler, viewport 1440x900",
-      "finding": "Confirmed login-redirect page. FinalURL=https://www.almacgroup.com/careers/almac-work-experience-hub/login/. Title='Login - Almac'. Documented in README Partial Captures. The careers-resource archetype sample captures auth-gated content, not real archetype content.",
-      "viewports": [
-        {
-          "name": "desktop",
-          "source_screenshot": "source-bundle/pages/careers-resource-bioinformatics-scientist/desktop.png",
-          "preview_screenshot": ".eds-migration/verifier-results/crawler/screenshots/careers-resource-live-desktop.png",
-          "similarity": 0.547,
-          "method": "pHash (DCT 8x8, hamming distance) — note: viewport vs fullpage mismatch inflates hamming",
-          "threshold": 0.65,
-          "passed": false
-        }
-      ]
-    },
-    {
-      "page": "manifest_checks",
-      "source_artifact": ".eds-migration/state/manifest.json",
-      "preview_artifact": "N/A",
-      "render_strategy": "jq analysis + curl sitemap fetch",
-      "finding": "Manifest contains 3615 pages across 27 archetypes. Sitemap cross-check: ~3984 total sitemap URLs vs 3615 manifest (9.2% fewer, within 20% threshold). Navigation header has links covering all major site sections (diagnostics, careers, clinical-services, knowledge, etc.). Archetype categories are sensible and match site structure. Minor issues: totalPages=3605 vs pages.length=3615; archetype-level sampleUrl fields are null (sampleUrls array is populated).",
+      "render_strategy": "File inspection of sample-scrape.json knowledge-library page entry",
+      "finding": "knowledge-library archetype: 4 content sections (breadcrumbs, article-body/default-content, profile-details/profile, hubspot-form), 2 block candidates (profile custom high, form-embed high), 7 headings, cleaned_html=27386 bytes. Adequate analysis — identifies article+profile+form pattern for this archetype.",
       "viewports": []
     },
     {
-      "page": "source_bundle_chrome",
-      "source_artifact": "source-bundle/chrome/",
+      "page": "https://www.almacgroup.com/news/almac-clinical-services-scoops-national-training-award/ (news-post primary sample)",
+      "source_artifact": "source-bundle/pages/clinical-services-news/index.html",
+      "preview_artifact": "https://www.almacgroup.com/news/almac-clinical-services-scoops-national-training-award/",
+      "render_strategy": "File inspection of sample-scrape.json clinical-services-news page entry",
+      "finding": "news-post archetype (primary): 5 sections (breadcrumbs, sidebar/nav, article-body/default-content, related-content/card-grid, hubspot-form), 3 block candidates (sidebar medium, cards/related-content high, form-embed high), 4 headings including h1, cleaned_html=10108 bytes. Thorough analysis with related-content cards pattern identified.",
+      "viewports": []
+    },
+    {
+      "page": "https://www.almacgroup.com/clinical-services/",
+      "source_artifact": "source-bundle/pages/clinical-services/index.html",
+      "preview_artifact": "https://www.almacgroup.com/clinical-services/",
+      "render_strategy": "File inspection of sample-scrape.json clinical-services page entry",
+      "finding": "clinical-services archetype: 6 sections (hero/hero-banner, breadcrumbs, animated-intro/intro-content, video-embed/media, full-image/media, hubspot-form), 5 block candidates (hero high, embed-video high, section-full-width-image medium, default-content-animated-intro medium, form-embed high), 20 headings, cleaned_html=24395 bytes. Thorough analysis covering carousel hero, video, and animated intro patterns.",
+      "viewports": []
+    },
+    {
+      "page": "careers-resource-bioinformatics-scientist (gated check)",
+      "source_artifact": "source-bundle/pages/careers-resource-bioinformatics-scientist/index.html",
+      "preview_artifact": "https://www.almacgroup.com/careers/resources/a-day-in-the-life-of-a-bioinformatics-scientist/",
+      "render_strategy": "File inspection + README documentation cross-check",
+      "finding": "careers-resource sample has null content_sections, null block_candidates, null cleaned_html_size in sample-scrape.json. README documents this as a login-redirect partial capture. The archetype is correctly excluded from archetypes_analyzed. This is the only archetype with zero analysis coverage — all 36 pages appear auth-gated.",
+      "viewports": []
+    },
+    {
+      "page": "archetype_summary check",
+      "source_artifact": ".eds-migration/state/sample-scrape.json archetype_summary",
       "preview_artifact": "N/A",
-      "render_strategy": "file inspection",
-      "finding": "header.html=206,874 bytes (non-empty), footer.html=18,043 bytes (non-empty). header.links.json=705 links, footer.links.json=16 links. header-desktop.png=20,463 bytes, footer-desktop.png=75,567 bytes. All chrome artifacts present and non-empty.",
+      "render_strategy": "Python structural inspection",
+      "finding": "archetype_summary is a flat dict of {archetype_name: page_count}. High-volume: events=928, knowledge-library=723, news-post=679, clinical-services=209. This confirms the prioritization order for migration work. The summary is page-count only (no block analysis summary), so downstream agents must consult the pages dict for block patterns.",
       "viewports": []
     }
   ],
-  "summary": "PASS — bundle complete with 32 pages, all having desktop+mobile screenshots and index.html; chrome artifacts non-empty; render strategy documented; full-page pHash comparisons confirm accurate non-pre-hydration captures (similarity=1.0 on 3 spot-checked pages). Known issues documented: careers-resource redirects to login, knowledge-library-a-phase-ii captures a 404 page, minor count discrepancies in metadata fields."
+  "summary": "PASS — sample-scrape.json is well-formed JSON with 32 page entries fully matching source-bundle. All 27 manifest archetypes covered in archetypes_analyzed except careers-resource (correctly excluded as auth-gated, documented). High-volume archetypes (events, knowledge-library, news-post, clinical-services) all have thorough section/block analysis. Two empty-content pages (careers-resource login-redirect, knowledge-library-a-phase-ii 404) are documented limitations. Award and careers-story pages have thin cleaned HTML due to form/sub-site gating but block patterns are still captured."
 }
