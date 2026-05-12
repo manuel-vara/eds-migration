@@ -1,45 +1,13 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.pyo
-*.pyd
+.hlx/*
+coverage/*
+logs/*
+node_modules/*
 
-# Distribution / packaging
-*.egg-info/
-*.egg
-dist/
-build/
-wheels/
-
-# Virtual environments
-.venv/
-venv/
-env/
-ENV/
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-
-# Type checkers / linters
-.mypy_cache/
-.ruff_cache/
-
-# IDEs
-.idea/
-.vscode/
-
-# OS
+helix-importer-ui
 .DS_Store
-Thumbs.db
+*.bak
+.idea
 
-# Environment variables
-.env
-.env.*
-!.env.example
-
-# Local migration-state workspaces (cloned per run_id)
-.migration-workspaces/
+# Ensure these files are tracked
+!CLAUDE.md
+!AGENTS.md

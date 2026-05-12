@@ -1,0 +1,42 @@
+/* stats block */
+.stats .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 32px;
+  text-align: center;
+  padding: 24px 0;
+}
+
+.stats .stats-item {
+  padding: 16px;
+}
+
+.stats .stats-number {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--color-teal, #00857c);
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+
+.stats .stats-label {
+  font-size: var(--body-font-size-s);
+  color: var(--color-grey-dark, #666);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* dark section override */
+.section.dark .stats .stats-number {
+  color: var(--color-teal-light, #00a89d);
+}
+
+.section.dark .stats .stats-label {
+  color: var(--color-white, #fff);
+}
+
+@media (width >= 900px) {
+  .stats .stats-number {
+    font-size: 64px;
+  }
+}

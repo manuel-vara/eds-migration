@@ -1,0 +1,46 @@
+/* icon-grid block */
+.icon-grid > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 32px;
+  text-align: center;
+}
+
+.icon-grid .icon-grid-item {
+  padding: 24px 16px;
+}
+
+.icon-grid .icon-grid-icon {
+  margin-bottom: 16px;
+}
+
+.icon-grid .icon-grid-icon .icon,
+.icon-grid .icon-grid-icon img {
+  width: 56px;
+  height: 56px;
+  display: inline-block;
+  object-fit: contain;
+}
+
+.icon-grid .icon-grid-content h3 {
+  margin-top: 0;
+  font-size: var(--heading-font-size-s);
+  color: var(--color-navy, #002855);
+}
+
+.icon-grid .icon-grid-content p {
+  font-size: var(--body-font-size-s);
+  color: var(--color-grey-dark, #666);
+}
+
+/* dark section override */
+.section.dark .icon-grid .icon-grid-content h3 {
+  color: var(--color-white, #fff);
+}
+
+.section.dark .icon-grid .icon-grid-content p {
+  color: rgb(255 255 255 / 80%);
+}

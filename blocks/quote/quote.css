@@ -1,0 +1,43 @@
+/* quote block */
+.quote blockquote {
+  margin: 0 auto;
+  padding: 32px 24px;
+  max-width: 900px;
+  border-left: 4px solid var(--color-teal, #00857c);
+}
+
+@media (width >= 900px) {
+  .quote blockquote {
+    padding: 32px;
+  }
+}
+
+.quote blockquote .quote-quotation {
+  font-size: 120%;
+  font-style: italic;
+  color: var(--color-navy, #002855);
+}
+
+.quote blockquote .quote-quotation > :first-child {
+  text-indent: -0.5ch;
+}
+
+.quote blockquote .quote-quotation > :first-child::before {
+  content: '\201C';
+  line-height: 0;
+}
+
+.quote blockquote .quote-quotation > :last-child::after {
+  content: '\201D';
+  line-height: 0;
+}
+
+.quote blockquote .quote-attribution {
+  text-align: right;
+  color: var(--color-grey-dark, #666);
+}
+
+.quote blockquote .quote-attribution > :first-child::before {
+  content: '\2014';
+  padding-right: 0.5ch;
+}

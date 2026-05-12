@@ -1,0 +1,28 @@
+/* lazy-loaded global styles — post LCP */
+
+/* smooth scroll for anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
+/* focus styles for accessibility */
+:focus-visible {
+  outline: 2px solid var(--color-teal);
+  outline-offset: 2px;
+}
+
+/* skip to main content link */
+.skip-to-main {
+  position: absolute;
+  left: -9999px;
+  z-index: 999;
+  padding: 1em;
+  background-color: var(--color-navy);
+  color: var(--color-white);
+  opacity: 0;
+}
+
+.skip-to-main:focus {
+  left: 0;
+  opacity: 1;
+}

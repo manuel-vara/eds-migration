@@ -1,0 +1,127 @@
+/* cards block */
+.cards > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.cards > ul > li {
+  border: 1px solid var(--color-border, #dadada);
+  background-color: var(--background-color);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.cards > ul > li:hover {
+  box-shadow: 0 4px 16px rgb(0 0 0 / 12%);
+  transform: translateY(-2px);
+}
+
+.cards .cards-card-body {
+  padding: 16px 20px;
+}
+
+.cards .cards-card-body h3,
+.cards .cards-card-body h4 {
+  margin-top: 0;
+  font-size: var(--heading-font-size-s);
+}
+
+.cards .cards-card-image {
+  line-height: 0;
+}
+
+.cards > ul > li img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.cards .cards-card-body a.button {
+  margin-top: 12px;
+}
+
+/* news variant */
+.cards.news > ul > li .cards-card-body p:first-of-type {
+  font-size: var(--body-font-size-xs);
+  color: var(--color-grey-medium, #999);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+/* event variant */
+.cards.event > ul > li .cards-card-body p:first-of-type {
+  font-size: var(--body-font-size-xs);
+  color: var(--color-teal, #00857c);
+  font-weight: 600;
+}
+
+/* resource variant */
+.cards.resource > ul > li {
+  position: relative;
+}
+
+.cards.resource > ul > li .cards-card-image {
+  position: relative;
+}
+
+.cards.resource > ul > li .cards-card-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgb(0 40 85 / 70%), transparent);
+}
+
+.cards.resource > ul > li img {
+  aspect-ratio: 16 / 9;
+}
+
+/* related variant */
+.cards.related > ul {
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.cards.related > ul > li img {
+  aspect-ratio: 16 / 9;
+}
+
+.cards.related .cards-card-body h3,
+.cards.related .cards-card-body h4 {
+  font-size: var(--body-font-size-s);
+}
+
+/* icon variant */
+.cards.icon > ul {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 32px;
+  text-align: center;
+}
+
+.cards.icon > ul > li {
+  border: none;
+  background: transparent;
+}
+
+.cards.icon > ul > li:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+.cards.icon > ul > li img {
+  width: 64px;
+  height: 64px;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  margin: 0 auto;
+  display: block;
+}
+
+.cards.icon .cards-card-body {
+  padding: 8px 0;
+}
