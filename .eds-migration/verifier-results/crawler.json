@@ -1,0 +1,173 @@
+{
+  "verdict": "FAIL",
+  "issues": [
+    {
+      "severity": "high",
+      "criterion": "Screenshots exist at multiple viewports (check #8)",
+      "details": "The bundle page 'clinical-services-news' at .eds-migration/state/source-bundle/pages/clinical-services-news/ exists but contains ONLY meta.json — no desktop.png, no mobile.png, no index.html. The README acknowledges this as a 'partial capture — timed out on first attempt' but does not record an alternate fallback URL or a re-attempted successful capture. Per check #8, 'Missing screenshots = FAIL'.",
+      "remediation": "Re-run the crawler for https://www.almacgroup.com/clinical-services/news/ with a longer timeout or a fallback URL from the same archetype. The clinical-services-news archetype needs at least one fully captured page with both desktop and mobile screenshots."
+    },
+    {
+      "severity": "high",
+      "criterion": "Spot-check for pre-hydration capture / valid reference screenshots (checks #10 + #6)",
+      "details": "The bundle page 'knowledge-library' at .eds-migration/state/source-bundle/pages/knowledge-library/ was captured from https://www.almacgroup.com/knowledge/library/ which returns HTTP 404 ('Page not found - Almac') both at crawl time (meta.json title = 'Page not found - Almac', text_length=9619) and confirmed at verification time (curl returns HTTP/2 404). This archetype has 721 pages in the manifest. The reference screenshots in this bundle slot show an error page, not library content — any downstream visual fidelity gate comparing migrated knowledge-library pages against this reference will be meaningless.",
+      "remediation": "Replace the knowledge-library bundle capture with a valid knowledge/library item URL (e.g. https://www.almacgroup.com/knowledge/library/2019-investments-centered-around-cell-and-gene-therapies/ which is a real article). Re-capture desktop.png, mobile.png, and index.html for that slug."
+    },
+    {
+      "severity": "medium",
+      "criterion": "Each archetype has a sampleUrl with a corresponding screenshot in source-bundle/pages/ (Orchestrator check #2)",
+      "details": "7 archetypes in the manifest have NO corresponding page directory with screenshots in source-bundle/pages/: 'award' (50 pages), 'api-chemical-product' (70 pages), 'careers-story' (39 pages), 'careers-resource' (36 pages), 'expert-profile' (12 pages), 'blog-category' (1 page), 'client-portal' (1 page). Total affected pages: ~209.",
+      "remediation": "For each missing archetype, add a captured page to the bundle: pick the first valid (non-redirect, non-404) sampleUrl, run Playwright with the documented settle strategy, and commit the desktop.png/mobile.png/index.html/meta.json under a slug directory."
+    },
+    {
+      "severity": "medium",
+      "criterion": "Bundle README matches manifest (check #11) — bundle page slugs appear in manifest",
+      "details": "4 bundle page slugs do not appear in the manifest's .pages[] array: 'careers-careers', 'careers-news-almac-recognised-at-the-nus-2023-awards', 'knowledge-library', 'knowledge-library-a-phase-ii-study-evaluating-the-safety-and-efficacy-of-two-amg'. These pages were captured and included in the bundle but were not indexed in manifest.json. Downstream agents relying on manifest.pages[] to discover the bundle reference for these archetypes will not find them.",
+      "remediation": "Add entries to manifest.pages[] for these URLs (or update captured_screenshot flag on existing entries) so bundle-manifest consistency is maintained."
+    },
+    {
+      "severity": "low",
+      "criterion": "Manifest http_status coverage (Orchestrator check #6 — redirects captured)",
+      "details": "3584 of 3605 manifest pages have http_status=null; only 21 pages have http_status populated. During spot-check, https://www.almacgroup.com/careers/resources/a-day-in-the-life-of-a-commercial-manager/ returned HTTP 302 redirecting to /careers/almac-work-experience-hub/login (auth wall) — this page is incorrectly categorized as archetype 'careers-resource' rather than marked as a gated redirect. Redirects and auth-walled pages were not systematically identified.",
+      "remediation": "Run a lightweight status-check pass over all manifest URLs and populate http_status. Mark auth-redirected pages with appropriate status/flags so migration agents know which pages to skip or handle specially."
+    }
+  ],
+  "evidence": [
+    {
+      "page": "clinical-services-news (partial capture)",
+      "source_artifact": "source-bundle/pages/clinical-services-news/meta.json",
+      "preview_artifact": "https://www.almacgroup.com/clinical-services/news/",
+      "render_strategy": "N/A — bundle capture timed out; only meta.json present, no index.html or screenshots",
+      "viewports": [],
+      "finding": "FAIL: Bundle page directory exists but contains no desktop.png, mobile.png, or index.html. Only meta.json is present. Rule #8 states missing screenshots = FAIL."
+    },
+    {
+      "page": "knowledge-library (404 reference)",
+      "source_artifact": "source-bundle/pages/knowledge-library/index.html",
+      "preview_artifact": "https://www.almacgroup.com/knowledge/library/",
+      "render_strategy": "curl HEAD request + title extraction from index.html",
+      "viewports": [
+        {
+          "name": "desktop",
+          "source_screenshot": "source-bundle/pages/knowledge-library/desktop.png",
+          "preview_screenshot": null,
+          "similarity": null,
+          "method": "title-check",
+          "threshold": null,
+          "passed": false,
+          "note": "index.html title='Page not found - Almac'; live URL returns HTTP 404. Screenshots show 404 error page, not knowledge library content."
+        }
+      ],
+      "finding": "FAIL: The bundle reference for archetype 'knowledge-library' (721 pages) captures a 404 error page. All downstream fidelity comparisons for this archetype will compare against an error page."
+    },
+    {
+      "page": "homepage",
+      "source_artifact": "source-bundle/pages/homepage/index.html",
+      "preview_artifact": "https://www.almacgroup.com/",
+      "render_strategy": "Playwright headless Chromium, domcontentloaded + networkidle, #onetrust-accept-btn-handler dismissed, body.innerText stability check 500ms x2",
+      "viewports": [
+        {
+          "name": "desktop",
+          "source_screenshot": "source-bundle/pages/homepage/desktop.png",
+          "preview_screenshot": ".eds-migration/verifier-results/crawler/screenshots/homepage-fresh-desktop.png",
+          "similarity": null,
+          "method": "text-length parity",
+          "threshold": "fresh body.innerText within 10% of bundle meta.json text_length",
+          "passed": true,
+          "note": "Bundle meta.json text_length=13482; fresh render body.innerText length=13482. Exact match — no pre-hydration defect."
+        }
+      ],
+      "finding": "PASS: Homepage bundle capture is fully hydrated. text_length matches fresh Playwright render exactly."
+    },
+    {
+      "page": "diagnostics",
+      "source_artifact": "source-bundle/pages/diagnostics/index.html",
+      "preview_artifact": "https://www.almacgroup.com/diagnostics/",
+      "render_strategy": "Playwright headless Chromium, domcontentloaded + networkidle, #onetrust-accept-btn-handler dismissed, body.innerText stability check 500ms x2",
+      "viewports": [
+        {
+          "name": "desktop",
+          "source_screenshot": "source-bundle/pages/diagnostics/desktop.png",
+          "preview_screenshot": ".eds-migration/verifier-results/crawler/screenshots/diagnostics-fresh-desktop.png",
+          "similarity": null,
+          "method": "text-length parity",
+          "threshold": "fresh body.innerText within 10% of bundle meta.json text_length",
+          "passed": true,
+          "note": "Bundle meta.json text_length=17708; fresh render body.innerText length=17708. Exact match."
+        }
+      ],
+      "finding": "PASS: Diagnostics bundle capture is fully hydrated."
+    },
+    {
+      "page": "business-development-team/aidan-kelly (bd-team-profile)",
+      "source_artifact": "source-bundle/pages/business-development-team-aidan-kelly/index.html",
+      "preview_artifact": "https://www.almacgroup.com/business-development-team/aidan-kelly/",
+      "render_strategy": "Playwright headless Chromium, domcontentloaded + networkidle, #onetrust-accept-btn-handler dismissed",
+      "viewports": [
+        {
+          "name": "desktop",
+          "source_screenshot": "source-bundle/pages/business-development-team-aidan-kelly/desktop.png",
+          "preview_screenshot": ".eds-migration/verifier-results/crawler/screenshots/bd-team-profile-fresh-desktop.png",
+          "similarity": null,
+          "method": "content richness check",
+          "threshold": "HTML > 100KB, meaningful text present",
+          "passed": true,
+          "note": "HTML file is 334KB, contains rich profile content including biography, contact sections. Fresh render yields 10600 chars of visible text."
+        }
+      ],
+      "finding": "PASS: bd-team-profile bundle capture is content-rich and hydrated."
+    },
+    {
+      "page": "manifest URL spot-check 1: analytical-solid-state deep page",
+      "source_artifact": "manifest.json pages[50]",
+      "preview_artifact": "https://www.almacgroup.com/analytical-solid-state/pharmaceutical-drug-product-release-testing/microbiology-testing-overview/bioburden-validation-and-analysis/",
+      "render_strategy": "curl HEAD",
+      "viewports": [],
+      "finding": "PASS: Returns HTTP 200."
+    },
+    {
+      "page": "manifest URL spot-check 2: careers-resource (auth-gated)",
+      "source_artifact": "manifest.json pages[500]",
+      "preview_artifact": "https://www.almacgroup.com/careers/resources/a-day-in-the-life-of-a-commercial-manager/",
+      "render_strategy": "curl HEAD",
+      "viewports": [],
+      "finding": "LOW CONCERN: Returns HTTP 302 to /careers/almac-work-experience-hub/login (auth wall). This careers-resource page is gated. http_status not populated in manifest."
+    },
+    {
+      "page": "manifest URL spot-check 3: events deep page",
+      "source_artifact": "manifest.json pages[1500]",
+      "preview_artifact": "https://www.almacgroup.com/events/cold-chain-distribution/",
+      "render_strategy": "curl HEAD",
+      "viewports": [],
+      "finding": "PASS: Returns HTTP 200."
+    },
+    {
+      "page": "chrome header + footer",
+      "source_artifact": "source-bundle/chrome/",
+      "preview_artifact": "https://www.almacgroup.com/ (rendered header/footer)",
+      "render_strategy": "File inspection + link count verification",
+      "viewports": [
+        {
+          "name": "desktop",
+          "source_screenshot": "source-bundle/chrome/header-desktop.png",
+          "preview_screenshot": "source-bundle/chrome/header-desktop.png",
+          "similarity": 1.0,
+          "method": "file-size sanity check",
+          "threshold": "file size > 10KB",
+          "passed": true,
+          "note": "header-desktop.png=20KB, footer-desktop.png=75KB. header.html=206KB with 705 links. footer.html=18KB with 16 links. Both non-empty."
+        }
+      ],
+      "finding": "PASS: Chrome captures exist, are non-empty, and contain meaningful nav content (705 header links, 16 footer links)."
+    },
+    {
+      "page": "manifest page count check",
+      "source_artifact": "manifest.json",
+      "preview_artifact": "https://www.almacgroup.com/sitemap_index.xml + 10 sub-sitemaps",
+      "render_strategy": "curl + XML loc count",
+      "viewports": [],
+      "finding": "PASS: manifest has 3605 pages (>10 minimum). Combined sitemap URLs ~4007. Delta ~10% (<20% threshold). Likely explained by deduplication across overlapping main/sub sitemaps."
+    }
+  ],
+  "summary": "FAIL — 2 high-severity issues: (1) clinical-services-news bundle page missing all screenshots/HTML (timeout during capture); (2) knowledge-library archetype reference (721 pages) captures a live 404 error page, making it useless as a fidelity baseline. Additionally: 7 archetypes lack bundle screenshots, 4 bundle pages are absent from manifest.pages[], and some careers-resource pages are auth-gated. Manifest itself is comprehensive (3605 URLs, 27 archetypes, documented render strategy, mostly complete bundle with correct hydration)."
+}
