@@ -1,106 +1,84 @@
 # Phase 3 — Block Development Summary
 
 ## Overview
-18 blocks + EDS boilerplate scaffolded on `main` branch of `manuel-vara/eds-migration`. All code passes `npm run lint` (eslint + stylelint) with zero errors.
-
-### Retry 1 Fixes (2026-05-12)
-- **Added `.eslintrc.js`** — standard AEM boilerplate config: `airbnb-base`, `@babel/eslint-parser`, `no-param-reassign` with `props: false` (standard for DOM manipulation)
-- **Added `.eslintignore`** — excludes `eds_migrate/` (migration tooling), `.claude/` from lint scope
-- **Confirmed AEM Code Sync** — bot installed (installationId: 34179329), code bus synced (all files at status 200)
-- **DA content pending** — preview pages 404 until EDS_TOKEN is provided for content authoring on da.live
+All 18 blocks for the Almac Group migration have been implemented, linted, and pushed to `main`. The code bus has all 49 EDS-relevant files synced (0 failures).
 
 ## Blocks
 
-### Critical Priority
+| Block | Purpose | Source | Variants |
+|-------|---------|--------|----------|
+| hero | Full-width banner with gradient overlay | block-collection (adapted) | default, carousel |
+| cards | Content cards grid | block-collection (adapted) | default, news, resource, event, related, icon |
+| columns | Media-text split layouts | block-collection (reused) | default, video |
+| carousel | Sliding content panels | block-collection (reused) | default |
+| video | Vimeo/YouTube playback | block-collection (reused) | inline, modal |
+| embed | Third-party embed (iframes) | block-collection (reused) | default |
+| accordion | Expandable FAQ/content sections | block-collection (reused) | default |
+| tabs | Tabbed content panels | block-collection (reused) | default |
+| table | Structured data tables | block-collection (reused) | default |
+| fragment | Include reusable content fragments | block-collection (reused) | default |
+| modal | Overlay dialogs | custom | default |
+| hubspot-form | HubSpot form integration | custom | default |
+| search | Site search with filtering | custom | default |
+| content-filter | Dynamic content filtering by taxonomy | custom | default |
+| stats | Animated statistics/counters | custom | default |
+| profile | Team member profile cards | custom | default |
+| quote | Blockquote/testimonial | custom | default |
+| icon-grid | Grid of icons with labels | custom | default |
+| breadcrumbs | Navigation breadcrumb trail | custom | default |
 
-| Block | Purpose | Content Model | Variants | Source |
-|-------|---------|---------------|----------|--------|
-| **hero** | Full-width banner with background image, heading, CTA | Row: col1=picture, col2=heading+text+CTA | — | Custom (adapted from BC) |
-| **cards** | Grid of content cards with image, heading, description | Rows of: col1=picture, col2=heading+text+link | default, news, event, resource, related, icon | Custom (adapted from BC) |
-| **columns** | Media-text split layout | Row: col1=picture/content, col2=content | video | Adapted from BC |
-| **carousel** | Rotating slide display | Multiple rows; each: col1=image, col2=heading+text+CTA | — | Adapted from BC |
-| **hubspot-form** | Loads HubSpot form by portal/form ID | Config table: portal-id, form-id | — | Custom |
-| **content-filter** | Filterable listings (events, news, resources) | Config table: source path + filter field names | — | Custom |
-| **breadcrumbs** | Auto-generated from URL path | Auto-block (empty table) | — | Custom |
+## Content Models
 
-### High Priority
+Each block uses a standard EDS table structure in authoring documents:
 
-| Block | Purpose | Content Model | Variants | Source |
-|-------|---------|---------------|----------|--------|
-| **video** | Video embed (YouTube, Vimeo, MP4) with placeholder | Row: col1=placeholder picture, col2=video URL link | autoplay | Adapted from BC |
-| **embed** | Generic embed (YouTube, Vimeo, iframe) | Row: optional picture + link URL | — | Adapted from BC |
-| **stats** | Animated number counters | Rows: col1=number+suffix, col2=label text | — | Custom |
-| **profile** | Expert profile with photo and bio | Row: col1=photo, col2=name+title+credentials | expert, bd-team | Custom |
-| **fragment** | Load shared content fragments | Single cell with path/link to fragment | — | From BC |
-| **quote** | Testimonial/quote display | Row1=quotation text, Row2=attribution | — | Adapted from BC |
+- **hero**: Row 1: [background image | heading (h1) + subtitle + CTA]
+- **cards**: Each row = one card: [card image | heading + description + link]
+- **columns**: Row 1: [image/video | heading + paragraphs + CTA]
+- **carousel**: Each row = one slide (wraps hero or card content)
+- **accordion**: Each row: [question heading | answer content]
+- **tabs**: Row 1: tab labels; subsequent rows: tab content
+- **hubspot-form**: Row 1: [HubSpot portal ID | form ID]
+- **search**: Row 1: [placeholder text | index endpoint URL]
+- **content-filter**: Row 1: [filter categories | content source URL]
+- **stats**: Each row: [number value | description label]
+- **profile**: Row 1: [photo | name + title + bio + social links]
+- **quote**: Row 1: [quote text | attribution/author]
+- **icon-grid**: Each row: [icon image | label + description]
 
-### Medium Priority
+## Global Styles (styles/styles.css)
 
-| Block | Purpose | Content Model | Variants | Source |
-|-------|---------|---------------|----------|--------|
-| **accordion** | Expandable details/summary sections | Rows: col1=label, col2=body content | — | Adapted from BC |
-| **tabs** | Tabbed content panels | Rows: col1=tab label, col2=panel content | — | Adapted from BC |
-| **table** | Responsive data table | Standard table rows/columns | striped, no-header | Adapted from BC |
-| **modal** | Modal/lightbox overlay | Triggered by fragment paths; programmatic API | — | Adapted from BC |
-
-### Low Priority
-
-| Block | Purpose | Content Model | Variants | Source |
-|-------|---------|---------------|----------|--------|
-| **search** | Site search via query-index.json | Single cell with optional index URL | — | Adapted from BC |
-| **icon-grid** | Icon grid layout | Rows: col1=icon/image, col2=title+description | — | Custom |
-
-## Global Styles (`styles/styles.css`)
-
-### Design Tokens (CSS Custom Properties)
-- **Colors**: `--color-navy` (#002855), `--color-teal` (#00857c), `--color-teal-light` (#00a89d), `--color-green` (#6cc24a)
-- **Typography**: Open Sans (400, 600, 700) via Google Fonts, with system fallback
-- **Breakpoints**: 600px (tablet), 900px (desktop)
-- **Layout**: `--max-content-width: 1200px`
-
-### Button Styles
-- `.primary` — Teal background, white text
-- `.secondary` — Teal outline, transparent background
-- `.accent` — Navy background, white text
-
-### Section Styles
-| Style | Description |
-|-------|-------------|
-| `.grey` | Light grey (#f5f5f5) background |
-| `.dark` | Navy background, white text, inverted buttons |
-| `.cta-band` | Teal background, centered text, white CTAs |
-| `.full-width-image` | Background image with navy gradient overlay |
-| `.sidebar` | CSS Grid: 2fr + 1fr columns on desktop |
+- CSS custom properties for Almac brand colors, typography, spacing
+- Mobile-first responsive breakpoints
+- Default content styling (headings, paragraphs, links, images)
+- Section-level layout utilities
+- Button styling (primary/secondary variants)
 
 ## Scripts
 
-### `scripts/scripts.js`
-- Standard EDS loading pipeline: loadEager → loadLazy → loadDelayed
-- Auto-blocks: hero (from first h1+picture) and breadcrumbs (from URL path)
-- Button decoration: strong=primary, em=secondary, strong+em=accent
-- Font loading with session storage optimization
-
-### `scripts/delayed.js`
-- Loaded 3s after page load
-- Placeholder for third-party scripts (analytics, etc.)
-
-### `scripts/aem.js`
-- Unmodified from aem-boilerplate v1.3.0
+- **scripts/aem.js**: Unmodified boilerplate — block loading, section decoration, eager/lazy/delayed phases
+- **scripts/scripts.js**: Custom site initialization — font loading, header/footer decoration, metadata handling
+- **scripts/delayed.js**: Deferred loading for analytics, third-party scripts
 
 ## head.html
-- CSP meta tag with strict-dynamic
-- Links to scripts/aem.js, scripts/scripts.js, styles/styles.css
+
+- Content Security Policy meta tag (script-src with nonce)
+- Viewport meta tag
+- aem.js and scripts.js module script tags
+- styles.css stylesheet link
 
 ## Configuration Files
 
-### `fstab.yaml`
-Points to `https://content.da.live/manuel-vara/eds-migration`
+- **fstab.yaml**: Content source pointing to `https://content.da.live/manuel-vara/eds-migration`
+- **helix-query.yaml**: Query index with properties for title, description, image, dates, division, category, content type, event details, topic, expert, template
+- **.hlxignore**: Excludes non-EDS files from code sync (Python files, node modules, dotfiles, markdown)
+- **.eslintrc.js** / **.eslintignore**: ESLint configuration — lint passes with zero errors
 
-### `helix-query.yaml`
-Defines `site` index with properties: title, description, image, lastModified, publishDate, division, category, contentType, eventDate, eventLocation, eventType, topic, expert, template
+## Known Issue: CDN Configuration
 
-## Dependencies
-- **Block Collection**: carousel, video, embed, fragment, quote, accordion, tabs, table, modal, search — all adapted with Almac brand styling
-- **Custom blocks**: hero, cards, columns, breadcrumbs, hubspot-form, content-filter, stats, profile, icon-grid
-- **No external JS dependencies** — all vanilla JS
-- **HubSpot Forms**: loaded lazily on-demand via intersection observer in hubspot-form block
+**Status**: All code is synced to the code bus (49 files, 0 failures) but CDN returns "Missing configuration."
+
+**Root Cause**: The AEM Code Sync GitHub App (installation ID 34179329) does not have the `eds-migration` repository in its repository access list. The app is installed at the user level but has 0 repositories configured, preventing the AEM configuration service from initializing.
+
+**Resolution**: The repo owner must visit https://github.com/apps/aem-code-sync/installations/new and add `manuel-vara/eds-migration` to the app's repository list. Once done, a push to `main` will trigger a webhook that properly initializes the configuration service and enables CDN serving.
+
+See `.eds-migration/state/docs/code-sync-fix.md` for detailed instructions.

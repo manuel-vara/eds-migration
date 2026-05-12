@@ -1,232 +1,192 @@
-# Authoring Guide — Almac EDS Migration
+# Authoring Guide — Almac Group EDS Migration
 
-## Content Source
-All content is authored in **DA (Document Authoring)** at:
-`https://da.live/edit#/manuel-vara/eds-migration/`
+## Overview
+This guide explains how content authors create pages and use blocks in the migrated Almac Group site on Adobe Edge Delivery Services (EDS). Content is authored on [da.live](https://da.live) and published to `https://main--eds-migration--manuel-vara.aem.live/`.
 
-## Page Types (Archetypes)
+## Prerequisites
+- Access to https://da.live (Dark Alley content editor)
+- AEM Sidekick Chrome extension installed
+- Familiarity with the block table structure
 
-### Standard Content Page
-- Hero section (optional): image + heading + CTA
-- Body content: headings, paragraphs, lists, images
-- Optional sidebar section for related content
-- CTA band or related cards at bottom
+## Creating Pages
 
-### Division Landing Page
-- Carousel or hero block at top
-- Stats block with key metrics
-- Cards grid showcasing services/capabilities
-- Quote/testimonial block
-- CTA band with contact link
+### Page Types (Archetypes)
+Pages follow predefined archetypes. Create a new document in da.live under the appropriate folder:
 
-### Expert Profile Page
-- Profile block with photo, name, title, credentials
-- Body content with expertise description
-- Related content cards at bottom
+| Archetype | Folder | Typical Blocks |
+|-----------|--------|---------------|
+| Homepage | `/` | hero (carousel), cards, stats, columns |
+| About / Landing | `/about/`, `/landing/` | hero, columns, cards, accordion |
+| Division pages | `/analytical/`, `/clinical-services/`, etc. | hero, cards, columns, video, tabs |
+| Knowledge / News | `/knowledge/`, `/news/` | hero, cards, content-filter |
+| Contact | `/contact/` | hero, hubspot-form, columns |
+| Careers | `/careers/` | hero, cards, accordion |
 
-### Event/News Listing Page
-- Content-filter block with appropriate source and filter fields
-- Configured via block table with source path and facet fields
+### Page Metadata
+Add a Metadata block at the bottom of every page:
 
-### Knowledge Library Page
-- Content-filter block with category/topic/division filters
-- Cards display with resource type indicators
+| Metadata | |
+|----------|--|
+| title | Page Title |
+| description | Page description for SEO |
+| image | /path/to/og-image.jpg |
+| template | archetype-name |
+| division | Division Name |
+| category | Category |
 
-## Block Usage Guide
+## Using Blocks
 
 ### Hero
-```
-| Hero |                                |
-|------|--------------------------------|
-| (picture) | # Heading                |
-|           | Description text          |
-|           | **[CTA Text](url)**       |
-```
+Full-width banner with optional gradient overlay.
+
+| Hero | |
+|------|--|
+| ![background image](/path/to/image.jpg) | # Heading<br>Subtitle text<br>**[CTA Button](/link)** |
+
+**Carousel variant**: Use `Hero (carousel)` — each row becomes a slide.
 
 ### Cards
-```
-| Cards (variant) |                    |
-|-----------------|---------------------|
-| (picture)       | ### Card Title      |
-|                 | Description         |
-|                 | **[Read More](url)**|
-| (picture)       | ### Card Title 2    |
-|                 | Description 2       |
-```
-**Variants**: `news`, `event`, `resource`, `related`, `icon`
+Grid of content cards. Each row = one card.
+
+| Cards | |
+|-------|--|
+| ![card image](/path/to/img1.jpg) | ### Card Title<br>Description text<br>[Learn More](/link) |
+| ![card image](/path/to/img2.jpg) | ### Card Title 2<br>Description text<br>[Learn More](/link2) |
+
+**Variants**: `Cards (news)`, `Cards (resource)`, `Cards (event)`, `Cards (related)`, `Cards (icon)`
 
 ### Columns
-```
-| Columns |                             |
-|---------|-------------------------------|
-| (picture or content) | Content or picture |
-```
+Side-by-side media + text layout.
 
-### Carousel
-```
-| Carousel |                            |
-|----------|-------------------------------|
-| (image)  | ## Slide 1 Heading           |
-|          | Description                   |
-|          | **[CTA](url)**               |
-| (image)  | ## Slide 2 Heading           |
-|          | Description                   |
-```
+| Columns | |
+|---------|--|
+| ![image](/path/to/image.jpg) | ## Heading<br>Paragraph text<br>**[CTA Link](/page)** |
 
-### HubSpot Form
-```
-| HubSpot Form |         |
-|--------------|---------|
-| Portal ID    | 123456  |
-| Form ID      | abc-def |
-```
-
-### Content Filter
-```
-| Content Filter |            |
-|---------------|-------------|
-| Source         | news        |
-| Category       | category   |
-| Division       | division   |
-```
-Reads from `query-index.json`. Filter field names must match metadata properties.
-
-### Breadcrumbs
-Auto-generated from URL path. No authoring needed — the block is inserted automatically on all non-homepage pages.
-
-### Video
-```
-| Video |                                      |
-|-------|--------------------------------------|
-| (thumbnail picture) | https://youtube.com/watch?v=xxx |
-```
-
-### Embed
-```
-| Embed |                                      |
-|-------|--------------------------------------|
-| (optional thumbnail) | https://youtube.com/watch?v=xxx |
-```
-
-### Stats
-```
-| Stats |              |
-|-------|--------------|
-| 50+   | Years Experience |
-| 6000  | Employees    |
-| 100+  | Countries    |
-```
-
-### Profile
-```
-| Profile |                              |
-|---------|-------------------------------|
-| (photo) | ## Dr. Jane Smith             |
-|         | **Vice President, Research**   |
-|         | Bio text...                    |
-```
-
-### Fragment
-```
-| Fragment |
-|----------|
-| /fragments/shared-cta |
-```
-
-### Quote
-```
-| Quote |                              |
-|-------|------------------------------|
-| "Quote text here..." |              |
-| — Author Name, *Title, Company* |   |
-```
+**Video variant**: Use `Columns (video)` with a video thumbnail.
 
 ### Accordion
-```
-| Accordion |                          |
-|-----------|--------------------------|
-| Question 1 | Answer text...          |
-| Question 2 | Answer text...          |
-```
+Expandable sections for FAQs or detailed content.
+
+| Accordion | |
+|-----------|--|
+| ### Question 1 | Answer content for question 1 |
+| ### Question 2 | Answer content for question 2 |
 
 ### Tabs
-```
-| Tabs |                               |
-|------|-------------------------------|
-| Tab 1 Label | Tab 1 content...       |
-| Tab 2 Label | Tab 2 content...       |
-```
+Tabbed content panels.
 
-### Table
-```
-| Table |          |          |
-|-------|----------|----------|
-| Header 1 | Header 2 | Header 3 |
-| Data 1   | Data 2   | Data 3   |
-```
-**Variants**: `striped`, `no-header`
+| Tabs | |
+|------|--|
+| Tab 1 | Tab 2 | Tab 3 |
+| Content for tab 1 | Content for tab 2 | Content for tab 3 |
 
-### Modal
-Modals are triggered programmatically. Create content at `/modals/your-modal-name` and link to it.
+### HubSpot Form
+Embed a HubSpot form.
 
-### Search
-```
-| Search |
-|--------|
-| /query-index.json |
-```
+| HubSpot Form | |
+|--------------|--|
+| portal-id | form-id |
+
+### Stats
+Animated counters.
+
+| Stats | |
+|-------|--|
+| 500+ | Global Employees |
+| 30 | Years of Experience |
+| 100+ | Countries Served |
+
+### Quote
+Testimonial or blockquote.
+
+| Quote | |
+|-------|--|
+| "Quote text here" | — Author Name, Title |
+
+### Profile
+Team member card.
+
+| Profile | |
+|---------|--|
+| ![photo](/path/to/photo.jpg) | **Name**<br>Job Title<br>Bio paragraph<br>[LinkedIn](https://linkedin.com/in/...) |
+
+### Video
+Inline or modal video playback.
+
+| Video | |
+|-------|--|
+| https://vimeo.com/123456789 | |
+
+### Embed
+Third-party content embed.
+
+| Embed | |
+|-------|--|
+| https://example.com/embed/content | |
 
 ### Icon Grid
-```
-| Icon Grid |                          |
-|-----------|--------------------------|
-| (icon)    | ### Title                 |
-|           | Description text          |
-| (icon)    | ### Title 2               |
-```
+Grid of icons with labels.
+
+| Icon Grid | |
+|-----------|--|
+| ![icon](/icons/icon1.svg) | Label 1<br>Description |
+| ![icon](/icons/icon2.svg) | Label 2<br>Description |
+
+### Table
+Structured data display.
+
+| Table | | |
+|-------|--|--|
+| Header 1 | Header 2 | Header 3 |
+| Data 1 | Data 2 | Data 3 |
+
+### Search
+Site search interface.
+
+| Search | |
+|--------|--|
+| Search placeholder text | /query-index.json |
+
+### Content Filter
+Dynamic filtering by taxonomy.
+
+| Content Filter | |
+|----------------|--|
+| division, category, content-type | /query-index.json |
+
+### Breadcrumbs
+Auto-generated from URL path. Add to page:
+
+| Breadcrumbs | |
+|-------------|--|
+
+### Fragment
+Include a shared content fragment.
+
+| Fragment | |
+|----------|--|
+| /fragments/shared-content | |
+
+### Modal
+Overlay dialog (triggered by link with `#modal-id`).
+
+| Modal | |
+|-------|--|
+| modal-id | Content for the modal dialog |
 
 ## Section Styles
-Add a **Section Metadata** table at the end of any section:
+Wrap content between horizontal rules (`---`) to create sections. Add section metadata:
 
-```
-| Section Metadata |        |
-|-----------------|---------|
-| Style           | dark    |
-```
+| Section Metadata | |
+|-----------------|--|
+| style | dark |
 
-Available styles:
-- **`grey`** — Light grey background
-- **`dark`** — Navy background, white text
-- **`cta-band`** — Teal background, centered, white text
-- **`full-width-image`** — Background image with navy overlay
-- **`sidebar`** — Two-column layout (2fr + 1fr on desktop)
-- **`highlight`** / **`light`** — Light grey background (alias)
+Available styles: `dark`, `highlight`, `centered`, `narrow`
 
 ## Image Guidelines
-- **Hero images**: 1600×600px minimum, landscape orientation
-- **Card images**: 750×563px (4:3 ratio) recommended
-- **Profile photos**: 400×400px square, will be displayed as circle
-- **Formats**: WebP preferred, JPEG/PNG accepted (auto-optimized)
-- **Alt text**: Always provide descriptive alt text for accessibility
-
-## Page Metadata
-Add metadata at the bottom of every document:
-
-```
-| Metadata |                          |
-|----------|--------------------------|
-| Title    | Page Title               |
-| Description | Page description      |
-| Image    | /path/to/og-image.jpg    |
-| Template | division-landing         |
-| Division | Almac Discovery          |
-| Category | News                     |
-| Topic    | Drug Development         |
-```
-
-## Tips
-- Use `**[Link Text](url)**` for primary buttons (bold link)
-- Use `*[Link Text](url)*` for secondary buttons (italic link)
-- Use `***[Link Text](url)***` for accent buttons (bold+italic)
-- Separate sections with `---` (horizontal rule)
-- Images are automatically optimized and served via CDN
+- **Hero backgrounds**: 1920×800px minimum, JPEG or WebP
+- **Card images**: 600×400px, consistent aspect ratio
+- **Profile photos**: 400×400px square, JPEG
+- **Icons**: SVG preferred, placed in `/icons/` folder
+- Always include descriptive alt text
+- Use WebP format when possible for performance
