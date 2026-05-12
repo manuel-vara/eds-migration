@@ -1,0 +1,50 @@
+{
+  "verdict": "PARTIAL_PASS",
+  "retry": "1/3",
+  "timestamp": "2026-05-12T13:12:00Z",
+  "fixes_applied": [
+    {
+      "issue": "HIGH — .eslintrc.js missing",
+      "status": "FIXED",
+      "details": "Added .eslintrc.js with standard AEM boilerplate config: airbnb-base extends, @babel/eslint-parser, no-param-reassign props:false (allows property mutation on DOM elements — standard EDS pattern). Added .eslintignore to exclude eds_migrate/ migration tooling. npm run lint (eslint + stylelint) passes with zero errors."
+    },
+    {
+      "issue": "HIGH — AEM Code Sync not installed",
+      "status": "ALREADY_INSTALLED",
+      "details": "AEM Code Sync bot IS installed (installationId: 34179329). Admin API confirms code.status=200 for all files (aem.js, scripts.js, fstab.yaml, .eslintrc.js, etc.). Code bus is fully synced with latest commit 51f3efb. The initial verifier run may have checked before the bot processed the first commit. Triggered manual code sync via POST to admin.hlx.page/code endpoint — completed successfully."
+    },
+    {
+      "issue": "HIGH — No preview screenshots",
+      "status": "BLOCKED_NO_EDS_TOKEN",
+      "details": "Preview/live pages return 404 because the DA content source (content.da.live/manuel-vara/eds-migration) has no content. Creating DA content requires an EDS_TOKEN which is not provided in this session. Code-side is fully operational (code bus synced). Once content is authored on DA, pages will render."
+    },
+    {
+      "issue": "MEDIUM — modal.css body scope",
+      "status": "ACCEPTED",
+      "details": "body.modal-open { overflow: hidden; } is standard Block Collection pattern for scroll-locking when modal is open. Left as-is per EDS convention."
+    }
+  ],
+  "evidence": [
+    {
+      "check": "npm run lint",
+      "result": "PASS",
+      "details": "eslint (airbnb-base) and stylelint (stylelint-config-standard) both pass with zero errors on all blocks/, scripts/, styles/ files."
+    },
+    {
+      "check": "code bus sync",
+      "result": "PASS",
+      "details": "admin.hlx.page/status confirms code.status=200 for fstab.yaml, aem.js, scripts.js, .eslintrc.js. installationId=34179329."
+    },
+    {
+      "check": "fstab.yaml content",
+      "result": "PASS",
+      "details": "Raw content verified: mountpoints: /: https://content.da.live/manuel-vara/eds-migration"
+    },
+    {
+      "check": "preview availability",
+      "result": "FAIL — awaiting DA content",
+      "details": "https://main--eds-migration--manuel-vara.aem.page/ returns 404. DA requires EDS_TOKEN for content creation."
+    }
+  ],
+  "summary": "Fixed .eslintrc.js (lint passes zero errors). AEM Code Sync confirmed installed and synced (code bus 200). Preview blocked on DA content authoring — requires EDS_TOKEN not available in this session. All code-side issues resolved."
+}

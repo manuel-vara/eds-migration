@@ -43,3 +43,4 @@ Thumbs.db
 
 # Local migration-state workspaces (cloned per run_id)
 .migration-workspaces/
+node_modules/

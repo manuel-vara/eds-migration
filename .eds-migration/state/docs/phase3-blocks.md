@@ -3,6 +3,12 @@
 ## Overview
 18 blocks + EDS boilerplate scaffolded on `main` branch of `manuel-vara/eds-migration`. All code passes `npm run lint` (eslint + stylelint) with zero errors.
 
+### Retry 1 Fixes (2026-05-12)
+- **Added `.eslintrc.js`** — standard AEM boilerplate config: `airbnb-base`, `@babel/eslint-parser`, `no-param-reassign` with `props: false` (standard for DOM manipulation)
+- **Added `.eslintignore`** — excludes `eds_migrate/` (migration tooling), `.claude/` from lint scope
+- **Confirmed AEM Code Sync** — bot installed (installationId: 34179329), code bus synced (all files at status 200)
+- **DA content pending** — preview pages 404 until EDS_TOKEN is provided for content authoring on da.live
+
 ## Blocks
 
 ### Critical Priority
