@@ -2,140 +2,119 @@
   "verdict": "FAIL",
   "issues": [
     {
+      "severity": "high",
+      "criterion": "Nav and footer documents exist on da.live (Check #5)",
+      "details": "The AEM admin status API (https://admin.hlx.page/status/manuel-vara/eds-migration/main/nav and .../footer) returns preview.status=404 and live.status=404 for both /nav and /footer. The phase5 docs explicitly confirm: 'EDS_TOKEN was not available in this run. All HTML config files are committed to .eds-migration/state/config/ on the migration-state branch. The following da.live uploads remain pending: POST /source/manuel-vara/eds-migration/nav and .../footer.' This is the same failure mode as the previous run: nav and footer HTML exist only in the migration-state branch, not on da.live. Every migrated page will render with collapsed <header></header> and <footer></footer>.",
+      "remediation": "Upload .eds-migration/state/config/nav.html via POST https://admin.da.live/source/manuel-vara/eds-migration/nav (with Authorization: Bearer $EDS_TOKEN and Content-Type: text/html). Do the same for footer.html. Then POST to https://admin.hlx.page/preview/manuel-vara/eds-migration/main/nav and .../footer to trigger preview generation. Confirm admin status returns 200 before re-verifying."
+    },
+    {
       "severity": "medium",
-      "criterion": "Nav link coverage vs source chrome",
-      "details": "Nav link coverage is 52.6% (143 of 272 unique almacgroup.com paths matched) — below the 60% threshold. All 8 top-level business unit sections and utility nav links are present, but 129 source paths are absent. Notable missing paths include: /our-locations (about sub-nav), many /about/* sub-pages (Leadership, Core Values, History, Policies, etc.), multiple /diagnostics/* deep sub-pages (BioPharma Partners, R&D Assays, News, Careers, Contact), many /api-chemical-development/* product catalog pages, /clinical-services/* division-specific pages (Blog, Meet the Team, Supply With Care), /clinical-technologies/* specific pages (Blog, Events, IRT Services), and several /commercial-services/* pages. Policy pages (/anti-bribery-corruption-policy, /data-protection-agreement, /supplier-code-of-conduct) also absent from nav.",
-      "remediation": "Add missing primary/secondary mega-menu links to config/nav.html. Minimum: restore all /about/* sub-pages visible in source mega-menu About section, add /diagnostics/news, /diagnostics/contact-us, /clinical-services/blog, /clinical-technologies/events, and all division-level News/Events/Contact sub-links. This will bring coverage above 60%."
-    },
-    {
-      "severity": "low",
-      "criterion": "Nav path mismatch: /pharmaceutical-development",
-      "details": "Source nav links to /pharmaceutical-development (top-level) but EDS nav uses /pharmaceutical-drug-product-development/ as the section root. This is a path change that requires the redirect /pharmaceutical-development → /pharmaceutical-drug-product-development to be present. No such redirect exists in redirects.html.",
-      "remediation": "Add redirect: /pharmaceutical-development → /pharmaceutical-drug-product-development (and trailing-slash variant) to config/redirects.html."
-    },
-    {
-      "severity": "low",
-      "criterion": "Footer /about-us path",
-      "details": "Source footer links to /about-us/ but the EDS footer links to /about/. The redirect /about-us → /about exists in redirects.html which handles the mapping. Coverage is 93.3% (14/15 unique source paths matched after normalizing).",
-      "remediation": "Already handled by redirect. No action needed unless /about-us should appear explicitly in footer."
-    },
-    {
-      "severity": "low",
-      "criterion": "Screenshot pairs not available — no live preview",
-      "details": "EDS_TOKEN was not available so nav/footer HTML files were not uploaded to da.live. The preview site https://main--eds-migration--manuel-vara.aem.page/ could not be rendered with actual nav/footer chrome. Screenshot comparison against source-bundle/chrome/header-desktop.png and footer-desktop.png was not possible. Verification was limited to HTML structural analysis.",
-      "remediation": "Once EDS_TOKEN is available and nav/footer are uploaded to da.live, re-run visual chrome comparison against source-bundle/chrome/header-desktop.png and footer-desktop.png at desktop (1280px) and mobile (420px) viewports."
+      "criterion": "Rendered nav and footer have real content in context (Check #6) — screenshot pairs mandatory",
+      "details": "The preview site https://main--eds-migration--manuel-vara.aem.page/ returns 404 (admin API confirms preview.status=404 for homepage, nav, and footer). Screenshot pairs comparing migrated chrome against source-bundle/chrome/header-desktop.png and footer-desktop.png are required by the verifier protocol but cannot be captured because the da.live content has not been uploaded. This is a direct consequence of the high-severity issue above.",
+      "remediation": "Once nav/footer are uploaded to da.live and preview is published, capture desktop (1440px) and mobile (390px) screenshots of the rendered homepage header and footer bands. Compare against source-bundle/chrome/header-desktop.png and footer-desktop.png with pHash similarity >= 0.75."
     }
   ],
   "evidence": [
     {
-      "check": "GitHub files on main",
-      "finding": "All four files (helix-query.yaml, helix-sitemap.yaml, robots.txt, fstab.yaml) return HTTP 200 from GitHub Contents API on main branch.",
-      "verdict": "PASS",
-      "source_artifact": "https://api.github.com/repos/manuel-vara/eds-migration/contents/{file}?ref=main",
+      "check": "GitHub files on main (helix-query.yaml, helix-sitemap.yaml, robots.txt)",
+      "page": "https://api.github.com/repos/manuel-vara/eds-migration/contents/{file}?ref=main",
+      "source_artifact": "source-bundle/README.md (site: https://www.almacgroup.com)",
       "preview_artifact": "https://raw.githubusercontent.com/manuel-vara/eds-migration/main/{file}",
+      "render_strategy": "GitHub Contents API raw HTTP — no browser render required for API sidechannel",
       "viewports": [],
-      "render_strategy": "GitHub API raw HTTP (no browser render required for API sidechannel)"
+      "finding": "All three files return HTTP 200: helix-query.yaml (200), helix-sitemap.yaml (200), robots.txt (200). PASS."
     },
     {
-      "check": "fstab.yaml intact",
-      "finding": "fstab.yaml mountpoints./ = 'https://content.da.live/manuel-vara/eds-migration' — DA.live mount point is correct and was not overwritten.",
-      "verdict": "PASS",
-      "source_artifact": "https://raw.githubusercontent.com/manuel-vara/eds-migration/main/fstab.yaml",
+      "check": "fstab.yaml intact (Check #2)",
+      "page": "https://raw.githubusercontent.com/manuel-vara/eds-migration/main/fstab.yaml",
+      "source_artifact": "source-bundle/README.md",
       "preview_artifact": "https://raw.githubusercontent.com/manuel-vara/eds-migration/main/fstab.yaml",
+      "render_strategy": "GitHub raw HTTP fetch",
       "viewports": [],
-      "render_strategy": "GitHub raw HTTP fetch"
+      "finding": "fstab.yaml mountpoints./ = 'https://content.da.live/manuel-vara/eds-migration' — DA.live mount point is correct and was not overwritten by config work. PASS."
     },
     {
-      "check": "helix-query.yaml YAML validity and indices",
-      "finding": "Valid YAML. 4 indices: site (/**), events (/events/**→/events-index.json), news (/news/**→/news-index.json), knowledge (/knowledge/**→/knowledge-index.json). All indices have required properties (title, description, image, lastModified plus domain-specific fields). eventDate, eventLocation, eventType for events; publishDate, division, category for news; contentType, topic, expert for knowledge.",
-      "verdict": "PASS",
-      "source_artifact": "https://raw.githubusercontent.com/manuel-vara/eds-migration/main/helix-query.yaml",
+      "check": "helix-query.yaml YAML validity (Check #3)",
+      "page": "https://raw.githubusercontent.com/manuel-vara/eds-migration/main/helix-query.yaml",
+      "source_artifact": "source-bundle/README.md",
       "preview_artifact": "https://raw.githubusercontent.com/manuel-vara/eds-migration/main/helix-query.yaml",
+      "render_strategy": "GitHub raw HTTP + Python yaml.safe_load validation",
       "viewports": [],
-      "render_strategy": "GitHub raw HTTP + Python yaml.safe_load validation"
+      "finding": "Valid YAML (python yaml.safe_load). version=1, 4 indices: site (/**→/query-index.json), events (/events/**→/events-index.json), news (/news/**→/news-index.json), knowledge (/knowledge/**→/knowledge-index.json). All indices have title, description, image, lastModified. Domain-specific fields: eventDate/Location/Type for events; publishDate/division/category for news; contentType/topic/expert for knowledge. PASS."
     },
     {
-      "check": "helix-sitemap.yaml YAML validity and sitemaps",
-      "finding": "Valid YAML. 4 sitemaps: default (/sitemap.xml, excludes /client-login/**, /careers/resources/**, /category/**, /drafts/**, /nav, /footer, /fragments/**), events (/sitemap-events.xml), news (/sitemap-news.xml), knowledge (/sitemap-knowledge.xml). hreflang configured for default sitemap pointing to almacgroup.com.",
-      "verdict": "PASS",
-      "source_artifact": "https://raw.githubusercontent.com/manuel-vara/eds-migration/main/helix-sitemap.yaml",
+      "check": "helix-sitemap.yaml YAML validity (Check #3)",
+      "page": "https://raw.githubusercontent.com/manuel-vara/eds-migration/main/helix-sitemap.yaml",
+      "source_artifact": "source-bundle/README.md",
       "preview_artifact": "https://raw.githubusercontent.com/manuel-vara/eds-migration/main/helix-sitemap.yaml",
+      "render_strategy": "GitHub raw HTTP + Python yaml.safe_load validation",
       "viewports": [],
-      "render_strategy": "GitHub raw HTTP + Python yaml.safe_load validation"
+      "finding": "Valid YAML (python yaml.safe_load). version=1, 4 sitemaps: default (/sitemap.xml, excludes /client-login/**, /careers/resources/**, /category/**, /drafts/**, /nav, /footer, /fragments/**; hreflang en→almacgroup.com{path}), events (/sitemap-events.xml), news (/sitemap-news.xml), knowledge (/sitemap-knowledge.xml). PASS."
     },
     {
-      "check": "robots.txt disallow rules",
-      "finding": "robots.txt disallows: /client-login/, /careers/resources/, /category/, /drafts/, /fragments/, /?s=. All four sitemap URLs referenced (sitemap.xml, sitemap-events.xml, sitemap-news.xml, sitemap-knowledge.xml). All auth-gated and internal paths correctly blocked.",
-      "verdict": "PASS",
-      "source_artifact": "https://raw.githubusercontent.com/manuel-vara/eds-migration/main/robots.txt",
-      "preview_artifact": "https://raw.githubusercontent.com/manuel-vara/eds-migration/main/robots.txt",
-      "viewports": [],
-      "render_strategy": "GitHub raw HTTP fetch"
-    },
-    {
-      "check": "Redirects HTML format and coverage",
-      "finding": "55 redirect rows, HTML table with Source and Destination column headers. No redirect loops (source∩destination=∅). No redirect chains (no destination is also a source). Coverage: 4 known 301s (biotech×2, pharma-services×2), 36 careers/resources → /careers, 1 client-portal → /client-login, 1 blog-category → /news, 4 WP alias normalizations, 8 almac_journies → careers/stories. All 37 manifest careers-resource pages have redirects. Missing: /pharmaceutical-development → /pharmaceutical-drug-product-development redirect.",
-      "verdict": "PASS (with low-severity gap noted)",
-      "source_artifact": ".eds-migration/state/config/redirects.html",
+      "check": "Redirects format and pharmaceutical-development redirect (Check #4)",
+      "page": ".eds-migration/state/config/redirects.html",
+      "source_artifact": "source-bundle/README.md",
       "preview_artifact": ".eds-migration/state/config/redirects.html",
+      "render_strategy": "Python HTMLParser on local state file (da.live upload pending — EDS_TOKEN unavailable)",
       "viewports": [],
-      "render_strategy": "Local HTML table parse (Python HTMLParser)"
+      "finding": "HTML table with DOCTYPE. Headers: ['Source', 'Destination']. 57 redirect rows (up from 55 in phase5 doc, accounting for 2 new pharmaceutical-development rows). pharmaceutical-development redirect present: '/pharmaceutical-development' → '/pharmaceutical-drug-product-development' AND trailing-slash variant '/pharmaceutical-development/' → '/pharmaceutical-drug-product-development'. PASS (content quality). NOTE: da.live upload is still pending due to missing EDS_TOKEN — cannot verify via admin.da.live API."
     },
     {
-      "check": "nav.html EDS structure",
-      "finding": "nav.html follows EDS conventions: logo paragraph, main mega-menu ul (8 business unit top-level sections with nested sub-menus), utility nav ul (8 links: About, Sustainability, Careers, News, Events, Knowledge Centre, Contact, Client Login). 174 total links, 165 unique paths. HubSpot tracking URLs stripped. All 8 BU section roots present. EDS nav block expectations met.",
-      "verdict": "PASS (structural)",
-      "source_artifact": ".eds-migration/state/source-bundle/chrome/header.html",
+      "check": "Nav link coverage vs source chrome (Check #7)",
+      "page": ".eds-migration/state/config/nav.html vs source-bundle/chrome/header.links.json",
+      "source_artifact": "source-bundle/chrome/header.links.json",
       "preview_artifact": ".eds-migration/state/config/nav.html",
+      "render_strategy": "Python HTMLParser link extraction on local state file; source paths extracted from header.links.json (almacgroup.com paths only, stripped of tracking params)",
       "viewports": [],
-      "render_strategy": "Local HTML parse (no browser render — EDS_TOKEN unavailable)"
+      "finding": "Nav coverage 99.6% (270/271 unique source almacgroup.com paths matched). The one missing path is '/commercial-services/wp-content/uploads/sites/9/2024/10/ALMAC_Pharma-16pp-Brochure-CORP-DIGITAL.pdf' — a PDF asset, appropriately excluded from nav. Total nav links in HTML: 296 (unique paths: 285, including EDS-relative paths not in source). This is a significant improvement from the previous 52.6% coverage. PASS (well above 60% threshold)."
     },
     {
-      "check": "Nav link coverage vs source header.links.json",
-      "finding": "52.6% coverage (143/272 unique almacgroup.com paths matched, excluding HubSpot tracking URLs). Below the 60% threshold. 129 source paths absent from nav: 13 /about/* sub-pages, 14 /diagnostics/* deep-links, 19 /api-chemical-development/* product pages, 12 /clinical-services/* pages, 10 /clinical-technologies/* pages, 14 /commercial-services/* pages, and various policy/other paths. Top-level structure is correct but secondary/tertiary mega-menu links insufficiently populated.",
-      "verdict": "FAIL",
-      "source_artifact": ".eds-migration/state/source-bundle/chrome/header.links.json",
-      "preview_artifact": ".eds-migration/state/config/nav.html",
-      "viewports": [],
-      "render_strategy": "Path normalization comparison (Python urllib.parse); source paths normalized to strip almacgroup.com domain and trailing slashes",
-      "matched_count": 143,
-      "unmatched_count": 129,
-      "total_source_paths": 272,
-      "coverage_pct": 52.6,
-      "threshold_pct": 60.0
-    },
-    {
-      "check": "footer.html EDS structure and HubSpot block",
-      "finding": "footer.html follows EDS conventions: logo paragraph, hubspot-form block (div.hubspot-form with header row 'Contact Us' and data row portal_id=742105, form_id=61f11908-1f5a-47c0-b358-d1e2c3d076b2), Quick Links ul (9 links), Get in Touch ul (3 phone numbers), Social Links ul (LinkedIn, YouTube, Vimeo), legal bar paragraph with copyright and legal links. All EDS block conventions met.",
-      "verdict": "PASS",
-      "source_artifact": ".eds-migration/state/source-bundle/chrome/footer.html",
+      "check": "Footer link coverage vs source chrome (Check #7)",
+      "page": ".eds-migration/state/config/footer.html vs source-bundle/chrome/footer.links.json",
+      "source_artifact": "source-bundle/chrome/footer.links.json",
       "preview_artifact": ".eds-migration/state/config/footer.html",
+      "render_strategy": "Python HTMLParser link extraction on local state file; source link texts from footer.links.json",
       "viewports": [],
-      "render_strategy": "Local HTML parse (no browser render — EDS_TOKEN unavailable)"
+      "finding": "Footer coverage 100% (16/16 source link texts matched). All source footer links present: Careers, About Us, Our Locations, Latest News, Knowledge Centre, Almac Discovery, Almac Diagnostic Services, Privacy Policy, Galen Pharmaceuticals, +44/+1/+65 phone numbers, Company Information, Terms and Conditions, Privacy & Cookie Policy, Modern Slavery Statement. Migrated footer also adds LinkedIn/YouTube/Vimeo social links (not in source capture but present on site). PASS."
     },
     {
-      "check": "Footer link coverage vs source footer.links.json",
-      "finding": "93.3% coverage (14/15 unique source paths after normalizing). Only /about-us (source) vs /about (EDS) differs — this is handled by the /about-us → /about redirect in redirects.html. Social links (LinkedIn, YouTube, Vimeo) added beyond source — present as bonus. HubSpot form block present. Phone numbers preserved. Legal bar links all present.",
-      "verdict": "PASS",
-      "source_artifact": ".eds-migration/state/source-bundle/chrome/footer.links.json",
-      "preview_artifact": ".eds-migration/state/config/footer.html",
+      "check": "Nav and footer exist on da.live (Check #5) — FAIL",
+      "page": "https://admin.hlx.page/status/manuel-vara/eds-migration/main/nav",
+      "source_artifact": "source-bundle/chrome/header.html",
+      "preview_artifact": "https://main--eds-migration--manuel-vara.aem.page/nav",
+      "render_strategy": "AEM Admin status API (public, no auth required); preview URL HTTP status check",
       "viewports": [],
-      "render_strategy": "Path normalization comparison (Python urllib.parse)",
-      "matched_count": 14,
-      "unmatched_count": 1,
-      "total_source_paths": 15,
-      "coverage_pct": 93.3,
-      "threshold_pct": 60.0
+      "finding": "admin.hlx.page/status returns preview.status=404, live.status=404 for both /nav and /footer. Preview URL https://main--eds-migration--manuel-vara.aem.page/nav returns HTTP 404. Phase5 docs confirm: 'EDS_TOKEN was not available in this run... da.live uploads remain pending.' The nav/footer HTML content (369 and 48 lines respectively) has NOT been pushed to da.live. Every rendered page will produce collapsed empty <header> and <footer> — same failure as previous run. FAIL (high severity)."
     },
     {
-      "check": "Metadata HTML coverage and format",
-      "finding": "3607 rows, 5 columns (URL, Title, Description, Image, Template). All 3615 manifest pages covered (8 pages share deduplicated EDS paths, accounting for difference). All URLs are EDS-relative paths starting with /. Templates include: homepage, about, service, product, news-post, events, knowledge, knowledge-library, knowledge-expert, profile, careers, careers-story, careers-resource, client-portal, contact, landing, news. No rows with wrong column count.",
-      "verdict": "PASS",
-      "source_artifact": ".eds-migration/state/manifest.json",
-      "preview_artifact": ".eds-migration/state/config/metadata.html",
-      "viewports": [],
-      "render_strategy": "Local HTML table parse + manifest JSON comparison (Python)"
+      "check": "Screenshot pairs: nav/footer chrome comparison (Check #6)",
+      "page": "https://main--eds-migration--manuel-vara.aem.page/",
+      "source_artifact": "source-bundle/chrome/header-desktop.png, source-bundle/chrome/footer-desktop.png",
+      "preview_artifact": "N/A — preview is 404",
+      "render_strategy": "Playwright desktop (1440×900) and mobile (390×844) — attempted but aborted: preview site returns 404 for all pages because nav/footer not uploaded to da.live",
+      "viewports": [
+        {
+          "name": "desktop",
+          "source_screenshot": "source-bundle/chrome/header-desktop.png",
+          "preview_screenshot": "N/A",
+          "similarity": null,
+          "method": "N/A",
+          "threshold": 0.75,
+          "passed": false
+        },
+        {
+          "name": "mobile",
+          "source_screenshot": "N/A",
+          "preview_screenshot": "N/A",
+          "similarity": null,
+          "method": "N/A",
+          "threshold": 0.75,
+          "passed": false
+        }
+      ],
+      "finding": "Cannot capture screenshot pairs — the preview site is 404 across all pages (homepage, /nav, /footer). Screenshot comparison is blocked by the da.live upload failure. FAIL (mandatory per verifier protocol)."
     }
   ],
-  "summary": "FAIL — nav link coverage is 52.6% (143/272 source paths), below the 60% threshold; all GitHub config files valid and intact; redirects/metadata/footer/YAML all pass; screenshot comparison not possible as EDS_TOKEN was unavailable and nav/footer not yet uploaded to da.live"
+  "summary": "FAIL: Nav and footer HTML content is high-quality (99.6% nav coverage, 100% footer coverage, pharmaceutical-development redirect added) but neither document has been uploaded to da.live — admin API confirms 404 for /nav and /footer on both preview and live. All GitHub configs (helix-query.yaml, helix-sitemap.yaml, robots.txt, fstab.yaml) are correct. Blocked on EDS_TOKEN to complete da.live delivery."
 }
