@@ -1,202 +1,161 @@
 {
   "verdict": "FAIL",
+  "verifier": "PilotVerifier-1b3ddcfa",
+  "verified_at": "2026-05-12T17:00:00.000000Z",
+  "infrastructure_note": "EDS_TOKEN not available. Preview URLs (aem.page) return 404. Screenshot pairs CANNOT be captured — this FAIL is an expected infrastructure constraint, not a migration-logic failure. HTML artifact quality assessed independently as instructed.",
+
   "issues": [
     {
       "severity": "high",
-      "criterion": "Content not on da.live — all preview URLs return 404",
-      "details": "No EDS_TOKEN was provided during the migration run. All da.live Source API calls returned 401 Unauthorized. All five pilot preview URLs (/, /about, /contact-us, /careers, /knowledge/library/...) return HTTP 404. No preview rendering, visual comparison, JS-error check, or chrome-presence check is possible.",
-      "remediation": "Provide a valid EDS_TOKEN, then re-run da.live uploads using the staged HTML files from .eds-migration/state/migrated-html/ and .eds-migration/state/content-staging/."
+      "criterion": "screenshot-pairs-mandatory",
+      "details": "No preview screenshots can be captured for any of the 16 pilot pages. Without EDS_TOKEN, da.live uploads did not occur, preview URLs return 404, and Playwright visual comparison is impossible. 0/16 pages have desktop+mobile screenshot pairs.",
+      "remediation": "Provide EDS_TOKEN and re-run the pilot upload phase. Once aem.page previews are live, re-run this verifier to capture screenshot pairs and compute similarity scores."
     },
     {
       "severity": "high",
-      "criterion": "Screenshot pairs are mandatory — none can be produced",
-      "details": "Per verifier rules, every page check requires desktop (≥1280px) and mobile (≤420px) screenshot pairs comparing source-bundle captures to live preview renders. Because all preview URLs return 404, no preview screenshots can be captured. The visual-comparison gate (pHash / SSIM similarity threshold) cannot be evaluated. This alone is an automatic FAIL.",
-      "remediation": "Upload content to da.live, then re-run this verifier to capture screenshot pairs and compute similarity scores."
-    },
-    {
-      "severity": "high",
-      "criterion": "Incomplete pilot coverage — 11 of 15 blueprint pilot pages have no committed HTML",
-      "details": "The blueprint specifies 15 pilot pages across 15 archetypes. Only 4 have HTML committed to the branch (homepage, about, contact-us, knowledge-library). The careers page is staged but in a secondary content-staging/ directory. Two more (knowledge-expert/abi-pesun and news-post/almac-clinical-services...) have status files claiming HTML was generated but the htmlPath points to /home/claude/scratch — outside the repo and not committed. The remaining 9 pilot archetypes (award, clinical-services, diagnostics, bd-team-profile, news-post[correct URL], api-chemical-product, events, careers-story, landing, careers-resource) have no status files and no HTML artifacts at all.",
-      "remediation": "Complete migration for all 15 blueprint pilot pages. Commit generated HTML to .eds-migration/state/migrated-html/ or .eds-migration/state/content-staging/ — not to ephemeral scratch paths."
-    },
-    {
-      "severity": "high",
-      "criterion": "Chrome presence cannot be verified — previews are 404",
-      "details": "Check 6 (chrome/header+footer band present on rendered preview) is impossible: all preview URLs return 404. The rendered HTML files show nav and footer were generated as separate documents, but whether they render correctly as EDS chrome on the live site cannot be confirmed.",
-      "remediation": "Upload nav.html and footer.html to da.live at /nav and /footer paths, then verify chrome renders on a pilot preview page."
+      "criterion": "da-live-content-not-uploaded",
+      "details": "Zero pilot pages were successfully uploaded to da.live. All 16 migrated status files record failureReason: 'EDS_TOKEN not available'. The HTML artifacts are staged locally in content-staging/ only. The admin.da.live Source API would return 404 for all pilot paths.",
+      "remediation": "Set EDS_TOKEN environment variable and re-run the pilot upload step. Content is ready in .eds-migration/state/content-staging/."
     },
     {
       "severity": "medium",
-      "criterion": "Two inconsistent nav/footer versions exist in the branch",
-      "details": "Both .eds-migration/state/migrated-html/ and .eds-migration/state/content-staging/ contain separate nav.html and footer.html files that differ in content. The content-staging footer is a flat unsectioned list without a <footer> wrapper; the migrated-html footer has proper structure with sections, contact numbers, and social links. It is unclear which version is authoritative.",
-      "remediation": "Consolidate to a single canonical nav.html and footer.html and remove the duplicate."
+      "criterion": "archetype-coverage",
+      "details": "15 of 28 manifest archetypes (54%) have pilot HTML files. 13 archetypes are entirely unrepresented: analytical, api-chemical, bd-team-profile, blog-category, careers-resource, client-portal, clinical-technologies, commercial-services, discovery, events, knowledge, news, pharma-drug. A complete pilot should cover all or nearly all archetypes to validate migration logic.",
+      "remediation": "Generate pilot HTML for the 13 missing archetypes using source-bundle pages: analytical-solid-state, api-chemical-development, business-development-team-aidan-kelly, blog-category-uncategorized, careers-resource-bioinformatics-scientist, client-portal-waybill, clinical-technologies, commercial-services, discovery, events, knowledge, news, pharmaceutical-drug-product-development."
     },
     {
       "severity": "medium",
-      "criterion": "Footer URL paths differ from source chrome bundle",
-      "details": "Three footer links use incorrect EDS paths vs the crawled source: (1) /about/ instead of /about-us/, (2) /about/our-locations/ instead of /our-locations/, (3) /privacy-policy/ instead of /privacy-cookie-policy/. These will produce broken footer links post-launch.",
-      "remediation": "Verify correct EDS destination paths for these URLs before upload (they may be intentional redirects or path changes in EDS)."
-    },
-    {
-      "severity": "medium",
-      "criterion": "HTML artifacts for knowledge-expert and news-post not committed to branch",
-      "details": "Status files for /knowledge/experts/abi-pesun and /news/almac-clinical-services-scoops-national-training-award claim htmlGenerated=true but htmlPath references /home/claude/scratch/page-migrator/output/ — a path outside the repo. These HTML files are not committed and will be lost on workspace teardown.",
-      "remediation": "Copy these generated HTML files into .eds-migration/state/migrated-html/ and commit them."
+      "criterion": "content-fidelity",
+      "details": "5 of 12 comparable pilot pages fail the 50% word-overlap threshold against source-bundle counterparts (after removing nav/footer/form/cookie-banner noise). contact-us: 0.45, expert-profile: 0.44, award: 0.28, api-chemical-product: 0.25, careers-story: 0.34. Caveat: for award (18 clean source words), api-chemical-product (173 words but 261-option country form), and expert-profile (source mostly sidebar navigation), the source-bundle captures are thin/noisy and staged content is arguably more complete. True concern: careers-story (0.34, 38 clean source words) and contact-us (0.45, form replaced with HubSpot block).",
+      "remediation": "Expand careers-story staged HTML with full story narrative. Verify contact-us form replacement is intentional. Accept low overlap for award/api-chemical-product/expert-profile as source-bundle measurement artifacts."
     },
     {
       "severity": "low",
-      "criterion": "Nested block table inside Columns cell (contact-us.html)",
-      "details": "The contact-us.html places a HubSpot Form block table inside the first column cell of the Columns block. While EDS technically allows nested tables, this pattern may cause rendering issues depending on how the Columns block JS processes cell content.",
-      "remediation": "Consider restructuring: place the HubSpot Form as a standalone block after the Columns block, or verify that the EDS Columns block handles nested tables correctly."
+      "criterion": "wordpress-post-id-links",
+      "details": "diagnostics.html contains 3 href values using WordPress post-ID URLs (https://www.almacgroup.com/?p=92072, ?p=92127, ?p=92129) for upcoming events. These will produce broken links in EDS.",
+      "remediation": "Resolve ?p= post IDs to canonical pretty URLs or event slugs before final import."
     },
     {
       "severity": "low",
-      "criterion": "Content fidelity word-overlap below 50% threshold on homepage and contact-us",
-      "details": "Word-set overlap between source rendered HTML main-content and migrated HTML: homepage 0.42 (below 0.50 threshold), about 0.68 (pass), contact-us 0.12 (heavily below threshold). The contact-us low ratio is partly due to a very large source HTML with megamenu navigation text, but the migrated HTML is also missing several office location detail fields visible in the source. Note: source HTML files include full WordPress rendered output with mega-nav and tracking scripts inflating source word counts.",
-      "remediation": "Verify contact-us.html includes all office location addresses, phone/fax/email, and map links visible in source. The low contact-us ratio warrants manual review."
+      "criterion": "th-missing-colspan",
+      "details": "Several single-column block tables (Breadcrumbs, Fragment, Video) use <th> without colspan in about/index.html, clinical-services/index.html, contact-us/index.html, index.html. EDS recommends colspan='2' for all block headers.",
+      "remediation": "Add colspan='2' to single-column <th> elements for consistency."
+    },
+    {
+      "severity": "low",
+      "criterion": "status-files-missing-stagedAt",
+      "details": "10 of 16 migrated status files do not include a 'stagedAt' field pointing to the committed HTML artifact path. HTML files exist and are locatable by URL convention, but the missing cross-reference complicates downstream automation.",
+      "remediation": "Update the 10 status files to include stagedAt pointing to the correct content-staging path."
     }
   ],
+
+  "html_quality_assessment": {
+    "overall": "GOOD",
+    "eds_block_tables": "PASS — all 16 content pages use valid EDS table syntax with named block headers",
+    "section_breaks": "PASS — all substantial content pages use <hr> section dividers",
+    "metadata_tables": "PASS — all 16 content pages end with a Metadata table containing title and description",
+    "nav_footer_canonical": "PASS — exactly one nav.html (17 nav links, logo present) and one footer.html (20 links, contact details, copyright line)",
+    "ephemeral_paths": "PASS — no /home/claude or /tmp/ references in any HTML artifact",
+    "pending_patterns": "PASS — 2 redirect pages documented (biotech/ to events, pharma-services/ to workshop landing page)",
+    "block_names": "PASS — all block names match known EDS block palette (hero, cards, columns, breadcrumbs, stats, metadata, fragment, hubspot form, job listing, profile, section metadata)",
+    "image_urls": "PASS — all image src attributes use absolute HTTPS URLs (required for staged migration)",
+    "absolute_internal_links": "WARN — 3 WordPress post-ID links in diagnostics.html need resolution"
+  },
+
+  "archetype_coverage": {
+    "total_manifest_archetypes": 28,
+    "covered": 15,
+    "coverage_pct": 54,
+    "covered_archetypes": [
+      "homepage", "about", "contact", "clinical-services", "diagnostics",
+      "knowledge-library", "knowledge-expert", "expert-profile",
+      "award", "news-post", "api-chemical-product", "job-listing",
+      "careers-story", "landing", "careers"
+    ],
+    "missing_archetypes": [
+      "analytical", "api-chemical", "bd-team-profile", "blog-category",
+      "careers-resource", "client-portal", "clinical-technologies",
+      "commercial-services", "discovery", "events", "knowledge", "news", "pharma-drug"
+    ]
+  },
+
+  "content_fidelity_summary": {
+    "method": "word-set overlap after removing scripts/styles/nav/header/footer/forms/select/cookie-banner noise; 4+ char alpha words; threshold 0.50 (0.35 for pages with <30 clean source words)",
+    "results": [
+      {"page": "homepage", "overlap": 0.55, "src_clean_words": 217, "pass": true},
+      {"page": "about", "overlap": 0.61, "src_clean_words": 206, "pass": true},
+      {"page": "contact-us", "overlap": 0.45, "src_clean_words": 76, "pass": false, "note": "form replaced with HubSpot block — deliberate structural change"},
+      {"page": "diagnostics", "overlap": 0.87, "src_clean_words": 286, "pass": true},
+      {"page": "clinical-services", "overlap": 0.81, "src_clean_words": 63, "pass": true},
+      {"page": "knowledge-library", "overlap": 0.69, "src_clean_words": 13, "pass": true, "note": "source bundle has 13 clean words — very thin capture"},
+      {"page": "knowledge-expert (abi-pesun)", "overlap": 0.70, "src_clean_words": 117, "pass": true},
+      {"page": "expert-profile (doctor-rodney-brown)", "overlap": 0.44, "src_clean_words": 129, "pass": false, "note": "source mostly navigation sidebar; staged has richer content"},
+      {"page": "award (abc-council-2022)", "overlap": 0.28, "src_clean_words": 18, "pass": false, "note": "source had 18 clean words (cookie banner dominated); staged has fuller content"},
+      {"page": "news-post", "overlap": 0.87, "src_clean_words": 253, "pass": true},
+      {"page": "api-chemical-product", "overlap": 0.25, "src_clean_words": 173, "pass": false, "note": "source dominated by 261-option country form; staged structured correctly with HubSpot Form block"},
+      {"page": "careers-story", "overlap": 0.34, "src_clean_words": 38, "pass": false, "note": "source had 38 clean words; staged has content but some story narrative missing"}
+    ],
+    "pass_count": 7,
+    "fail_count": 5,
+    "note": "Most failures are measurement artifacts from thin/noisy source-bundle captures. Manual spot-check of careers-story and contact-us recommended."
+  },
+
   "evidence": [
     {
-      "page": "https://www.almacgroup.com/",
+      "page": "https://www.almacgroup.com/ (homepage)",
       "source_artifact": "source-bundle/pages/homepage/index.html",
-      "preview_artifact": "https://main--eds-migration--manuel-vara.aem.page/",
-      "da_live_source_api": "https://admin.da.live/source/manuel-vara/eds-migration/",
-      "render_strategy": "N/A — preview URL returns HTTP 404; content was never uploaded to da.live (EDS_TOKEN missing, 401 on upload)",
-      "da_live_http_status": 401,
-      "preview_http_status": 404,
+      "preview_artifact": "https://main--eds-migration--manuel-vara.aem.page/ (404 — no EDS_TOKEN)",
+      "staged_artifact": ".eds-migration/state/content-staging/index.html",
+      "render_strategy": "SKIPPED — no EDS_TOKEN; preview URL returns 404",
       "viewports": [],
-      "html_artifact_committed": ".eds-migration/state/migrated-html/index.html",
-      "html_blocks_found": ["Carousel (hero)", "Stats", "Section Metadata", "Cards", "Cards (news)", "Fragment", "Metadata"],
-      "content_word_overlap": 0.42,
-      "content_overlap_threshold": 0.50,
-      "content_fidelity_pass": false,
-      "key_phrases_present": ["7800+", "50%", "CDMO", "Almac Trial Coordinator", "Almac Sciences", "sustainability", "Almac Group releases"],
-      "finding": "HTML generated and committed. EDS block table structure is correct. Key content phrases verified present. Cannot do visual/chrome/JS-error check — preview is 404. Word overlap 0.42 is below 0.50 threshold (source HTML includes megamenu inflation). Screenshot pairs: ABSENT (preview 404)."
+      "finding": "HTML artifact present (226 lines, 9 block tables, 7 section breaks). Word overlap 0.55 PASS. Contains Hero (carousel), Stats, Cards (services), Fragment blocks. Metadata table complete with title and description."
     },
     {
       "page": "https://www.almacgroup.com/about/",
       "source_artifact": "source-bundle/pages/about/index.html",
-      "preview_artifact": "https://main--eds-migration--manuel-vara.aem.page/about",
-      "da_live_source_api": "https://admin.da.live/source/manuel-vara/eds-migration/about",
-      "render_strategy": "N/A — preview URL returns HTTP 404; content was never uploaded to da.live",
-      "da_live_http_status": 401,
-      "preview_http_status": 404,
+      "preview_artifact": "https://main--eds-migration--manuel-vara.aem.page/about (404 — no EDS_TOKEN)",
+      "staged_artifact": ".eds-migration/state/content-staging/about/index.html",
+      "render_strategy": "SKIPPED — no EDS_TOKEN",
       "viewports": [],
-      "html_artifact_committed": ".eds-migration/state/migrated-html/about.html",
-      "html_blocks_found": ["Hero", "Breadcrumbs", "Columns", "Section Metadata", "Cards", "Fragment", "Metadata"],
-      "content_word_overlap": 0.68,
-      "content_overlap_threshold": 0.50,
-      "content_fidelity_pass": true,
-      "finding": "HTML generated and committed. EDS block table structure is correct. Word overlap 0.68 passes threshold. Cannot do visual/chrome/JS-error check — preview is 404. Screenshot pairs: ABSENT (preview 404)."
+      "finding": "HTML present (111 lines, 7 block tables, 5 section breaks). Word overlap 0.61 PASS. Hero, Columns, Cards blocks present. Section Metadata used for styled sections."
     },
     {
-      "page": "https://www.almacgroup.com/contact-us/",
-      "source_artifact": "source-bundle/pages/contact-us/index.html",
-      "preview_artifact": "https://main--eds-migration--manuel-vara.aem.page/contact-us",
-      "da_live_source_api": "https://admin.da.live/source/manuel-vara/eds-migration/contact-us",
-      "render_strategy": "N/A — preview URL returns HTTP 404; content was never uploaded to da.live",
-      "da_live_http_status": 401,
-      "preview_http_status": 404,
+      "page": "https://www.almacgroup.com/diagnostics/",
+      "source_artifact": "source-bundle/pages/diagnostics/index.html",
+      "preview_artifact": "https://main--eds-migration--manuel-vara.aem.page/diagnostics (404)",
+      "staged_artifact": ".eds-migration/state/content-staging/diagnostics.html",
+      "render_strategy": "SKIPPED",
       "viewports": [],
-      "html_artifact_committed": ".eds-migration/state/migrated-html/contact-us.html",
-      "html_blocks_found": ["Breadcrumbs", "Columns", "HubSpot Form", "Fragment", "Metadata"],
-      "content_word_overlap": 0.12,
-      "content_overlap_threshold": 0.50,
-      "content_fidelity_pass": false,
-      "issue_noted": "HubSpot Form block nested inside Columns cell — potential rendering risk",
-      "finding": "HTML generated and committed. EDS block structure correct. Word overlap 0.12 is far below 0.50 threshold; source HTML contact-us page is unusually large (993 source words inc. megamenu) while migrated has only 89. Nested table pattern flagged. Cannot do visual/chrome check — preview 404. Screenshot pairs: ABSENT."
+      "finding": "Word overlap 0.87 PASS. High fidelity. 11 block tables, 9 section breaks. Contains WordPress post-ID links (low severity)."
     },
     {
-      "page": "https://www.almacgroup.com/careers/",
-      "source_artifact": "source-bundle/pages/careers/index.html",
-      "preview_artifact": "https://main--eds-migration--manuel-vara.aem.page/careers",
-      "da_live_source_api": "https://admin.da.live/source/manuel-vara/eds-migration/careers",
-      "render_strategy": "N/A — preview URL returns HTTP 404; content was never uploaded to da.live",
-      "da_live_http_status": 401,
-      "preview_http_status": 404,
+      "page": "https://www.almacgroup.com/news/almac-clinical-services-scoops-national-training-award/",
+      "source_artifact": "source-bundle/pages/clinical-services-news/index.html",
+      "preview_artifact": "https://main--eds-migration--manuel-vara.aem.page/news/almac-clinical-services-scoops-national-training-award (404)",
+      "staged_artifact": ".eds-migration/state/content-staging/news/almac-clinical-services-scoops-national-training-award.html",
+      "render_strategy": "SKIPPED",
       "viewports": [],
-      "html_artifact_committed": ".eds-migration/state/content-staging/careers.html",
-      "html_blocks_found": ["Hero", "Stats", "Cards (news)", "Fragment", "Metadata"],
-      "content_word_overlap": 0.13,
-      "content_overlap_threshold": 0.50,
-      "content_fidelity_pass": false,
-      "key_phrases_present": ["Talent Network", "advance human health", "7,800", "55+", "exceptional together"],
-      "finding": "HTML generated and staged. EDS block structure correct. Word overlap 0.13 is below threshold; source careers index.html is a heavily WordPress-bloated page (748 source words inc. mega navigation) while migrated has 132. Key content phrases verified present. This is not a blueprint pilot page URL — careers was a worker-added page. Cannot do visual/chrome check. Screenshot pairs: ABSENT."
+      "finding": "Word overlap 0.87 PASS. Excellent fidelity — full article text, blockquotes, numbered notes. Metadata with publish-date and division fields."
     },
     {
-      "page": "https://www.almacgroup.com/knowledge/library/2019-investments-centered-around-cell-and-gene-therapies/",
-      "source_artifact": "source-bundle/pages/knowledge-library/index.html",
-      "preview_artifact": "https://main--eds-migration--manuel-vara.aem.page/knowledge/library/2019-investments-centered-around-cell-and-gene-therapies",
-      "da_live_source_api": "https://admin.da.live/source/manuel-vara/eds-migration/knowledge/library/2019-investments-centered-around-cell-and-gene-therapies",
-      "render_strategy": "N/A — preview URL returns HTTP 404; content was never uploaded to da.live",
-      "da_live_http_status": 401,
-      "preview_http_status": 404,
-      "viewports": [],
-      "html_artifact_committed": ".eds-migration/state/content-staging/knowledge-library-2019-investments.html",
-      "html_blocks_found": ["Breadcrumbs", "Profile", "Hubspot Form (gated-content)", "Cards (related)", "Fragment", "Metadata"],
-      "content_word_overlap": 0.11,
-      "content_overlap_threshold": 0.50,
-      "content_fidelity_pass": false,
-      "key_phrases_present": ["2019", "cell and gene", "Sharon Courtney", "Almac Clinical Services", "Marken", "cold-chain"],
-      "finding": "HTML generated and staged. EDS block structure correct with appropriate gated-content pattern. Key content phrases verified present. Word overlap 0.11 is below threshold but driven by large source HTML (936 source words inc. mega-nav). Status file claims textLenRatio=0.82 based on its own fidelity check. Cannot do visual/chrome check. Screenshot pairs: ABSENT."
-    },
-    {
-      "page": "https://www.almacgroup.com/award/abc-council-business-awards-2022/",
-      "source_artifact": "source-bundle/pages/award-abc-council-business-awards-2022/index.html",
-      "preview_artifact": "https://main--eds-migration--manuel-vara.aem.page/award/abc-council-business-awards-2022",
-      "render_strategy": "N/A — no status file, no HTML generated for this blueprint pilot page",
-      "viewports": [],
-      "html_artifact_committed": null,
-      "finding": "MISSING — No status file and no HTML committed. This blueprint pilot page was never processed by the worker."
-    },
-    {
-      "page": "https://www.almacgroup.com/clinical-services/",
-      "source_artifact": "source-bundle/pages/clinical-services/index.html",
-      "preview_artifact": "https://main--eds-migration--manuel-vara.aem.page/clinical-services",
-      "render_strategy": "N/A — no status file, no HTML generated for this blueprint pilot page",
-      "viewports": [],
-      "html_artifact_committed": null,
-      "finding": "MISSING — No status file and no HTML committed. This blueprint pilot page was never processed by the worker."
-    },
-    {
-      "page": "nav",
+      "page": "nav.html",
       "source_artifact": "source-bundle/chrome/header.html",
-      "preview_artifact": "https://main--eds-migration--manuel-vara.aem.page/nav",
-      "render_strategy": "N/A — preview returns 404",
-      "da_live_http_status": 401,
-      "preview_http_status": 404,
+      "preview_artifact": "N/A — nav.html is a chrome fragment",
+      "staged_artifact": ".eds-migration/state/content-staging/nav.html",
+      "render_strategy": "SKIPPED",
       "viewports": [],
-      "html_artifact_committed": ".eds-migration/state/migrated-html/nav.html",
-      "nav_links_in_migrated": 13,
-      "nav_links_in_source": 705,
-      "finding": "Nav HTML generated with 13 top-level links (correct — EDS nav should be top-level only, not the full 705-link mega-menu). Two nav versions exist (migrated-html/nav.html and content-staging/nav.html differ). Preview 404. Screenshot pairs: ABSENT."
+      "finding": "PASS. Single canonical nav.html. Contains logo img, 8 primary service links, 8 secondary links. 17 total href links. HTML is minimal and EDS-compliant."
     },
     {
-      "page": "footer",
+      "page": "footer.html",
       "source_artifact": "source-bundle/chrome/footer.html",
-      "preview_artifact": "https://main--eds-migration--manuel-vara.aem.page/footer",
-      "render_strategy": "N/A — preview returns 404",
-      "da_live_http_status": 401,
-      "preview_http_status": 404,
+      "preview_artifact": "N/A — footer.html is a chrome fragment",
+      "staged_artifact": ".eds-migration/state/content-staging/footer.html",
+      "render_strategy": "SKIPPED",
       "viewports": [],
-      "html_artifact_committed": ".eds-migration/state/migrated-html/footer.html",
-      "footer_links_in_migrated": 15,
-      "footer_links_in_source": 16,
-      "url_discrepancies": [
-        {"source": "/about-us/", "migrated": "/about/"},
-        {"source": "/our-locations/", "migrated": "/about/our-locations/"},
-        {"source": "/privacy-cookie-policy/", "migrated": "/privacy-policy/"}
-      ],
-      "finding": "Footer HTML generated. 15 links vs 16 in source (one intentional omission). Three URL path discrepancies noted (low severity). Two footer versions in branch differ in structure — migrated-html version is better structured. Preview 404. Screenshot pairs: ABSENT."
+      "finding": "PASS. Single canonical footer.html. Contains logo, 9 service links, 3 contact phone numbers (EU/US/APAC), 3 social links, copyright. 20 total href links."
     }
   ],
-  "pilot_page_coverage": {
-    "total_blueprint_pilot_pages": 15,
-    "html_committed_to_branch": 5,
-    "html_generated_but_not_committed": 2,
-    "never_processed": 8,
-    "coverage_percent": 33
-  },
-  "summary": "FAIL — EDS_TOKEN was not provided, preventing all da.live uploads; all 5 checked preview URLs return 404, making visual comparison, chrome verification, and JS-error checks impossible. Only 5 of 15 blueprint pilot pages have HTML committed to the branch (33% coverage). Two further HTML artifacts were saved to ephemeral scratch paths outside the repo. The generated HTML files that do exist follow correct EDS block-table structure and pass key content-phrase spot-checks, but cannot be validated end-to-end without live previews."
+
+  "summary": "FAIL — infrastructure blockers (no EDS_TOKEN, no live previews, no screenshot pairs) prevent full validation; HTML artifact quality is GOOD (all 16 pages use valid EDS block tables, section breaks, and metadata tables; nav/footer canonical; no ephemeral paths; redirects documented), but only 54% archetype coverage (15/28) and 5/12 content fidelity failures (mostly source-bundle measurement artifacts rather than true migration errors)"
 }
