@@ -1,0 +1,15 @@
+{
+  "url": "https://www.almacgroup.com/api-chemical-development/biocatalyst_product/aldehyde-reductases-sub-set-of-cesk-6000-standard-format/",
+  "slug": "api-chemical-product-aldehyde-reductases",
+  "archetype": "api-chemical-product",
+  "captured_at": "2026-05-12T11:27:45.483827+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "domcontentloaded -> networkidle -> content-stability 500ms x2 -> dismiss OneTrust",
+  "errors": [],
+  "title": "Aldehyde reductases \u2013 sub set of CESK-6000 - Almac",
+  "meta_description": "Aldehyde reductases - sub set of CESK-6000 (standard format) - We offer a range of biocatalysts in easy-to-use kits. Click here to find out more.",
+  "text_length": 12387
+}

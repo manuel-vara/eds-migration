@@ -1,0 +1,15 @@
+{
+  "url": "https://www.almacgroup.com/client-login/almac-returns-waybill-generator/",
+  "slug": "client-portal-waybill",
+  "archetype": "client-portal",
+  "captured_at": "2026-05-12T11:29:23.588450+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "domcontentloaded -> networkidle -> content-stability 500ms x2 -> dismiss OneTrust",
+  "errors": [],
+  "title": "Drug Returns Portal - Almac",
+  "meta_description": "",
+  "text_length": 9643
+}

@@ -1,0 +1,15 @@
+{
+  "url": "https://www.almacgroup.com/careers/resources/a-day-in-the-life-of-a-bioinformatics-scientist/",
+  "slug": "careers-resource-bioinformatics-scientist",
+  "archetype": "careers-resource",
+  "captured_at": "2026-05-12T11:28:14.598043+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "domcontentloaded -> networkidle -> content-stability 500ms x2 -> dismiss OneTrust",
+  "errors": [],
+  "title": "Login - Almac",
+  "meta_description": "",
+  "text_length": 10270
+}

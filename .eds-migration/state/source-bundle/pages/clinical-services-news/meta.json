@@ -1,15 +1,15 @@
 {
-  "url": "https://www.almacgroup.com/clinical-services/news/",
+  "url": "https://www.almacgroup.com/news/almac-clinical-services-scoops-national-training-award/",
   "slug": "clinical-services-news",
-  "archetype": "news-section",
-  "captured_at": "2026-05-12T11:02:07.020665+00:00",
+  "archetype": "news-post",
+  "captured_at": "2026-05-12T11:26:59.106761+00:00",
   "viewport_sizes": {
     "desktop": "1440x900",
     "mobile": "390x844"
   },
-  "settle_strategy": "networkidle + body.innerText stable 500ms x2",
-  "errors": [
-    "desktop: Page.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"https://www.almacgroup.com/clinical-services/news/\", waiting until \"domcontentloaded\"\n",
-    "mobile: Page.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"https://www.almacgroup.com/clinical-services/news/\", waiting until \"domcontentloaded\"\n"
-  ]
+  "settle_strategy": "domcontentloaded -> networkidle -> content-stability 500ms x2 -> dismiss OneTrust",
+  "errors": [],
+  "title": "Almac Clinical Services Scoops National Training Award - Almac",
+  "meta_description": "",
+  "text_length": 14084
 }

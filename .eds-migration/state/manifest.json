@@ -1,6 +1,6 @@
 {
   "site": "https://www.almacgroup.com",
-  "crawledAt": "2026-05-12T11:05:44.012991+00:00",
+  "crawledAt": "2026-05-12T11:34:10.421976Z",
   "totalPages": 3605,
   "pages": [
     {
@@ -35,7 +35,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "about-50-years",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/about/almac-awards/",
@@ -45,7 +46,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "about-almac-awards",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/about/company-video/",
@@ -199,7 +201,8 @@
       "depth": 1,
       "priority": "medium",
       "slug": "almac-is-proud-to-support-multiple-programs-to-accelerate-covid-19-treatment",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/almac-on-brexit-preparation-and-maintaining-your-clinical-supply/",
@@ -271,7 +274,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "analytical-solid-state-almac-sciences-analytical-laboratories",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/analytical-solid-state/almac-voice/",
@@ -281,7 +285,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "analytical-solid-state-almac-voice",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/analytical-solid-state/analytical-method-development-and-validation/",
@@ -291,7 +296,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "analytical-solid-state-analytical-method-development-and-validation",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/analytical-solid-state/bioavailability-enhancement-solutions/",
@@ -693,7 +699,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "api-chemical-development-ai-assisted-enzyme-design",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/api-chemical-development/almac-sciences-resource-hub/",
@@ -703,7 +710,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "api-chemical-development-almac-sciences-resource-hub",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/api-chemical-development/almac-sciences-technology-group/",
@@ -713,7 +721,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "api-chemical-development-almac-sciences-technology-group",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/api-chemical-development/almac-sciences-virtual-tour-hub/",
@@ -803,7 +812,8 @@
       "depth": 3,
       "priority": "medium",
       "slug": "api-chemical-development-biocatalyst-product-aldehyde-reductases-sub-set-of-cesk",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/api-chemical-development/biocatalyst_product/amidases-standard-format/",
@@ -813,7 +823,8 @@
       "depth": 3,
       "priority": "medium",
       "slug": "api-chemical-development-biocatalyst-product-amidases-standard-format",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/api-chemical-development/biocatalyst_product/amine-dehydrogenases-standard-format/",
@@ -823,7 +834,8 @@
       "depth": 3,
       "priority": "medium",
       "slug": "api-chemical-development-biocatalyst-product-amine-dehydrogenases-standard-forma",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/api-chemical-development/biocatalyst_product/amine-oxidases-96-well-plate-format/",
@@ -2173,7 +2185,8 @@
       "depth": 2,
       "priority": "low",
       "slug": "award-abc-council-business-awards-2022",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/award/aer-lingus-viscount-awards-2014/",
@@ -2183,7 +2196,8 @@
       "depth": 2,
       "priority": "low",
       "slug": "award-aer-lingus-viscount-awards-2014",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/award/aer-lingus-viscount-awards/",
@@ -2193,7 +2207,8 @@
       "depth": 2,
       "priority": "low",
       "slug": "award-aer-lingus-viscount-awards",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/award/almac-group-win-irish-american-business-chamber-award-usa/",
@@ -2745,7 +2760,8 @@
       "depth": 1,
       "priority": "low",
       "slug": "business-development-team-amir-ahmad",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/business-development-team/anthony-fazio/",
@@ -2755,7 +2771,8 @@
       "depth": 1,
       "priority": "low",
       "slug": "business-development-team-anthony-fazio",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/business-development-team/bryant-oneill/",
@@ -3087,7 +3104,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "careers-all4health-employee-health-well-being-programme",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/careers/almac-mckervey-award/",
@@ -3097,7 +3115,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "careers-almac-mckervey-award",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/careers/almac-pathways/",
@@ -3107,7 +3126,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "careers-almac-pathways",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/careers/almac-pathways/experienced-professionals/",
@@ -3347,7 +3367,8 @@
       "depth": 3,
       "priority": "medium",
       "slug": "careers-almac-journies-curtis-campbell",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/careers/almac_journies/dinesh-srinivasan/",
@@ -3357,7 +3378,8 @@
       "depth": 3,
       "priority": "medium",
       "slug": "careers-almac-journies-dinesh-srinivasan",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/careers/almac_journies/dr-laura-knight/",
@@ -3367,7 +3389,8 @@
       "depth": 3,
       "priority": "medium",
       "slug": "careers-almac-journies-dr-laura-knight",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/careers/almac_journies/dr-leeona-galligan/",
@@ -4987,7 +5010,8 @@
       "depth": 3,
       "priority": "medium",
       "slug": "careers-resources-a-day-in-the-life-of-a-bioinformatics-scientist",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/careers/resources/a-day-in-the-life-of-a-biology-associate-scientist/",
@@ -4997,7 +5021,8 @@
       "depth": 3,
       "priority": "medium",
       "slug": "careers-resources-a-day-in-the-life-of-a-biology-associate-scientist",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/careers/resources/a-day-in-the-life-of-a-chemical-engineer/",
@@ -5007,7 +5032,8 @@
       "depth": 3,
       "priority": "medium",
       "slug": "careers-resources-a-day-in-the-life-of-a-chemical-engineer",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/careers/resources/a-day-in-the-life-of-a-clinical-testing-scientist/",
@@ -5407,7 +5433,8 @@
       "depth": 1,
       "priority": "low",
       "slug": "category-uncategorized",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/client-login/",
@@ -5427,7 +5454,8 @@
       "depth": 1,
       "priority": "low",
       "slug": "client-login-almac-returns-waybill-generator",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/clinical-services-knowledge-hub/",
@@ -5459,7 +5487,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "clinical-services--e7-99-bd-e7-9a-ae-e4-b9-a6-ef-bc-9a-e5-8c-97-e7-88-b1-e5-b0-9",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/clinical-services/%e7%bd%91%e7%bb%9c%e7%a0%94%e8%ae%a8%e4%bc%9a%ef%bc%9a%e8%8b%b1%e5%9b%bd%e8%84%b1%e6%ac%a7%e5%90%8e%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88/",
@@ -5469,7 +5498,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "clinical-services--e7-bd-91-e7-bb-9c-e7-a0-94-e8-ae-a8-e4-bc-9a-ef-bc-9a-e8-8b-b",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/clinical-services/%e8%8b%b1%e5%9b%bd%e5%92%8c%e6%ac%a7%e6%b4%b2%e4%b8%b4%e5%ba%8a%e4%be%9b%e5%ba%94%e9%93%be%e7%9a%84%e8%8b%b1%e5%9b%bd%e9%80%80%e6%ac%a7%e5%90%8e%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88/",
@@ -5479,7 +5509,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "clinical-services--e8-8b-b1-e5-9b-bd-e5-92-8c-e6-ac-a7-e6-b4-b2-e4-b8-b4-e5-ba-8",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/clinical-services/3-part-podcast-series-behind-the-breakthroughs-how-almac-powers-clinical-trial-success-with-care/",
@@ -6932,10 +6963,10 @@
       "canonical": ""
     },
     {
-      "url": "https://www.almacgroup.com/clinical-services/news/",
-      "title": "",
+      "url": "https://www.almacgroup.com/news/almac-clinical-services-scoops-national-training-award/",
+      "title": "Almac Clinical Services Scoops National Training Award",
       "meta_description": "",
-      "archetype": "clinical-services",
+      "archetype": "news-post",
       "depth": 1,
       "priority": "high",
       "slug": "clinical-services-news",
@@ -7593,7 +7624,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "clinical-technologies-accelerating-outcomes-with-a-pancreatic-cancer-adaptive-pl",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/clinical-technologies/almactrialcoordinator/",
@@ -7603,7 +7635,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "clinical-technologies-almactrialcoordinator",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/clinical-technologies/asia-pacific-apac-irt-regional-capabilities/",
@@ -7613,7 +7646,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "clinical-technologies-asia-pacific-apac-irt-regional-capabilities",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/clinical-technologies/atc/",
@@ -8425,7 +8459,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "commercial-services-almac-pharma-services-state-of-the-art-commercial-manufactur",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/commercial-services/artwork-pack-design/",
@@ -8435,7 +8470,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "commercial-services-artwork-pack-design",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/commercial-services/capital-projects-2/",
@@ -8445,7 +8481,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "commercial-services-capital-projects-2",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/commercial-services/capital-projects/",
@@ -9159,7 +9196,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "diagnostics-almac-diagnostic-services-global-biopharma-partners",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/diagnostics/almac-diagnostic-services-overview/a-day-in-the-life/",
@@ -9169,7 +9207,8 @@
       "depth": 1,
       "priority": "medium",
       "slug": "diagnostics-almac-diagnostic-services-overview-a-day-in-the-life",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/diagnostics/almac-diagnostic-services-overview/current-vacancies/",
@@ -9179,7 +9218,8 @@
       "depth": 1,
       "priority": "medium",
       "slug": "diagnostics-almac-diagnostic-services-overview-current-vacancies",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/diagnostics/almac-diagnostic-services-overview/government-support-for-research-development-programmes/",
@@ -10921,7 +10961,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "discovery-about",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/discovery/about/company-overview/",
@@ -10931,7 +10972,8 @@
       "depth": 1,
       "priority": "medium",
       "slug": "discovery-about-company-overview",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/discovery/about/meet-the-team/",
@@ -10941,7 +10983,8 @@
       "depth": 1,
       "priority": "medium",
       "slug": "discovery-about-meet-the-team",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/discovery/articles-publications/",
@@ -11121,7 +11164,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "events-archive",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/events/",
@@ -11143,7 +11187,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "events-10th-annual-clinical-trials-summit",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/events/10th-annual-predict-tumour-models/",
@@ -20413,7 +20458,8 @@
       "depth": 1,
       "priority": "low",
       "slug": "expert-doctor-rodney-brown",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/expert/dr-derek-quinn/",
@@ -20423,7 +20469,8 @@
       "depth": 1,
       "priority": "low",
       "slug": "expert-dr-derek-quinn",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/expert/dr-gareth-brown/",
@@ -20433,7 +20480,8 @@
       "depth": 1,
       "priority": "low",
       "slug": "expert-dr-gareth-brown",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/expert/dr-jane-mueller/",
@@ -20679,7 +20727,8 @@
       "depth": 2,
       "priority": "medium",
       "slug": "knowledge-experts-alan-carson",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/knowledge/experts/alan-thompson/",
@@ -21619,7 +21668,8 @@
       "depth": 2,
       "priority": "medium",
       "slug": "knowledge-library--e3-82-a2-e3-82-b8-e3-82-a2-e5-a4-aa-e5-b9-b3-e6-b4-8b-e3-81-a",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/knowledge/library/19th-international-isotope-society-uk-group-symposium-synthesis-applications-of-labelled-compounds-2010/",
@@ -21629,7 +21679,8 @@
       "depth": 2,
       "priority": "medium",
       "slug": "knowledge-library-19th-international-isotope-society-uk-group-symposium-synthesi",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/knowledge/library/2019-investments-centered-around-cell-and-gene-therapies/",
@@ -21639,7 +21690,8 @@
       "depth": 2,
       "priority": "medium",
       "slug": "knowledge-library-2019-investments-centered-around-cell-and-gene-therapies",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/knowledge/library/2nd-applied-biocatalysis-summit-interview-with-jill-caswell/",
@@ -28829,7 +28881,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "knowledge-meet-the-experts",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/news/",
@@ -28851,7 +28904,8 @@
       "depth": 1,
       "priority": "low",
       "slug": "news-16966",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/news/2018-19-figures-show-almac-groups-turnover-increased-by-85m-to-634m/",
@@ -28861,7 +28915,8 @@
       "depth": 1,
       "priority": "low",
       "slug": "news-2018-19-figures-show-almac-groups-turnover-increased-by-85m-to-634m",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/news/27288/",
@@ -28871,7 +28926,8 @@
       "depth": 1,
       "priority": "low",
       "slug": "news-27288",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/news/30680/",
@@ -35693,7 +35749,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "pharmaceutical-drug-product-development-almac-pharma-services-response-to-corona",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/pharmaceutical-drug-product-development/bioavailability-enhancement-solutions/",
@@ -35703,7 +35760,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "pharmaceutical-drug-product-development-bioavailability-enhancement-solutions",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/pharmaceutical-drug-product-development/contact-us/",
@@ -35713,7 +35771,8 @@
       "depth": 1,
       "priority": "high",
       "slug": "pharmaceutical-drug-product-development-contact-us",
-      "canonical": ""
+      "canonical": "",
+      "http_status": 200
     },
     {
       "url": "https://www.almacgroup.com/pharmaceutical-drug-product-development/drug-product-testing/",
@@ -36094,6 +36153,106 @@
       "priority": "medium",
       "slug": "update-your-preferences",
       "canonical": ""
+    },
+    {
+      "url": "https://www.almacgroup.com/careers/careers/",
+      "title": "Careers - Almac",
+      "archetype": "job-listing",
+      "depth": 2,
+      "priority": "medium",
+      "slug": "careers-careers",
+      "http_status": 200,
+      "captured_screenshot": true
+    },
+    {
+      "url": "https://www.almacgroup.com/careers/news/almac-recognised-at-the-nus-2023-awards/",
+      "title": "Almac Recognised at the NUS 2023 Awards",
+      "archetype": "news-post",
+      "depth": 3,
+      "priority": "medium",
+      "slug": "careers-news-almac-recognised-at-the-nus-2023-awards",
+      "http_status": 200,
+      "captured_screenshot": true
+    },
+    {
+      "url": "https://www.almacgroup.com/knowledge/library/2019-investments-centered-around-cell-and-gene-therapies/",
+      "title": "2019 Investments Centered around Cell and Gene Therapies",
+      "archetype": "knowledge-library",
+      "depth": 3,
+      "priority": "high",
+      "slug": "knowledge-library",
+      "http_status": 200,
+      "captured_screenshot": true
+    },
+    {
+      "url": "https://www.almacgroup.com/knowledge/library/a-phase-ii-study-evaluating-the-safety-and-efficacy-of-two-amg-386-dose-schedules/",
+      "title": "A Phase II Study: Safety and Efficacy of Two AMG 386 Dose Schedules",
+      "archetype": "knowledge-library",
+      "depth": 3,
+      "priority": "medium",
+      "slug": "knowledge-library-a-phase-ii-study-evaluating-the-safety-and-efficacy-of-two-amg",
+      "http_status": 200,
+      "captured_screenshot": true
+    },
+    {
+      "url": "https://www.almacgroup.com/api-chemical-development/biocatalyst_product/aldehyde-reductases-sub-set-of-cesk-6000-standard-format/",
+      "title": "Aldehyde reductases - Almac",
+      "archetype": "api-chemical-product",
+      "depth": 3,
+      "priority": "medium",
+      "slug": "api-chemical-product-aldehyde-reductases",
+      "http_status": 200,
+      "captured_screenshot": true
+    },
+    {
+      "url": "https://www.almacgroup.com/careers/almac_journies/curtis-campbell/",
+      "title": "Curtis Campbell - Almac",
+      "archetype": "careers-story",
+      "depth": 3,
+      "priority": "medium",
+      "slug": "careers-story-curtis-campbell",
+      "http_status": 200,
+      "captured_screenshot": true
+    },
+    {
+      "url": "https://www.almacgroup.com/careers/resources/a-day-in-the-life-of-a-bioinformatics-scientist/",
+      "title": "A Day in the Life of a Bioinformatics Scientist",
+      "archetype": "careers-resource",
+      "depth": 3,
+      "priority": "medium",
+      "slug": "careers-resource-bioinformatics-scientist",
+      "http_status": 200,
+      "captured_screenshot": true
+    },
+    {
+      "url": "https://www.almacgroup.com/expert/doctor-rodney-brown/",
+      "title": "Dr. Rodney Brown - Almac",
+      "archetype": "expert-profile",
+      "depth": 2,
+      "priority": "medium",
+      "slug": "expert-profile-doctor-rodney-brown",
+      "http_status": 200,
+      "captured_screenshot": true
+    },
+    {
+      "url": "https://www.almacgroup.com/category/uncategorized/",
+      "title": "Uncategorized - Almac",
+      "archetype": "blog-category",
+      "depth": 2,
+      "priority": "low",
+      "slug": "blog-category-uncategorized",
+      "http_status": 200,
+      "captured_screenshot": true
+    },
+    {
+      "url": "https://www.almacgroup.com/client-login/almac-returns-waybill-generator/",
+      "title": "Drug Returns Portal - Almac",
+      "archetype": "client-portal",
+      "depth": 2,
+      "priority": "low",
+      "slug": "client-portal-waybill",
+      "http_status": 200,
+      "captured_screenshot": true
     }
   ],
   "archetypes": [

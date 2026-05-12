@@ -1,0 +1,15 @@
+{
+  "url": "https://www.almacgroup.com/award/abc-council-business-awards-2022/",
+  "slug": "award-abc-council-business-awards-2022",
+  "archetype": "award",
+  "captured_at": "2026-05-12T11:27:31.169218+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "domcontentloaded -> networkidle -> content-stability 500ms x2 -> dismiss OneTrust",
+  "errors": [],
+  "title": "ABC Council Business Awards 2022 - Almac",
+  "meta_description": "",
+  "text_length": 10038
+}

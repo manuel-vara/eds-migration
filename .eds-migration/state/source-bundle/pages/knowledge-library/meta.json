@@ -1,16 +1,15 @@
 {
-  "url": "https://www.almacgroup.com/knowledge/library/",
+  "url": "https://www.almacgroup.com/knowledge/library/2019-investments-centered-around-cell-and-gene-therapies/",
   "slug": "knowledge-library",
   "archetype": "knowledge-library",
-  "captured_at": "2026-05-12T11:08:27.186595+00:00",
+  "captured_at": "2026-05-12T11:27:12.378141+00:00",
   "viewport_sizes": {
     "desktop": "1440x900",
     "mobile": "390x844"
   },
-  "settle_strategy": "networkidle + body.innerText stable 500ms",
+  "settle_strategy": "domcontentloaded -> networkidle -> content-stability 500ms x2 -> dismiss OneTrust",
   "errors": [],
-  "title": "Page not found - Almac",
+  "title": "2019 Investments Centered around Cell and Gene Therapies - Almac",
   "meta_description": "",
-  "canonical": "",
-  "text_length": 9619
+  "text_length": 11223
 }
