@@ -3,145 +3,58 @@
   "issues": [
     {
       "severity": "high",
-      "criterion": "npm run lint:js passes with zero errors",
-      "details": "The .eslintrc.js configuration file is completely missing from the repository root. Running `npm run lint:js` fails with: 'ESLint couldn't find a configuration file'. This means the JS lint step of the CI pipeline cannot execute at all. The phase3-blocks.md documentation incorrectly states 'All code passes npm run lint (eslint + stylelint) with zero errors'.",
-      "remediation": "Add a standard AEM boilerplate .eslintrc.js to the repo root. The standard boilerplate includes 'airbnb-base' extends with @babel/eslint-parser. Note: when a valid .eslintrc.js is provided, several blocks also show no-param-reassign violations (breadcrumbs, cards, content-filter, embed, fragment, hubspot-form, icon-grid, quote, search, stats) that must also be fixed."
+      "criterion": "AEM code bus is operational (code.status should be 200)",
+      "details": "Admin API consistently returns code.status=400. Attempting to fetch static code files from the AEM CDN (https://main--eds-migration--manuel-vara.aem.page/scripts/scripts.js, /blocks/hero/hero.js, /styles/styles.css) all return HTTP 404. The CDN error message is: \"Missing configuration (fetch p800 restarts: 0, shield: 0 - 404) [ Failed to determine configuration (fetch p100 restarts: 0 - 404 - Not Found) ]\". A POST to /code sync job ran but processed 0 files. The orchestrator claimed code.status=200 but independent verification shows 400. Code files are NOT being served from the AEM CDN.",
+      "remediation": "The AEM Code Sync GitHub App may not be properly configured for this forked repo. Steps: (1) Verify the GitHub App \"AEM Code Sync\" (installationId: 34179329) actually has access to the manuel-vara/eds-migration repo (not just the parent jmffraiz/eds-migration). (2) Check if a helix-config.yaml is needed. (3) Ensure the app has repo read permissions. (4) Try manually triggering code sync via admin API with proper auth token."
     },
     {
-      "severity": "high",
-      "criterion": "AEM preview pages render and are visually comparable to source",
-      "details": "All AEM preview and live endpoints return HTTP 404. Admin API shows code.status=404 (code bus not synced) and preview/live status=404 (no DA content published). URLs checked: https://main--eds-migration--manuel-vara.aem.page/ and https://main--eds-migration--manuel-vara.aem.live/ both return 404. fstab.yaml at aem.live is also unreachable. Playwright verification confirmed all pages at 404.",
-      "remediation": "Install the AEM CodeSync GitHub app on the manuel-vara/eds-migration repository to enable code sync to the AEM CDN. Then publish content to DA (Document Authoring) at content.da.live/manuel-vara/eds-migration so preview pages become available."
-    },
-    {
-      "severity": "high",
-      "criterion": "Visual regression: screenshot pairs are mandatory per verifier rules",
-      "details": "No preview screenshots could be captured for any archetype because all AEM preview URLs return 404. The verifier rules require per-archetype screenshot pairs (source-bundle vs preview) at desktop (>=1280px), tablet (~768px), and mobile (<=420px). Zero preview screenshots exist — this is a mandatory FAIL condition per the verifier's visual rule.",
-      "remediation": "Once the AEM preview is available (see code sync issue above), re-run this verifier to capture and compare screenshot pairs for all 28 archetypes. Source bundle screenshots are available at .eds-migration/state/source-bundle/pages/<slug>/desktop.png and mobile.png."
-    },
-    {
-      "severity": "medium",
-      "criterion": "CSS is properly scoped: every selector starts with .{block-name}",
-      "details": "modal.css begins with a `body.modal-open { overflow: hidden; }` selector that is scoped to body, not to `.modal`. While this is a common EDS pattern for scroll locking, it is technically outside the `.modal` block scope and can affect the entire page.",
-      "remediation": "This is acceptable EDS practice but worth noting. Alternatively, use `document.body.classList.add('modal-open')` with a `:has(.modal[open])` selector in styles.css to maintain scoping."
+      "severity": "low",
+      "criterion": "CSS selectors properly scoped to block name",
+      "details": "Two minor CSS scoping issues: (1) modal.css has body.modal-open { overflow: hidden; } - a body-level selector needed to prevent scroll when modal is open. This is a standard EDS pattern but technically outside .modal scope. (2) stats.css has .section.dark .stats .stats-number and .section.dark .stats .stats-label selectors starting with .section.dark instead of .stats - these are contextual overrides for dark section variants, an accepted EDS pattern.",
+      "remediation": "Low priority. For modal: acceptable as-is (common EDS pattern). For stats: acceptable as-is (section-variant styling is a standard EDS pattern). Both lint clean under stylelint."
     }
   ],
   "evidence": [
     {
       "page": "fstab.yaml",
-      "source_artifact": "https://raw.githubusercontent.com/manuel-vara/eds-migration/main/fstab.yaml",
-      "preview_artifact": "https://main--eds-migration--manuel-vara.aem.live/fstab.yaml",
-      "render_strategy": "curl raw HTTP fetch",
+      "source_artifact": "N/A",
+      "preview_artifact": "https://api.github.com/repos/manuel-vara/eds-migration/contents/fstab.yaml?ref=main",
+      "render_strategy": "GitHub API authenticated GET (raw file)",
       "viewports": [],
-      "finding": "PASS: fstab.yaml content is 'mountpoints:\\n  /: https://content.da.live/manuel-vara/eds-migration'. Correct DA mountpoint confirmed. However, the file returns 404 from aem.live (code sync not set up)."
+      "finding": "PASS: fstab.yaml exists at GitHub main with content: mountpoints: /: https://content.da.live/manuel-vara/eds-migration. Correct DA mountpoint. File not accessible via aem.page (404) due to code bus issue."
     },
     {
       "page": "blocks directory",
-      "source_artifact": "https://api.github.com/repos/manuel-vara/eds-migration/contents/blocks?ref=main",
-      "preview_artifact": "N/A",
-      "render_strategy": "GitHub API authenticated GET",
+      "source_artifact": "blueprint.json blockPalette (18 blocks)",
+      "preview_artifact": "https://api.github.com/repos/manuel-vara/eds-migration/contents/blocks?ref=main",
+      "render_strategy": "GitHub API authenticated GET per block",
       "viewports": [],
-      "finding": "PASS: All 18 blueprint blocks found on main branch with both .js and .css files: accordion, breadcrumbs, cards, carousel, columns, content-filter, embed, fragment, hero, hubspot-form, modal, profile, quote, search, stats, table, tabs, video. One extra block (icon-grid) is present but not required by blueprint."
+      "finding": "PASS: All 18 blueprint blocks verified on main branch with .js and .css files (200 status each): accordion, breadcrumbs, cards, carousel, columns, content-filter, embed, fragment, hero, hubspot-form, modal, profile, quote, search, stats, table, tabs, video. Plus icon-grid (extra, not in blueprint)."
     },
     {
-      "page": "export default decorate",
-      "source_artifact": "https://raw.githubusercontent.com/manuel-vara/eds-migration/main/blocks/*/",
-      "preview_artifact": "N/A",
-      "render_strategy": "curl raw HTTP + grep",
+      "page": "lint check",
+      "source_artifact": "package.json + .eslintrc.js + .stylelintrc.json",
+      "preview_artifact": "Fresh clone of manuel-vara/eds-migration@main",
+      "render_strategy": "Local npm install + npm run lint (fresh clone)",
       "viewports": [],
-      "finding": "PASS: All 18 blocks confirmed to have exactly one `export default` function (decorate). content-filter and hubspot-form export async decorate functions."
+      "finding": "PASS: npm run lint exits 0. .eslintrc.js uses airbnb-base, @babel/eslint-parser, no-param-reassign props:false. stylelint-config-standard. All 18 block JS/CSS files pass lint with zero errors."
     },
     {
-      "page": "scripts/scripts.js",
-      "source_artifact": "https://raw.githubusercontent.com/manuel-vara/eds-migration/main/scripts/scripts.js",
-      "preview_artifact": "N/A",
-      "render_strategy": "curl raw HTTP",
+      "page": "code bus / AEM CDN",
+      "source_artifact": "https://admin.hlx.page/status/manuel-vara/eds-migration/main",
+      "preview_artifact": "https://main--eds-migration--manuel-vara.aem.page/scripts/scripts.js",
+      "render_strategy": "curl HTTP GET to admin API and aem.page CDN",
       "viewports": [],
-      "finding": "PASS: scripts.js implements the standard EDS loading pipeline (loadEager→loadLazy→loadDelayed). Auto-blocks include buildHeroBlock (h1+preceding picture) and buildBreadcrumbsBlock (skips homepage/index). Button decoration handles strong=primary, em=secondary, strong+em=accent. loadFonts with sessionStorage optimization."
+      "finding": "FAIL: code.status=400 from admin API. All aem.page code files return 404. CDN error: \"Missing configuration\". POST /code sync processed 0 files. Code bus is not operational, preventing any visual verification of preview pages."
     },
     {
-      "page": "styles/styles.css — brand tokens",
-      "source_artifact": "https://raw.githubusercontent.com/manuel-vara/eds-migration/main/styles/styles.css",
+      "page": "JS code quality",
+      "source_artifact": "GitHub API raw file contents for all 18 blocks",
       "preview_artifact": "N/A",
-      "render_strategy": "curl raw HTTP + grep",
+      "render_strategy": "GitHub API authenticated GET + pattern analysis",
       "viewports": [],
-      "finding": "PASS: CSS custom properties include --color-navy: #002855 (Almac navy) and --color-teal: #00857c (Almac teal). All five section styles implemented: .grey, .dark, .cta-band, .full-width-image, .sidebar."
-    },
-    {
-      "page": "lint checks",
-      "source_artifact": "https://raw.githubusercontent.com/manuel-vara/eds-migration/main/package.json",
-      "preview_artifact": "N/A",
-      "render_strategy": "git clone + npm install + npm run lint",
-      "viewports": [],
-      "finding": "FAIL: npm run lint:js FAILS — .eslintrc.js is absent from repo root. Error: 'ESLint couldn't find a configuration file'. npm run lint:css PASSES with 0 errors (stylelint with stylelint-config-standard)."
-    },
-    {
-      "page": "helix-query.yaml",
-      "source_artifact": "https://raw.githubusercontent.com/manuel-vara/eds-migration/main/helix-query.yaml",
-      "preview_artifact": "N/A",
-      "render_strategy": "curl raw HTTP",
-      "viewports": [],
-      "finding": "PASS: helix-query.yaml version 1, single 'site' index covering /**, targets /query-index.json. Includes all necessary Almac-specific fields: title, description, image, lastModified, publishDate, division, category, contentType, eventDate, eventLocation, eventType, topic, expert, template."
-    },
-    {
-      "page": "head.html",
-      "source_artifact": "https://raw.githubusercontent.com/manuel-vara/eds-migration/main/head.html",
-      "preview_artifact": "N/A",
-      "render_strategy": "curl raw HTTP",
-      "viewports": [],
-      "finding": "PASS: head.html exists with Content-Security-Policy meta, viewport meta, aem.js module script, scripts.js module script, and styles.css stylesheet link."
-    },
-    {
-      "page": "content-filter block architecture",
-      "source_artifact": "https://raw.githubusercontent.com/manuel-vara/eds-migration/main/blocks/content-filter/content-filter.js",
-      "preview_artifact": "N/A",
-      "render_strategy": "curl raw HTTP",
-      "viewports": [],
-      "finding": "PASS: content-filter.js uses readBlockConfig for configuration, fetches from /query-index.json, implements faceted filter dropdowns from config fields, card rendering with date/title/description/location, pagination (PAGE_SIZE=12), URL parameter state, and smooth scroll on page change."
-    },
-    {
-      "page": "hubspot-form lazy-loading",
-      "source_artifact": "https://raw.githubusercontent.com/manuel-vara/eds-migration/main/blocks/hubspot-form/hubspot-form.js",
-      "preview_artifact": "N/A",
-      "render_strategy": "curl raw HTTP",
-      "viewports": [],
-      "finding": "PASS: hubspot-form.js uses IntersectionObserver to defer HubSpot script loading until block is visible in viewport. Script loaded once (hsScriptLoaded flag). Handles missing portalId/formId gracefully."
-    },
-    {
-      "page": "AEM preview availability",
-      "source_artifact": "source-bundle/pages/homepage/desktop.png",
-      "preview_artifact": "https://main--eds-migration--manuel-vara.aem.page/",
-      "render_strategy": "Playwright networkidle + status check",
-      "viewports": [
-        {
-          "name": "desktop",
-          "source_screenshot": "source-bundle/pages/homepage/desktop.png",
-          "preview_screenshot": null,
-          "similarity": null,
-          "method": "N/A — preview returned 404",
-          "threshold": 0.75,
-          "passed": false
-        },
-        {
-          "name": "mobile",
-          "source_screenshot": "source-bundle/pages/homepage/mobile.png",
-          "preview_screenshot": null,
-          "similarity": null,
-          "method": "N/A — preview returned 404",
-          "threshold": 0.75,
-          "passed": false
-        }
-      ],
-      "finding": "FAIL: AEM preview https://main--eds-migration--manuel-vara.aem.page/ returns HTTP 404. Admin API confirms code.status=404 (AEM CodeSync not installed/synced). No preview screenshots possible for any archetype. Visual regression is impossible."
-    },
-    {
-      "page": "framework check",
-      "source_artifact": "all blocks/*.js on main",
-      "preview_artifact": "N/A",
-      "render_strategy": "curl raw HTTP + grep for framework imports",
-      "viewports": [],
-      "finding": "PASS: No framework imports found (React, Vue, jQuery, Tailwind, Bootstrap). All blocks use vanilla ES6+ JavaScript with .js extensions and import only from ../../scripts/aem.js or ../../scripts/scripts.js. No build steps required."
+      "finding": "PASS: All 18 blocks have export default decorate. No framework imports (no react/vue/jquery/tailwind). ES6+ patterns. .js extensions on all imports. Vanilla JS with no build step."
     }
   ],
-  "summary": "FAIL: Missing .eslintrc.js breaks npm run lint:js; AEM preview is unavailable (code bus 404, no DA content) making mandatory visual regression impossible. Code quality and structure are otherwise strong — all 18 blocks present, CSS lint passes, EDS patterns followed correctly."
+  "summary": "FAIL: Code quality (lint, block structure, fstab) all PASS after retry. The critical remaining failure is the AEM code bus (code.status=400, all CDN requests return 404 with \"Missing configuration\" error), preventing visual verification. The orchestrator's claim of code.status=200 is contradicted by direct admin API measurement."
 }
