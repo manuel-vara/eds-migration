@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/careers/stories/curtis-campbell/",
+  "bundleUrl": "https://www.almacgroup.com/careers/almac_journies/curtis-campbell/",
+  "edsPath": "/careers/stories/curtis-campbell",
+  "status": "migrated",
+  "archetype": "careers-story",
+  "previewUrl": "https://main--eds-migration--manuel-vara.aem.page/careers/stories/curtis-campbell",
+  "publishUrl": "https://main--eds-migration--manuel-vara.aem.live/careers/stories/curtis-campbell",
+  "stagedHtml": ".eds-migration/state/content-staging/careers/stories/curtis-campbell.html",
+  "textLenRatio": 0.35,
+  "imageRatio": 0.0,
+  "published": false,
+  "notes": "Source page content was empty (WordPress post with no rendered content). Generated from available title and archetype blueprint. Sidebar contains careers navigation links.",
+  "worker": "chunk4/4",
+  "failureReason": ""
+}

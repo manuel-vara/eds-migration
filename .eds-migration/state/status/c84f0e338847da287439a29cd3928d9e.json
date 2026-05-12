@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/expert/doctor-rodney-brown/",
+  "bundleUrl": "https://www.almacgroup.com/expert/doctor-rodney-brown/",
+  "edsPath": "/knowledge/experts/doctor-rodney-brown",
+  "status": "migrated",
+  "archetype": "expert-profile",
+  "previewUrl": "https://main--eds-migration--manuel-vara.aem.page/knowledge/experts/doctor-rodney-brown",
+  "publishUrl": "https://main--eds-migration--manuel-vara.aem.live/knowledge/experts/doctor-rodney-brown",
+  "stagedHtml": ".eds-migration/state/content-staging/knowledge/experts/doctor-rodney-brown.html",
+  "textLenRatio": 0.72,
+  "imageRatio": 1.0,
+  "published": false,
+  "notes": "Profile page with bio text and headshot image. Old URL pattern /expert/ redirects to /knowledge/experts/. Generated with breadcrumbs, profile block, bio content, expert navigation sidebar.",
+  "worker": "chunk4/4",
+  "failureReason": ""
+}

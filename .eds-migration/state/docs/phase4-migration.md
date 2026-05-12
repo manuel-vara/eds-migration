@@ -177,4 +177,31 @@ All HTML committed to `.eds-migration/state/content-staging/`:
 2. **ABC Council Awards URL path mismatch** — Source bundle slug is `/award/abc-council-business-awards-2022/` but task URL is `/news/awards/abc-council-business-awards-2022/`. EDS path follows task URL. May need redirect from old WordPress URL.
 3. **Award page minimal content** — Source page rendered only the title; body content synthesised from award archetype context and page title. Original page may have been a WordPress post with no article body.
 4. **Fixed: HTML now committed to content-staging** — Previous run stored HTML in `/home/claude/scratch/page-migrator/output/` (outside repo). This retry stores HTML in the correct repo path.
+## Chunk 4/4 — Worker PageMigrator-1b3ddcfa#chunk4
+
+### Pages Migrated
+
+| URL | Archetype | EDS Path | Status | Notes |
+|-----|-----------|----------|--------|-------|
+| https://www.almacgroup.com/careers/stories/curtis-campbell/ | careers-story | /careers/stories/curtis-campbell | migrated | Source page content empty (WordPress post had no rendered content). Title-only page; generated from blueprint archetype structure. textLenRatio≈0.35 |
+| https://www.almacgroup.com/knowledge/experts/doctor-rodney-brown/ | expert-profile | /knowledge/experts/doctor-rodney-brown | migrated | Good content: bio, headshot, expertise areas. Old URL pattern /expert/ mapped to /knowledge/experts/. textLenRatio≈0.72, imageRatio=1.0 |
+| https://www.almacgroup.com/careers/careers/ | job-listing | /careers/careers | migrated | Source page returned 404 at crawl time. Generated job listing page from archetype blueprint. Requires ATS integration for live listings. textLenRatio≈0.30 |
+
+### Pages Not Matching Any Archetype
+None — all 3 pages matched existing archetypes.
+
+### Issues Encountered
+
+1. **Empty Content (careers-story curtis-campbell)**: The WordPress post at `/careers/almac_journies/curtis-campbell/` had an empty `entry-content` div both in the source bundle and on the live site. WP REST API also returned empty content. Generated page uses title + archetype-based placeholder content.
+
+2. **404 Source Page (careers-careers)**: The job listing page returned a 404 at crawl time (source bundle contains a 404 error page). Generated structural EDS page with job listing embed placeholder and careers sidebar navigation.
+
+3. **URL Mismatch**: Task URLs (`/careers/stories/`, `/knowledge/experts/`) differ from source bundle canonical URLs (`/careers/almac_journies/`, `/expert/`). Both URL hashes written to status files. EDS paths use the task (new EDS) URL structure.
+
+4. **No EDS_TOKEN**: da.live upload skipped. HTML committed to `content-staging/` only.
+
+### Fidelity Distribution
+- Dr. Rodney Brown: High fidelity (all available source content captured)
+- Curtis Campbell: Low fidelity (source content was empty — only title available)
+- careers/careers: Low-moderate fidelity (404 source — generated from archetype blueprint)
 

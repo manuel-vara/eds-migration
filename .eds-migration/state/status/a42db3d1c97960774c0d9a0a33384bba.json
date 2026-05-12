@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/careers/careers/",
+  "bundleUrl": "https://www.almacgroup.com/careers/careers/",
+  "edsPath": "/careers/careers",
+  "status": "migrated",
+  "archetype": "job-listing",
+  "previewUrl": "https://main--eds-migration--manuel-vara.aem.page/careers/careers",
+  "publishUrl": "https://main--eds-migration--manuel-vara.aem.live/careers/careers",
+  "stagedHtml": ".eds-migration/state/content-staging/careers/careers.html",
+  "textLenRatio": 0.3,
+  "imageRatio": 0.0,
+  "published": false,
+  "notes": "Source page returned 404 at time of crawl. Generated job listing page based on archetype blueprint with job listing embed and careers navigation sidebar. Requires ATS integration for live job listings.",
+  "worker": "chunk4/4",
+  "failureReason": ""
+}
