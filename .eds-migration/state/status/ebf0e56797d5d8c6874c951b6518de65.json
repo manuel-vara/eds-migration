@@ -1,0 +1,10 @@
+{
+  "url": "https://www.almacgroup.com/careers/",
+  "status": "failed",
+  "previewUrl": "https://main--eds-migration--manuel-vara.aem.page/careers",
+  "publishUrl": "https://main--eds-migration--manuel-vara.hlx.live/careers",
+  "textLenRatio": 0.78,
+  "imageRatio": 0.6,
+  "published": false,
+  "failureReason": "EDS HTML generated and stored in .eds-migration/state/content-staging/careers.html. Upload skipped: no EDS_TOKEN available. HTML is ready for manual upload to da.live at /careers path."
+}

@@ -1,0 +1,10 @@
+{
+  "url": "https://www.almacgroup.com/biotech/",
+  "status": "failed",
+  "previewUrl": "",
+  "publishUrl": "",
+  "textLenRatio": 0.0,
+  "imageRatio": 0.0,
+  "published": false,
+  "failureReason": "URL is a 301 redirect to /events/biotech-japan-2018/. This is a redirect-page pattern added to pending-patterns.json. Needs redirect rule in EDS redirects spreadsheet, not a content page."
+}

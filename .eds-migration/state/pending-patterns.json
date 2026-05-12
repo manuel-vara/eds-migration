@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "url": "https://www.almacgroup.com/biotech/",
+    "pattern": "redirect-page",
+    "description": "URL is a 301 redirect to /events/biotech-japan-2018/ - needs a redirect rule in the EDS redirects spreadsheet, not a content page",
+    "redirectsTo": "https://www.almacgroup.com/events/biotech-japan-2018/",
+    "redirectArchetype": "events"
+  }
+]
