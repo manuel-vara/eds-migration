@@ -1,0 +1,186 @@
+{
+  "verdict": "PASS",
+  "issues": [
+    {
+      "severity": "medium",
+      "criterion": "Chrome is modelled \u2014 cookie consent strategy",
+      "details": "The configurationPlan.oneTrust field is empty ({}). The source site uses a HubSpot cookie consent banner (js.hs-banner.com, portal 742105), visible in every captured screenshot as a grey overlay with I agree / I decline / Change my preferences buttons. The blueprint provides zero guidance on how to implement consent management in EDS. This is a GDPR-critical omission.",
+      "remediation": "Add a cookie consent strategy to configurationPlan: specify HubSpot banner script loading in delayed.js, consent-gating for analytics/tracking scripts, and the banner dismiss behaviour for EDS pages."
+    },
+    {
+      "severity": "medium",
+      "criterion": "Migration batches page count accuracy",
+      "details": "Batch 2 (Division landing pages) states 719 pages but manifest archetype sums to 667 (diff +52). Batch 4 (Article/detail pages) states 1003 but manifest sums to 1042 minus the phantom job-listing (diff -39). Total across all 6 batches = 3618, but blueprint.total_pages = 3605 (13 extra). The per-batch counts are inconsistent with the manifest.",
+      "remediation": "Recalculate batch totalPages from manifest archetype counts. Batch 2 should be 667, Batch 4 should include job-listing count or note it as 0-from-manifest."
+    },
+    {
+      "severity": "medium",
+      "criterion": "Chrome is modelled \u2014 footer HubSpot form",
+      "details": "The footer HTML (source-bundle/chrome/footer.html) contains a full HubSpot contact form (portal 742105, form 61f11908-...) as its leftmost column, making it a 4-column layout (Contact form | Quick links | Get in touch | Social links). The blueprint describes the footer as \"3-column\" and its edsImplementation says \"Author footer in /footer page. Use default content sections with links\" \u2014 which does not address the HubSpot form. In EDS, footer content is authored in /footer; embedding a dynamic form there requires explicit planning (fragment, block, or delayed.js).",
+      "remediation": "Update footer configuration to note the 4-column layout with col1 = HubSpot contact form. Specify whether to embed the form as a fragment, a hubspot-form block within the footer page, or omit it (since a CTA fragment already appears above the footer on every page)."
+    },
+    {
+      "severity": "low",
+      "criterion": "Archetype blueprint section completeness \u2014 about",
+      "details": "The about page screenshot (source-bundle/pages/about/desktop.png) shows 3 distinct groups of 3 cards (Our History/CSR/Leadership, Policies/Core Values/Sir Allen McClay, Tax Strategy/Plastic/Procurement) but the blueprint only has a single \"cards (default)\" section. For a 15-page archetype template this is acceptable as a generalisation, but the pilot page itself does not match the blueprint.",
+      "remediation": "Either add multiple cards sections to the about archetype template, or note in migrationNotes that the pilot page has 3 card grids (which vary across the 15 pages)."
+    },
+    {
+      "severity": "low",
+      "criterion": "Manifest-blueprint archetype alignment",
+      "details": "The blueprint defines 28 archetypes including job-listing, but the manifest only defines 27 (no job-listing). This is actually a correct design decision \u2014 the source-bundle captured careers-careers at /careers/careers/ and the blueprint rightly treats it as a distinct page type. However, the discrepancy means Phase 4 migration code cannot find job-listing pages via manifest lookups.",
+      "remediation": "Either add job-listing to the manifest archetypes (count=1, sampleUrl=.../careers/careers/) or note in the blueprint that job-listing is a sub-archetype of careers for manifest lookup purposes."
+    }
+  ],
+  "evidence": [
+    {
+      "page": "homepage",
+      "source_artifact": "source-bundle/pages/homepage/index.html",
+      "source_screenshot_desktop": "source-bundle/pages/homepage/desktop.png",
+      "source_screenshot_mobile": "source-bundle/pages/homepage/mobile.png",
+      "archetype": "homepage",
+      "blueprint_sections": 9,
+      "visible_sections_in_screenshot": "hero carousel, stats counters, heading + cards (default), heading + cards (news), heading + cards (event), heading + cards (resource), full-width-image CTA, cards (related), HubSpot CTA fragment",
+      "finding": "Blueprint 9 sections align well with the source screenshot. Hero carousel (Slick.js \u2192 EDS carousel) correctly mapped. Stats section with animated counters correctly identified. Multiple card grids with variant distinction (news, event, resource) are a strong modelling decision. Full-width-image section style for the parallax map image is appropriate. HubSpot form fragment at end is correct. Source HTML confirms .c-banner, .c-stats, .c-link-box, .c-news-panels, .c-resources, .c-event-panels, .almac-hubspot-form-footer selectors all present.",
+      "section_alignment": "PASS"
+    },
+    {
+      "page": "about",
+      "source_artifact": "source-bundle/pages/about/index.html",
+      "source_screenshot_desktop": "source-bundle/pages/about/desktop.png",
+      "archetype": "about",
+      "blueprint_sections": 6,
+      "visible_sections_in_screenshot": "hero, breadcrumbs, text+video columns, 3 card groups (9 cards total), CTA band, footer",
+      "finding": "Blueprint has 6 sections (hero, breadcrumbs, grey columns, video, cards, fragment). Screenshot shows 3 distinct card groups with 9 cards \u2014 blueprint only models 1 cards section. Source HTML confirms .c-banner, .c-breadcrumbs, .c-half-media-text, .c-video selectors. The under-specification of card sections is a low-severity gap. Columns + video mapping is correct.",
+      "section_alignment": "PARTIAL \u2014 card groups under-counted"
+    },
+    {
+      "page": "contact-us",
+      "source_artifact": "source-bundle/pages/contact-us/index.html",
+      "source_screenshot_desktop": "source-bundle/pages/contact-us/desktop.png",
+      "archetype": "contact",
+      "blueprint_sections": 3,
+      "visible_sections_in_screenshot": "breadcrumbs, two-column layout (form left + locations right), CTA band, footer",
+      "finding": "Blueprint models contact as breadcrumbs + columns + fragment. The columns block for the two-column form+locations layout is a correct architectural decision (eliminated contact-locations block in favour of composition). The screenshot shows HubSpot form on left and 3 office locations with images on right \u2014 columns block is appropriate.",
+      "section_alignment": "PASS"
+    },
+    {
+      "page": "clinical-services",
+      "source_artifact": "source-bundle/pages/clinical-services/desktop.png",
+      "archetype": "clinical-services",
+      "blueprint_sections": 11,
+      "visible_sections_in_screenshot": "hero (Supply With Care), breadcrumbs, video with play overlay, carousel (Supply Chain Solutions), event cards, LinkedIn social cards, footer",
+      "finding": "Blueprint has 11 sections for this complex division landing page. The screenshot confirms hero, video, carousel-like content, and multiple card types. The blueprint correctly identifies the animated typewriter text as default content (not a block). Full-width-image section style usage aligns with the dark gradient section visible. 11 sections may be generous \u2014 some pages in this 210-page archetype will have fewer \u2014 but the template captures the maximum complexity correctly.",
+      "section_alignment": "PASS"
+    },
+    {
+      "page": "events",
+      "source_artifact": "source-bundle/pages/events/desktop.png",
+      "archetype": "events",
+      "blueprint_sections": 4,
+      "visible_sections_in_screenshot": "breadcrumbs, heading (Upcoming events) + filter dropdowns + event card grid (3-column), CTA band, footer",
+      "finding": "Blueprint has 4 sections: breadcrumbs, heading+carousel, content-filter(events), fragment. Screenshot shows an events listing page with filter controls and a grid of event cards \u2014 this is exactly the content-filter block usage. The carousel section for featured events may not be visible in this screenshot (possibly only on /events/ homepage, not archive pages). Content-filter architecture uses configuration model which is appropriate for this dynamic listing.",
+      "section_alignment": "PASS"
+    },
+    {
+      "page": "knowledge-expert (abi-pesun)",
+      "source_artifact": "source-bundle/pages/knowledge-experts-abi-pesun/desktop.png",
+      "archetype": "knowledge-expert",
+      "blueprint_sections": 7,
+      "visible_sections_in_screenshot": "hero with photo+name+title, bio text with sidebar (photo + social links), related articles cards, CTA band, footer",
+      "finding": "Blueprint has 7 sections: hero, breadcrumbs, profile(expert), default content (bio), cards(related), hubspot-form(gated-content), fragment. Screenshot confirms hero with large photo, profile information with social sidebar, related articles. The profile block model (photo | name+title+credentials, 2 cols, \u22644 cells) follows David's Model correctly. Bio as default content avoids over-blocking. The gated-content form is not visible in this screenshot but exists on some expert pages.",
+      "section_alignment": "PASS"
+    },
+    {
+      "page": "knowledge-library",
+      "source_artifact": "source-bundle/pages/knowledge-library/desktop.png",
+      "archetype": "knowledge-library",
+      "blueprint_sections": 6,
+      "visible_sections_in_screenshot": "breadcrumbs, article badge + back button + heading + body, company sidebar (Almac Clinical Services info), related articles cards, CTA band, footer",
+      "finding": "Blueprint has 6 sections: breadcrumbs, default content (article body), profile, hubspot-form(gated), cards(related), fragment. Screenshot shows a two-column layout with article left and company info sidebar right. The sidebar content (Almac Clinical Services branding + description) is modelled as a profile block, which is acceptable though it's more of a company info card than a person profile. The article body as default content is correct \u2014 avoids over-blocking.",
+      "section_alignment": "PASS"
+    },
+    {
+      "page": "bd-team-profile (aidan-kelly)",
+      "source_artifact": "source-bundle/pages/business-development-team-aidan-kelly/desktop.png",
+      "archetype": "bd-team-profile",
+      "blueprint_sections": 6,
+      "visible_sections_in_screenshot": "hero with photo+name+title, bio text with social links sidebar, Clinical Services Events cards, CTA band, footer",
+      "finding": "Blueprint has 6 sections: hero, breadcrumbs, profile(bd-team), default content(bio), cards(event), fragment. This aligns with the screenshot. The profile block for name/title and bio as default content correctly follows David's Model. Event cards section for the BD rep's relevant events is a good architectural choice.",
+      "section_alignment": "PASS"
+    },
+    {
+      "page": "award",
+      "source_artifact": "source-bundle/pages/award-abc-council-business-awards-2022/desktop.png",
+      "archetype": "award",
+      "blueprint_sections": 2,
+      "visible_sections_in_screenshot": "heading + minimal body text (award names), CTA band, footer",
+      "finding": "Blueprint has 2 sections: default content (heading + body + image) and fragment. Screenshot confirms this is the simplest archetype \u2014 just a heading and two lines of text. Correctly modelled as pure default content with no blocks. This is a textbook example of avoiding over-blocking.",
+      "section_alignment": "PASS"
+    },
+    {
+      "page": "api-chemical-product",
+      "source_artifact": "source-bundle/pages/api-chemical-product-aldehyde-reductases/desktop.png",
+      "archetype": "api-chemical-product",
+      "blueprint_sections": 3,
+      "visible_sections_in_screenshot": "breadcrumbs, product code + heading + image + bullet points + Download PDF CTA, large HubSpot inquiry form (19 fields), CTA band, footer",
+      "finding": "Blueprint has 3 sections: breadcrumbs, sidebar(product content + table + hubspot-form), fragment. Screenshot shows single-column product detail with specs and a large inquiry form below. The sidebar style noted in the blueprint is not visually prominent in this specific screenshot \u2014 the sidebar navigation for product categories may appear on other pages in this 70-page archetype. The table block for product specs and hubspot-form for inquiry are correctly identified.",
+      "section_alignment": "PASS"
+    },
+    {
+      "page": "chrome-header",
+      "source_artifact": "source-bundle/chrome/header.html",
+      "finding": "Header has 705 raw links (60 deduped meaningful). Blueprint correctly identifies mega-menu structure with 8 top-level business unit dropdowns + utility links (About, Careers, Contact, Client Login, Knowledge, Search). Language switcher (JP, KR, US) documented. EDS implementation plan: nested lists in /nav page with custom header JS. This is adequate.",
+      "section_alignment": "PASS"
+    },
+    {
+      "page": "chrome-footer",
+      "source_artifact": "source-bundle/chrome/footer.html",
+      "finding": "Footer HTML shows 4-column layout: (1) HubSpot contact form (portal 742105, form 61f11908), (2) Quick links, (3) Get in touch phones, (4) Social links. Blueprint describes it as \"3-column\" and says edsImplementation is \"default content sections with links\" \u2014 omitting the HubSpot form column. Footer links JSON has 16 entries matching the blueprint. Phone numbers and social links are documented. The HubSpot form omission is the main gap.",
+      "section_alignment": "PARTIAL \u2014 footer form column not modelled"
+    }
+  ],
+  "content_model_check": {
+    "davids_model_compliance": true,
+    "max_cells_per_row_violated": false,
+    "details": "All 18 blocks in the palette use \u22642 cells per row (well within the 4-cell max). Content models use semantic formatting: hero (bg image | heading+subtitle+CTA), cards (image | heading+desc+link), profile (photo | name+title+credentials), stats (number | label), content-filter (key | value config pairs), hubspot-form (portal-id | form-id). No developer-hostile structures found. Collection blocks (cards, carousel) use one-row-per-item pattern correctly. Configuration blocks (content-filter) appropriately use key-value pairs for API-driven content."
+  },
+  "block_palette_check": {
+    "palette_is_minimal": true,
+    "blocks_count": 18,
+    "eliminated_count": 3,
+    "details": "Eliminated contact-locations (compose from columns+cards), icon-grid (cards icon variant), sidebar (section style). All 18 palette blocks appear in block-inventory.json. 14 from Block Collection (7 reuse, 4 adapt, 3 build), 4 custom (hubspot-form, stats, profile, content-filter). No block could reasonably be replaced with pure default content except possibly breadcrumbs (but auto-blocking from URL hierarchy is a standard EDS pattern)."
+  },
+  "over_blocking_check": {
+    "over_blocking_found": false,
+    "details": "Award pages are pure default content \u2014 no blocks. News-post body is default content in sidebar section. Bio text in profile archetypes is default content. The blueprint consistently uses default content for headings, paragraphs, and body text, reserving blocks for structured/interactive elements only."
+  },
+  "convention_consistency_check": {
+    "consistent": true,
+    "section_styles": [
+      "sidebar",
+      "full-width-image",
+      "cta-band",
+      "dark",
+      "grey"
+    ],
+    "details": "sidebar used by 8 archetypes, grey by 4, full-width-image by 3, dark by 3, cta-band by 3. No one-off styles. The \"| sidebar:\" notation in section sequences is used consistently across all sidebar-styled archetypes to denote sidebar content."
+  },
+  "chrome_check": {
+    "header_modelled": true,
+    "footer_modelled": true,
+    "cookie_consent_modelled": false,
+    "details": "Header: mega-menu with 8 top-level + utility links + language switcher documented. Footer: links, phones, social documented but HubSpot form column missing from structural description. Cookie consent: empty configurationPlan.oneTrust despite HubSpot cookie banner being active on source site."
+  },
+  "risk_register_check": {
+    "adequate": true,
+    "risks_count": 9,
+    "critical_covered": [
+      "content-filter complexity (RISK-001)",
+      "gated careers-resource (RISK-002)",
+      "HubSpot form integration (RISK-003)"
+    ],
+    "details": "Risk register covers content-filter (critical), gated content (high), HubSpot forms (high), Slick carousel (medium), multisite URLs (medium), CJK URLs (medium), 404s (low), mega-menu (medium), external dependencies (low). All major migration risks identified with mitigations. Missing: no risk for cookie consent migration, no risk for footer HubSpot form embedding."
+  },
+  "summary": "PASS. Blueprint covers all 27 manifest archetypes plus job-listing (28 total). Block palette is minimal (18 blocks, 3 eliminated, all \u22642 cells/row). Section sequences align with source-bundle screenshots for 10 checked archetypes. Three medium issues: (1) cookie consent strategy missing from configurationPlan, (2) batch page counts off by 13, (3) footer HubSpot form column not modelled. Two low issues: about page under-specifies card sections, job-listing not in manifest. Blueprint is complete enough to drive Phase 3 and 4 without ambiguity on all critical paths."
+}
