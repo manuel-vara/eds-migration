@@ -47,3 +47,93 @@ indices:
       template:
         select: head > meta[name="template"]
         value: attribute(el, "content")
+
+  events:
+    include:
+      - /events/**
+    target: /events-index.json
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: attribute(el, "content")
+      description:
+        select: head > meta[name="description"]
+        value: attribute(el, "content")
+      image:
+        select: head > meta[property="og:image"]
+        value: attribute(el, "content")
+      eventDate:
+        select: head > meta[name="event-date"]
+        value: attribute(el, "content")
+      eventLocation:
+        select: head > meta[name="event-location"]
+        value: attribute(el, "content")
+      eventType:
+        select: head > meta[name="event-type"]
+        value: attribute(el, "content")
+      division:
+        select: head > meta[name="division"]
+        value: attribute(el, "content")
+      lastModified:
+        select: none
+        value: dateValue(headers["last-modified"], "ddd, DD MMM YYYY hh:mm:ss GMT")
+
+  news:
+    include:
+      - /news/**
+    target: /news-index.json
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: attribute(el, "content")
+      description:
+        select: head > meta[name="description"]
+        value: attribute(el, "content")
+      image:
+        select: head > meta[property="og:image"]
+        value: attribute(el, "content")
+      publishDate:
+        select: head > meta[name="publish-date"]
+        value: attribute(el, "content")
+      division:
+        select: head > meta[name="division"]
+        value: attribute(el, "content")
+      category:
+        select: head > meta[name="category"]
+        value: attribute(el, "content")
+      lastModified:
+        select: none
+        value: dateValue(headers["last-modified"], "ddd, DD MMM YYYY hh:mm:ss GMT")
+
+  knowledge:
+    include:
+      - /knowledge/**
+    target: /knowledge-index.json
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: attribute(el, "content")
+      description:
+        select: head > meta[name="description"]
+        value: attribute(el, "content")
+      image:
+        select: head > meta[property="og:image"]
+        value: attribute(el, "content")
+      contentType:
+        select: head > meta[name="content-type"]
+        value: attribute(el, "content")
+      topic:
+        select: head > meta[name="topic"]
+        value: attribute(el, "content")
+      expert:
+        select: head > meta[name="expert"]
+        value: attribute(el, "content")
+      division:
+        select: head > meta[name="division"]
+        value: attribute(el, "content")
+      publishDate:
+        select: head > meta[name="publish-date"]
+        value: attribute(el, "content")
+      lastModified:
+        select: none
+        value: dateValue(headers["last-modified"], "ddd, DD MMM YYYY hh:mm:ss GMT")

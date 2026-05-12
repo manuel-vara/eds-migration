@@ -1,0 +1,36 @@
+version: 1
+sitemaps:
+  default:
+    origin: https://main--eds-migration--manuel-vara.aem.live
+    include:
+      - /**
+    exclude:
+      - /client-login/**
+      - /client-login
+      - /careers/resources/**
+      - /category/**
+      - /drafts/**
+      - /nav
+      - /footer
+      - /fragments/**
+    target: /sitemap.xml
+    hreflang:
+      - lang: en
+        href: https://www.almacgroup.com{path}
+  events:
+    origin: https://main--eds-migration--manuel-vara.aem.live
+    include:
+      - /events/**
+    exclude:
+      - /events/index
+    target: /sitemap-events.xml
+  news:
+    origin: https://main--eds-migration--manuel-vara.aem.live
+    include:
+      - /news/**
+    target: /sitemap-news.xml
+  knowledge:
+    origin: https://main--eds-migration--manuel-vara.aem.live
+    include:
+      - /knowledge/**
+    target: /sitemap-knowledge.xml

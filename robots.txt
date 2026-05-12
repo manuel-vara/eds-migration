@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+# Disallow auth-gated and internal paths
+Disallow: /client-login/
+Disallow: /careers/resources/
+Disallow: /category/
+Disallow: /drafts/
+Disallow: /fragments/
+Disallow: /?s=
+
+# Sitemap index
+Sitemap: https://main--eds-migration--manuel-vara.aem.live/sitemap.xml
+Sitemap: https://main--eds-migration--manuel-vara.aem.live/sitemap-events.xml
+Sitemap: https://main--eds-migration--manuel-vara.aem.live/sitemap-news.xml
+Sitemap: https://main--eds-migration--manuel-vara.aem.live/sitemap-knowledge.xml
