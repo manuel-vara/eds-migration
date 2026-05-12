@@ -5,5 +5,13 @@
     "description": "URL is a 301 redirect to /events/biotech-japan-2018/ - needs a redirect rule in the EDS redirects spreadsheet, not a content page",
     "redirectsTo": "https://www.almacgroup.com/events/biotech-japan-2018/",
     "redirectArchetype": "events"
+  },
+  {
+    "url": "https://www.almacgroup.com/pharma-services/",
+    "pattern": "redirect-to-landing-page",
+    "description": "URL redirects to /pharma-services-boston-workshop-april-2026/ which is a landing page for a Boston workshop event. Not a pharma-services service hub. Needs EDS redirect rule from /pharma-services/ to /pharma-services-boston-workshop-april-2026/. Landing page content has been staged at content-staging/pharma-services-boston-workshop-april-2026.html.",
+    "redirectsTo": "https://www.almacgroup.com/pharma-services-boston-workshop-april-2026/",
+    "redirectArchetype": "landing",
+    "stagedContent": "content-staging/pharma-services-boston-workshop-april-2026.html"
   }
 ]

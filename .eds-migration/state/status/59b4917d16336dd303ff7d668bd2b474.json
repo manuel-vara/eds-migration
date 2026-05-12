@@ -1,0 +1,14 @@
+{
+  "url": "https://www.almacgroup.com/pharma-services/",
+  "archetype": "redirect",
+  "path": "/pharma-services",
+  "status": "failed",
+  "previewUrl": "",
+  "publishUrl": "",
+  "textLenRatio": 0.0,
+  "imageRatio": 0.0,
+  "published": false,
+  "failureReason": "URL is a 301 redirect to https://www.almacgroup.com/pharma-services-boston-workshop-april-2026/ which is a landing page for a Boston workshop event. Not a pharma-services service hub. Added to pending-patterns.json. The redirect destination content has been staged at content-staging/pharma-services-boston-workshop-april-2026.html. Needs EDS redirect rule: /pharma-services -> /pharma-services-boston-workshop-april-2026.",
+  "redirectsTo": "https://www.almacgroup.com/pharma-services-boston-workshop-april-2026/",
+  "addedToPendingPatterns": true
+}

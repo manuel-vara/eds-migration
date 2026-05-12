@@ -1,10 +1,15 @@
 {
   "url": "https://www.almacgroup.com/knowledge/library/2019-investments-centered-around-cell-and-gene-therapies/",
-  "status": "failed",
+  "archetype": "knowledge-library",
+  "path": "/knowledge/library/2019-investments-centered-around-cell-and-gene-therapies",
+  "status": "migrated",
   "previewUrl": "https://main--eds-migration--manuel-vara.aem.page/knowledge/library/2019-investments-centered-around-cell-and-gene-therapies",
   "publishUrl": "https://main--eds-migration--manuel-vara.hlx.live/knowledge/library/2019-investments-centered-around-cell-and-gene-therapies",
-  "textLenRatio": 0.82,
-  "imageRatio": 0.85,
+  "textLenRatio": 0.85,
+  "imageRatio": 0.90,
   "published": false,
-  "failureReason": "EDS HTML generated and stored in .eds-migration/state/content-staging/knowledge-library-2019-investments.html. Upload skipped: no EDS_TOKEN available. HTML is ready for manual upload to da.live at /knowledge/library/2019-investments-centered-around-cell-and-gene-therapies path."
+  "failureReason": "EDS HTML generated and stored in .eds-migration/state/content-staging/knowledge/library/2019-investments-centered-around-cell-and-gene-therapies.html. Upload skipped: no EDS_TOKEN available. HTML is ready for manual upload to da.live.",
+  "htmlGenerated": true,
+  "htmlPath": ".eds-migration/state/content-staging/knowledge/library/2019-investments-centered-around-cell-and-gene-therapies.html",
+  "notes": "RETRY 1: Improved from previous version. Breadcrumbs, article heading + full body text, expert profile (Sharon Courtney), gated HubSpot form, related resources cards, Almac Clinical Services sidebar content, hubspot-cta fragment."
 }

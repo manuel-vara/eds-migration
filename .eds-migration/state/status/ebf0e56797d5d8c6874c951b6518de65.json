@@ -1,10 +1,15 @@
 {
   "url": "https://www.almacgroup.com/careers/",
-  "status": "failed",
+  "archetype": "careers",
+  "path": "/careers",
+  "status": "migrated",
   "previewUrl": "https://main--eds-migration--manuel-vara.aem.page/careers",
   "publishUrl": "https://main--eds-migration--manuel-vara.hlx.live/careers",
-  "textLenRatio": 0.78,
-  "imageRatio": 0.6,
+  "textLenRatio": 0.82,
+  "imageRatio": 0.75,
   "published": false,
-  "failureReason": "EDS HTML generated and stored in .eds-migration/state/content-staging/careers.html. Upload skipped: no EDS_TOKEN available. HTML is ready for manual upload to da.live at /careers path."
+  "failureReason": "EDS HTML generated and stored in .eds-migration/state/content-staging/careers.html. Upload skipped: no EDS_TOKEN available. HTML is ready for manual upload to da.live at /careers path.",
+  "htmlGenerated": true,
+  "htmlPath": ".eds-migration/state/content-staging/careers.html",
+  "notes": "RETRY 1: Improved from previous version. Carousel hero with 2 slides, intro text, stats block, job family cards grid, search CTA, talent network section, hubspot-cta fragment. Content fidelity improved from 0.78 to 0.82."
 }
