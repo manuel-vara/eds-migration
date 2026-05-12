@@ -1,0 +1,10 @@
+.*
+*.md
+LICENSE
+package.json
+package-lock.json
+test/*
+eds_migrate/*
+pyproject.toml
+requirements.txt
+.env.example
