@@ -1,0 +1,877 @@
+{
+  "generated_at": "2026-05-12",
+  "source_site": "https://www.almacgroup.com",
+  "total_pages_in_manifest": 3605,
+  "total_archetypes": 27,
+  "inventory_version": "2b-v1",
+  "methodology": "Patterns identified from sample-scrape.json (32 pages across 27 archetypes), mapped to EDS Block Collection (https://www.aem.live/developer/block-collection) and Block Party. Block Collection verified via live nav-page search; Block Party searched for specialized patterns (breadcrumb, filter, stats, sidebar, profile, testimonial, form embed).",
+  "block_collection_available": {
+    "boilerplate_blocks": ["hero", "columns", "cards", "header", "footer"],
+    "boilerplate_default_content": ["headings", "text", "images", "lists", "links", "buttons", "code", "sections", "icons"],
+    "boilerplate_metadata": ["metadata", "section-metadata"],
+    "collection_blocks": ["embed", "fragment", "table", "video", "accordion", "breadcrumbs", "carousel", "modal", "quote", "search", "tabs", "form"]
+  },
+  "block_party_matches": {
+    "breadcrumb": {
+      "title": "Breadcrumb",
+      "source": "https://github.com/hlxsites/elixirsolutions/blob/19da1f3448b7933d85f6c198d2b0293d55b339ce/blocks/breadcrumb/",
+      "description": "Creates a breadcrumb nav based on page titles of parent pages",
+      "author": "shsteimer"
+    },
+    "content-filter-hub": {
+      "title": "Content Filter Hub",
+      "source": "https://github.com/rusmeenkhan1/content-filter-hub",
+      "description": "Search, filter, sort and explore - find exactly what you're looking for with powerful real-time content filtering.",
+      "showcase": "https://main--content-filter-hub--rusmeenkhan1.aem.page/en/projects",
+      "author": "rusmeenkhan1"
+    }
+  },
+  "local_project_blocks": [],
+  "blocks": [
+    {
+      "name": "hero",
+      "description": "Full-width banner with background image, gradient overlay, heading (h1), subtitle paragraph, and optional CTA button. Used as the primary page introduction on nearly every page. The homepage version features a multi-slide carousel (Slick.js on source site), but most inner pages use a single static hero.",
+      "source": "block-collection",
+      "block_collection_url": "https://main--aem-block-collection--adobe.aem.live/block-collection/hero",
+      "source_pattern": {
+        "css_selectors": [".c-banner", ".c-banner-blank--wrap", ".c-banner__content", ".c-banner__title"],
+        "html_pattern": "<section class='c-banner'><div class='c-banner__content'><h1>Title</h1><p>Subtitle</p><a class='c-banner__cta'>CTA</a></div></section>"
+      },
+      "variants": [
+        {
+          "name": "hero (default)",
+          "description": "Static single-image hero with heading, subtitle, and CTA button",
+          "used_by_archetypes": ["about", "landing", "analytical", "api-chemical", "clinical-services", "clinical-technologies", "commercial-services", "diagnostics", "discovery", "pharma-drug", "knowledge", "careers", "client-portal"]
+        },
+        {
+          "name": "hero (carousel)",
+          "description": "Multi-slide hero using Block Collection Carousel wrapper or nested carousel. Homepage has 3-5 rotating slides, each with image + text + CTA",
+          "used_by_archetypes": ["homepage"],
+          "notes": "Consider implementing as Carousel block with hero-styled slides rather than modifying the hero block itself"
+        },
+        {
+          "name": "hero (profile)",
+          "description": "Hero with person's name, title, photo, and back-navigation. Used on profile/expert pages",
+          "used_by_archetypes": ["bd-team-profile", "knowledge-expert", "expert-profile"]
+        }
+      ],
+      "content_model": {
+        "type": "standalone",
+        "structure": "Single row: Col1 = background image, Col2 = heading + subtitle + CTA link (as strong/em link for button styling)",
+        "rows": [
+          {"col1": "Background image", "col2": "h1 heading, paragraph, CTA link (bold = primary button)"}
+        ],
+        "max_cells_per_row": 2,
+        "notes": "Block Collection hero uses image in first column, content in second. For carousel variant, use a Carousel block wrapping multiple hero content panels."
+      },
+      "archetype_usage": ["homepage", "about", "landing", "analytical", "api-chemical", "clinical-services", "clinical-technologies", "commercial-services", "diagnostics", "discovery", "pharma-drug", "knowledge", "careers", "client-portal", "bd-team-profile", "knowledge-expert", "expert-profile"],
+      "page_count_estimate": 2800,
+      "complexity": "simple",
+      "complexity_notes": "CSS-only for static hero. Carousel variant needs Block Collection Carousel JS.",
+      "priority": "critical"
+    },
+    {
+      "name": "cards",
+      "description": "Grid of content cards displaying items with images, headings, descriptions, and optional CTAs. The most versatile block on the site with 5 distinct variants used across all major archetypes. The EDS Block Collection Cards block supports variant classes to differentiate layouts.",
+      "source": "block-collection",
+      "block_collection_url": "https://main--aem-block-collection--adobe.aem.live/block-collection/cards",
+      "source_pattern": {
+        "css_selectors": [".c-link-box", ".c-box-link-title-image", ".c-news-panels", ".c-resources", ".c-event-panels"],
+        "html_pattern": "<div class='c-link-box'><a><img/><h4>Title</h4><p>Description</p><span>Find out more</span></a></div>"
+      },
+      "variants": [
+        {
+          "name": "cards (default)",
+          "description": "Standard link-box cards: image on top, h4 title, description text, 'Find out more' CTA. 2-3 column responsive grid. Used for service divisions, about sub-pages, and general navigation.",
+          "source_component": "c-link-box / c-box-link-title-image",
+          "used_by_archetypes": ["about", "landing", "analytical", "api-chemical", "clinical-technologies", "commercial-services", "homepage", "pharma-drug"],
+          "page_count_estimate": 500
+        },
+        {
+          "name": "cards (news)",
+          "description": "News cards: image on top, date below, then article title. Used for 'Latest News' sections on division landing pages and homepage. Sometimes in a carousel.",
+          "source_component": "c-news-panels",
+          "used_by_archetypes": ["analytical", "api-chemical", "clinical-technologies", "commercial-services", "discovery", "homepage", "pharma-drug"],
+          "page_count_estimate": 400
+        },
+        {
+          "name": "cards (resource)",
+          "description": "Knowledge resource cards: dark gradient overlay on background image, resource type tag (e.g., 'White Paper', 'Webinar'), title overlay. 3-column grid. Links to knowledge library items.",
+          "source_component": "c-resources",
+          "used_by_archetypes": ["analytical", "api-chemical", "clinical-technologies", "commercial-services", "homepage", "pharma-drug"],
+          "page_count_estimate": 400
+        },
+        {
+          "name": "cards (event)",
+          "description": "Event cards: image, event name, date range, location text, short description, 'Event Details' CTA. 3-column grid. Used on event listing and division pages.",
+          "source_component": "c-event-panels",
+          "used_by_archetypes": ["bd-team-profile", "clinical-technologies", "homepage", "events"],
+          "page_count_estimate": 100
+        },
+        {
+          "name": "cards (related)",
+          "description": "Related content cards: compact row of 2-3 cards with type tag, title, optional author name. Placed at the bottom of article/detail pages for cross-linking to related content.",
+          "source_component": "Various related content sections",
+          "used_by_archetypes": ["analytical", "api-chemical", "clinical-technologies", "commercial-services", "homepage", "knowledge-expert", "pharma-drug", "news-post"],
+          "page_count_estimate": 1500
+        }
+      ],
+      "content_model": {
+        "type": "collection",
+        "structure": "Each card is one row. Col1 = image, Col2 = text content (heading, paragraph, link). Variant class on block name determines layout. For 'related' variant, content is auto-populated from query-index.",
+        "rows": [
+          {"col1": "Card image", "col2": "Heading (h3/h4), paragraph (description), link (CTA)"}
+        ],
+        "max_cells_per_row": 2,
+        "variant_class_mapping": {
+          "cards": "Default link-box style",
+          "cards (news)": "Date-first layout, auto-populated from news query-index",
+          "cards (resource)": "Overlay style with type tag",
+          "cards (event)": "Event details with date + location",
+          "cards (related)": "Compact related links, auto-populated"
+        },
+        "notes": "News, resource, and related variants are best auto-populated from query-index.json rather than manually authored per page. The block JS fetches from the index and renders dynamically."
+      },
+      "archetype_usage": ["homepage", "about", "landing", "analytical", "api-chemical", "clinical-services", "clinical-technologies", "commercial-services", "diagnostics", "discovery", "pharma-drug", "knowledge", "knowledge-expert", "bd-team-profile", "news-post", "events"],
+      "page_count_estimate": 2900,
+      "complexity": "medium",
+      "complexity_notes": "Base cards block is CSS-only from Block Collection. News/resource/related/event variants need light JS for query-index fetching and variant-specific rendering.",
+      "priority": "critical"
+    },
+    {
+      "name": "columns",
+      "description": "Two-column layout with one side containing an image (or video thumbnail) and the other side containing text with heading, paragraphs, and optional CTA button. Alternates left/right alignment on successive instances within a page. The core layout pattern for service description content.",
+      "source": "block-collection",
+      "block_collection_url": "https://main--aem-block-collection--adobe.aem.live/block-collection/columns",
+      "source_pattern": {
+        "css_selectors": [".c-half-media-text", ".c-half-media-text--wrap", ".c-half-media-text__content"],
+        "html_pattern": "<section class='c-half-media-text'><div class='c-half-media-text__media'><img/></div><div class='c-half-media-text__content'><h2>Title</h2><p>Text</p><a>CTA</a></div></section>"
+      },
+      "variants": [
+        {
+          "name": "columns (default)",
+          "description": "50/50 split image + text. Standard media-text layout.",
+          "used_by_archetypes": ["about", "landing", "api-chemical", "clinical-technologies", "commercial-services", "pharma-drug"]
+        },
+        {
+          "name": "columns (video)",
+          "description": "Same as default but with a video thumbnail + play button in the media column. Clicking opens video modal.",
+          "used_by_archetypes": ["api-chemical", "clinical-services", "commercial-services"]
+        }
+      ],
+      "content_model": {
+        "type": "standalone",
+        "structure": "Single row: Col1 = image or video thumbnail, Col2 = heading + paragraphs + optional CTA link",
+        "rows": [
+          {"col1": "Image / video poster", "col2": "Heading, paragraph(s), link (CTA)"}
+        ],
+        "max_cells_per_row": 2,
+        "notes": "Block Collection columns handles N columns per row. For media-text pattern, always 2 columns. Alternating left/right can be achieved with CSS :nth-child or section metadata style class."
+      },
+      "archetype_usage": ["about", "landing", "api-chemical", "clinical-services", "clinical-technologies", "commercial-services", "pharma-drug"],
+      "page_count_estimate": 600,
+      "complexity": "simple",
+      "complexity_notes": "Pure CSS layout from Block Collection. No custom JS needed.",
+      "priority": "critical"
+    },
+    {
+      "name": "carousel",
+      "description": "Rotating content display used for hero slides on the homepage and for testimonial rotation. The source site uses Slick.js. EDS Block Collection has a native Carousel block.",
+      "source": "block-collection",
+      "block_collection_url": "https://main--aem-block-collection--adobe.aem.live/block-collection/carousel",
+      "source_pattern": {
+        "css_selectors": [".slick-slider", ".slick-track", ".slick-slide", ".c-banner .slick-slider"],
+        "html_pattern": "<div class='slick-slider'><div class='slick-slide'>...</div></div>"
+      },
+      "variants": [
+        {
+          "name": "carousel (hero)",
+          "description": "Homepage hero carousel with multiple banner slides, each containing background image + text overlay + CTA",
+          "used_by_archetypes": ["homepage"]
+        },
+        {
+          "name": "carousel (testimonial)",
+          "description": "Rotating testimonial quotes. Uses carousel to cycle through customer/partner quotes.",
+          "used_by_archetypes": ["analytical", "api-chemical", "diagnostics"]
+        }
+      ],
+      "content_model": {
+        "type": "collection",
+        "structure": "Each slide is one row. Content depends on what's inside each slide (hero content or testimonial quote).",
+        "rows": [
+          {"col1": "Slide content: image + text or quote text + attribution"}
+        ],
+        "max_cells_per_row": 2,
+        "notes": "Block Collection Carousel wraps each row as a slide. For hero carousel, each row has bg image + text content. For testimonial carousel, each row has quote text + author."
+      },
+      "archetype_usage": ["homepage", "analytical", "api-chemical", "diagnostics"],
+      "page_count_estimate": 250,
+      "complexity": "medium",
+      "complexity_notes": "Block Collection Carousel provides JS for slide navigation, indicators, and touch/swipe. CSS customization needed for hero variant styling.",
+      "priority": "high"
+    },
+    {
+      "name": "video",
+      "description": "Video embed for Vimeo and YouTube content. The source site uses modal popup playback (click thumbnail → video plays in overlay). EDS Block Collection has both Video block (direct playback) and Embed block (social/third-party), plus Modal autoblock.",
+      "source": "block-collection",
+      "block_collection_url": "https://main--aem-block-collection--adobe.aem.live/block-collection/video",
+      "source_pattern": {
+        "css_selectors": [".c-video", ".c-video-wrapper", ".c-video__play-button", "iframe[src*='vimeo']", "iframe[src*='youtube']"],
+        "html_pattern": "<div class='c-video'><a class='c-video__play-button'></a><iframe src='https://player.vimeo.com/video/...'></iframe></div>"
+      },
+      "variants": [
+        {
+          "name": "video (inline)",
+          "description": "Video plays inline on the page within a columns or standalone section",
+          "used_by_archetypes": ["about", "clinical-services"]
+        },
+        {
+          "name": "video (modal)",
+          "description": "Video thumbnail with play button; clicking opens modal overlay for playback. Common pattern on division landing pages.",
+          "used_by_archetypes": ["api-chemical", "commercial-services", "diagnostics", "pharma-drug", "knowledge-expert"]
+        }
+      ],
+      "content_model": {
+        "type": "standalone",
+        "structure": "Single row: Col1 = video URL (Vimeo/YouTube link). For modal variant, link text or poster image triggers modal.",
+        "rows": [
+          {"col1": "Video URL (https://vimeo.com/... or https://youtube.com/watch?v=...)"}
+        ],
+        "max_cells_per_row": 1,
+        "notes": "Block Collection Video handles direct video files; Embed handles Vimeo/YouTube. For modal playback, combine with Modal autoblock (link to fragment containing the embed). Consider using Embed block for Vimeo/YouTube, Video for self-hosted mp4."
+      },
+      "archetype_usage": ["about", "api-chemical", "clinical-services", "commercial-services", "diagnostics", "pharma-drug", "knowledge-expert"],
+      "page_count_estimate": 200,
+      "complexity": "medium",
+      "complexity_notes": "Block Collection Video/Embed + Modal provide the foundation. Modal variant requires Fragment + Modal autoblock pattern.",
+      "priority": "high"
+    },
+    {
+      "name": "embed",
+      "description": "Embeds for third-party content including Vimeo/YouTube videos and other external widgets. Used alongside Video block for iframe-based embeds.",
+      "source": "block-collection",
+      "block_collection_url": "https://main--aem-block-collection--adobe.aem.live/block-collection/embed",
+      "source_pattern": {
+        "css_selectors": ["iframe[src*='vimeo']", "iframe[src*='youtube']", "iframe[src*='maps.google']"],
+        "html_pattern": "<iframe src='https://player.vimeo.com/video/228936206'></iframe>"
+      },
+      "variants": [
+        {
+          "name": "embed (video)",
+          "description": "Vimeo/YouTube video embed",
+          "used_by_archetypes": ["about", "api-chemical", "clinical-services", "commercial-services", "diagnostics", "pharma-drug"]
+        },
+        {
+          "name": "embed (map)",
+          "description": "Google Maps embed for office locations",
+          "used_by_archetypes": ["contact"]
+        }
+      ],
+      "content_model": {
+        "type": "standalone",
+        "structure": "Single row: Col1 = URL to embed",
+        "rows": [
+          {"col1": "URL (Vimeo, YouTube, Google Maps, etc.)"}
+        ],
+        "max_cells_per_row": 1,
+        "notes": "Block Collection Embed auto-detects provider from URL and renders appropriate iframe. Acts as autoblock when a bare URL is on its own line."
+      },
+      "archetype_usage": ["about", "api-chemical", "clinical-services", "commercial-services", "diagnostics", "pharma-drug", "contact"],
+      "page_count_estimate": 200,
+      "complexity": "simple",
+      "complexity_notes": "Block Collection Embed handles provider detection. Autoblock capability means authors just paste a URL.",
+      "priority": "high"
+    },
+    {
+      "name": "quote",
+      "description": "Client/partner testimonials and pull quotes. The source site uses a testimonial carousel with quote text and attribution. EDS Block Collection Quote provides the individual quote structure.",
+      "source": "block-collection",
+      "block_collection_url": "https://main--aem-block-collection--adobe.aem.live/block-collection/quote",
+      "source_pattern": {
+        "css_selectors": [".c-testimonials", ".c-testimonial-item", ".c-testimonial__quote", ".c-testimonial__author"],
+        "html_pattern": "<div class='c-testimonial-item'><p class='c-testimonial__quote'>Quote text</p><p class='c-testimonial__author'>Author Name, Title</p></div>"
+      },
+      "variants": [
+        {
+          "name": "quote (default)",
+          "description": "Single testimonial or pull quote with text and attribution",
+          "used_by_archetypes": ["analytical", "api-chemical", "diagnostics"]
+        }
+      ],
+      "content_model": {
+        "type": "standalone",
+        "structure": "Row 1: Col1 = quote text. Row 2 (optional): Col1 = attribution (author name, title, company)",
+        "rows": [
+          {"col1": "Quote text (paragraph)"},
+          {"col1": "Attribution: Name, Title (paragraph)"}
+        ],
+        "max_cells_per_row": 1,
+        "notes": "For multiple testimonials, wrap Quote blocks inside a Carousel block. Block Collection Quote provides blockquote styling."
+      },
+      "archetype_usage": ["analytical", "api-chemical", "diagnostics"],
+      "page_count_estimate": 100,
+      "complexity": "simple",
+      "complexity_notes": "Block Collection Quote is CSS-only. For carousel of quotes, combine with Carousel block.",
+      "priority": "medium"
+    },
+    {
+      "name": "accordion",
+      "description": "Expandable/collapsible content sections. Not heavily used on the current site but useful for FAQ-style content that may exist in knowledge library articles and service detail pages.",
+      "source": "block-collection",
+      "block_collection_url": "https://main--aem-block-collection--adobe.aem.live/block-collection/accordion",
+      "source_pattern": {
+        "css_selectors": [".c-accordion", ".c-accordion__item", ".c-accordion__header", ".c-accordion__content"],
+        "html_pattern": "<div class='c-accordion'><div class='c-accordion__item'><h3>Question</h3><div class='c-accordion__content'><p>Answer</p></div></div></div>"
+      },
+      "variants": [
+        {
+          "name": "accordion (default)",
+          "description": "Standard expandable Q&A or collapsible content panels",
+          "used_by_archetypes": ["landing", "clinical-services", "careers"]
+        }
+      ],
+      "content_model": {
+        "type": "collection",
+        "structure": "Each row is one accordion item. Col1 = heading/label (question), Col2 = content (answer/details)",
+        "rows": [
+          {"col1": "Question / Label (heading)", "col2": "Answer / Content (paragraph, list, etc.)"}
+        ],
+        "max_cells_per_row": 2,
+        "notes": "Block Collection Accordion handles expand/collapse JS and accessibility (aria-expanded). Each row becomes one collapsible panel."
+      },
+      "archetype_usage": ["landing", "clinical-services", "careers"],
+      "page_count_estimate": 50,
+      "complexity": "simple",
+      "complexity_notes": "Block Collection Accordion provides JS + CSS. No customization needed.",
+      "priority": "medium"
+    },
+    {
+      "name": "tabs",
+      "description": "Tabbed content panels for organizing related information. Used on some service pages where content is grouped by category (e.g., capabilities by phase). EDS Block Collection Tabs handles this natively.",
+      "source": "block-collection",
+      "block_collection_url": "https://main--aem-block-collection--adobe.aem.live/block-collection/tabs",
+      "source_pattern": {
+        "css_selectors": [".c-tabs", ".c-tab__nav", ".c-tab__content", ".c-tab-panel"],
+        "html_pattern": "<div class='c-tabs'><ul class='c-tab__nav'><li>Tab 1</li></ul><div class='c-tab-panel'>Content 1</div></div>"
+      },
+      "variants": [
+        {
+          "name": "tabs (default)",
+          "description": "Horizontal tab navigation with content panels",
+          "used_by_archetypes": ["clinical-technologies", "clinical-services", "commercial-services"]
+        }
+      ],
+      "content_model": {
+        "type": "collection",
+        "structure": "Each row is one tab. Col1 = tab label, Col2 = tab content (can contain other blocks via fragments)",
+        "rows": [
+          {"col1": "Tab label text", "col2": "Tab panel content (text, images, etc.)"}
+        ],
+        "max_cells_per_row": 2,
+        "notes": "Block Collection Tabs provides tab switching JS and accessibility. Content can include any default content or nested blocks via Fragment references."
+      },
+      "archetype_usage": ["clinical-technologies", "clinical-services", "commercial-services"],
+      "page_count_estimate": 100,
+      "complexity": "simple",
+      "complexity_notes": "Block Collection Tabs provides all needed JS + CSS.",
+      "priority": "medium"
+    },
+    {
+      "name": "breadcrumbs",
+      "description": "Breadcrumb navigation trail showing the user's position in the site hierarchy. Present on 22 of 32 sampled pages. The EDS Block Collection includes Breadcrumbs as a 'Block Add-on' and the Block Party has a community implementation.",
+      "source": "block-collection",
+      "block_collection_url": "https://main--aem-block-collection--adobe.aem.live/block-collection/breadcrumbs",
+      "block_party_reference": {
+        "title": "Breadcrumb",
+        "url": "https://github.com/hlxsites/elixirsolutions/blob/19da1f3448b7933d85f6c198d2b0293d55b339ce/blocks/breadcrumb/"
+      },
+      "source_pattern": {
+        "css_selectors": [".c-breadcrumbs", ".c-breadcrumbs__list", ".c-breadcrumbs__item", ".c-breadcrumbs__link"],
+        "html_pattern": "<nav class='c-breadcrumbs'><ol><li><a href='/'>Home</a></li><li><a href='/about/'>About</a></li><li>Current Page</li></ol></nav>"
+      },
+      "variants": [
+        {
+          "name": "breadcrumbs (default)",
+          "description": "Auto-generated breadcrumb trail based on URL hierarchy. Text-only, horizontal.",
+          "used_by_archetypes": ["about", "landing", "analytical", "api-chemical", "api-chemical-product", "clinical-services", "clinical-technologies", "commercial-services", "diagnostics", "discovery", "pharma-drug", "knowledge", "knowledge-expert", "bd-team-profile", "careers", "news-post", "award", "expert-profile"]
+        }
+      ],
+      "content_model": {
+        "type": "auto-blocked",
+        "structure": "Auto-generated from page URL hierarchy. No author input needed — the block reads the site structure and builds the breadcrumb trail automatically.",
+        "rows": [],
+        "max_cells_per_row": 0,
+        "notes": "Block Collection Breadcrumbs is a block add-on (auto-blocked). It should be implemented in scripts.js to automatically inject breadcrumbs based on page path. No authoring table needed."
+      },
+      "archetype_usage": ["about", "landing", "analytical", "api-chemical", "api-chemical-product", "clinical-services", "clinical-technologies", "commercial-services", "diagnostics", "discovery", "pharma-drug", "knowledge", "knowledge-expert", "bd-team-profile", "careers", "news-post", "award", "expert-profile"],
+      "page_count_estimate": 3500,
+      "complexity": "medium",
+      "complexity_notes": "Needs JS to read page hierarchy from query-index or URL path and build breadcrumb DOM. Block Collection provides reference implementation.",
+      "priority": "critical"
+    },
+    {
+      "name": "hubspot-form",
+      "description": "HubSpot embedded form for lead capture, content gating, contact requests, and newsletter signup. Present on virtually every page (30 of 32 sampled). The site-wide form appears to be a persistent CTA/contact form, while some pages have additional page-specific forms with more fields.",
+      "source": "custom",
+      "source_pattern": {
+        "css_selectors": [".c-hubspot-form", ".hbspt-form", ".hs-form", "script[src*='hsforms']"],
+        "html_pattern": "<div class='c-hubspot-form'><script>hbspt.forms.create({portalId: '...', formId: '...'})</script></div>"
+      },
+      "variants": [
+        {
+          "name": "hubspot-form (site-wide)",
+          "description": "Standard 8-field contact/inquiry form that appears on most pages, typically near the footer. Same form ID across pages.",
+          "used_by_archetypes": ["all"],
+          "field_count": 8
+        },
+        {
+          "name": "hubspot-form (gated-content)",
+          "description": "Page-specific form for gated content access (whitepapers, webinars). Has 10-11 fields including company, role, interest area.",
+          "used_by_archetypes": ["analytical", "knowledge-expert", "knowledge-library"],
+          "field_count": "10-11"
+        },
+        {
+          "name": "hubspot-form (product-inquiry)",
+          "description": "Detailed product inquiry form with up to 19 fields. Used on product detail pages for sample requests.",
+          "used_by_archetypes": ["api-chemical-product"],
+          "field_count": 19
+        }
+      ],
+      "content_model": {
+        "type": "configuration",
+        "structure": "Single row: Col1 = HubSpot portal ID, Col2 = HubSpot form ID. The block loads the HubSpot embed script and creates the form.",
+        "rows": [
+          {"col1": "Portal ID", "col2": "Form ID"}
+        ],
+        "max_cells_per_row": 2,
+        "notes": "This is a custom block. Authors provide the HubSpot portal and form IDs; the block JS loads the HubSpot Forms API script and initializes the form. The site-wide form could be implemented as a Fragment in the footer to avoid repeating on every page."
+      },
+      "archetype_usage": ["homepage", "about", "landing", "analytical", "api-chemical", "api-chemical-product", "clinical-services", "clinical-technologies", "commercial-services", "diagnostics", "discovery", "pharma-drug", "knowledge", "knowledge-expert", "knowledge-library", "careers", "news-post", "award", "expert-profile", "bd-team-profile", "events", "news", "contact", "client-portal", "blog-category"],
+      "page_count_estimate": 3500,
+      "complexity": "medium",
+      "complexity_notes": "Custom block loading HubSpot Forms JS API. Straightforward but external dependency. Consider lazy-loading in delayed.js for performance.",
+      "priority": "critical"
+    },
+    {
+      "name": "stats",
+      "description": "Row of 4-5 key statistics displayed as large animated numbers with descriptive labels below. Used on the homepage to showcase company metrics (e.g., '6000+ employees', '50+ years', '19 global sites').",
+      "source": "custom",
+      "source_pattern": {
+        "css_selectors": [".c-stats", ".c-stats__item", ".c-stats__number", ".c-stats__label"],
+        "html_pattern": "<div class='c-stats'><div class='c-stats__item'><span class='c-stats__number'>6000+</span><span class='c-stats__label'>employees worldwide</span></div></div>"
+      },
+      "variants": [
+        {
+          "name": "stats (default)",
+          "description": "Horizontal row of stat items with animated number counters that increment on scroll into view",
+          "used_by_archetypes": ["homepage"]
+        }
+      ],
+      "content_model": {
+        "type": "collection",
+        "structure": "Each row is one stat. Col1 = number (with suffix like '+' or 'M+'), Col2 = label/description.",
+        "rows": [
+          {"col1": "6000+", "col2": "employees worldwide"},
+          {"col1": "50+", "col2": "years of experience"},
+          {"col1": "19", "col2": "global sites"}
+        ],
+        "max_cells_per_row": 2,
+        "notes": "Custom block. Animation effect (counter increment) is a nice-to-have JS enhancement, not critical. Core content is just number + label pairs."
+      },
+      "archetype_usage": ["homepage"],
+      "page_count_estimate": 1,
+      "complexity": "medium",
+      "complexity_notes": "CSS layout is simple. Animated counter requires IntersectionObserver + requestAnimationFrame JS. Can be deferred to delayed.js.",
+      "priority": "medium"
+    },
+    {
+      "name": "profile",
+      "description": "Professional profile display with person's photo, name, title/role, bio text, and contact/social links. Used for knowledge experts, business development team members, and expert profiles.",
+      "source": "custom",
+      "source_pattern": {
+        "css_selectors": [".c-knowledge-expert", ".c-expert-profile", ".c-bd-profile", ".c-profile__photo", ".c-profile__bio", ".c-profile__contact"],
+        "html_pattern": "<div class='c-expert-profile'><img class='c-profile__photo'/><h1>Name</h1><h2>Title</h2><div class='c-profile__bio'><h3>Current Role</h3><p>Bio text...</p></div></div>"
+      },
+      "variants": [
+        {
+          "name": "profile (expert)",
+          "description": "Knowledge expert profile with photo, name, credentials, full bio, areas of expertise list, and contact form",
+          "used_by_archetypes": ["knowledge-expert", "expert-profile"]
+        },
+        {
+          "name": "profile (bd-team)",
+          "description": "Business development team member profile with photo, name, region, bio, contact details, and upcoming events",
+          "used_by_archetypes": ["bd-team-profile"]
+        }
+      ],
+      "content_model": {
+        "type": "standalone",
+        "structure": "Row 1: Col1 = photo image, Col2 = name (h2) + title/role (paragraph) + credentials. Additional rows for bio sections are default content below the block.",
+        "rows": [
+          {"col1": "Profile photo", "col2": "Name (h2), Title (p), Credentials (p)"}
+        ],
+        "max_cells_per_row": 2,
+        "notes": "The profile block handles the hero-like header portion. Bio content, expertise lists, and related sections below are default content and other blocks (cards for events, hubspot-form for contact). Consider using Columns block for the photo + info layout and keeping bio as default content."
+      },
+      "archetype_usage": ["knowledge-expert", "expert-profile", "bd-team-profile"],
+      "page_count_estimate": 141,
+      "complexity": "simple",
+      "complexity_notes": "Primarily CSS layout. No complex JS needed. Photo + text layout is straightforward.",
+      "priority": "high"
+    },
+    {
+      "name": "fragment",
+      "description": "Reusable content fragment that can be embedded across multiple pages. Essential for shared components like the site-wide HubSpot form, footer CTAs, and common content sections.",
+      "source": "block-collection",
+      "block_collection_url": "https://main--aem-block-collection--adobe.aem.live/block-collection/fragment",
+      "source_pattern": {
+        "css_selectors": [],
+        "html_pattern": "N/A — no direct source-site equivalent; this is an EDS architecture pattern"
+      },
+      "variants": [
+        {
+          "name": "fragment (default)",
+          "description": "References a separate content page whose content is inlined at this position",
+          "used_by_archetypes": ["all"]
+        }
+      ],
+      "content_model": {
+        "type": "configuration",
+        "structure": "Single row, single cell: URL/path to the fragment page",
+        "rows": [
+          {"col1": "/fragments/site-wide-cta"}
+        ],
+        "max_cells_per_row": 1,
+        "notes": "Used to DRY-up repeated content across pages. Key use cases: site-wide HubSpot form section, footer CTA, common testimonial blocks."
+      },
+      "archetype_usage": ["all"],
+      "page_count_estimate": 3500,
+      "complexity": "simple",
+      "complexity_notes": "Block Collection Fragment fetches and inlines content. No customization needed.",
+      "priority": "critical"
+    },
+    {
+      "name": "search",
+      "description": "Site-wide search functionality. The source site uses WordPress search. EDS Block Collection includes a Search block that works with query-index.",
+      "source": "block-collection",
+      "block_collection_url": "https://main--aem-block-collection--adobe.aem.live/block-collection/search",
+      "source_pattern": {
+        "css_selectors": [".c-search", "input[type='search']", ".c-header__search"],
+        "html_pattern": "<form class='c-search'><input type='search' placeholder='Search...'/></form>"
+      },
+      "variants": [
+        {
+          "name": "search (default)",
+          "description": "Search input that queries the EDS query-index and displays results",
+          "used_by_archetypes": ["all (header)"]
+        }
+      ],
+      "content_model": {
+        "type": "auto-blocked",
+        "structure": "Typically placed in the header or as a standalone page. No authoring table needed — block reads from query-index.",
+        "rows": [],
+        "max_cells_per_row": 0,
+        "notes": "Block Collection Search works with query-index.json. Implementation is in header or dedicated search page."
+      },
+      "archetype_usage": ["all"],
+      "page_count_estimate": 1,
+      "complexity": "medium",
+      "complexity_notes": "Block Collection Search provides baseline. May need customization for Almac's multi-site structure.",
+      "priority": "high"
+    },
+    {
+      "name": "content-filter",
+      "description": "Faceted filter/listing interface for browsable content collections. Used on events listing, news listing, and knowledge library pages. Provides dropdown and checkbox filters with dynamic result display.",
+      "source": "custom",
+      "block_party_reference": {
+        "title": "Content Filter Hub",
+        "url": "https://github.com/rusmeenkhan1/content-filter-hub",
+        "showcase": "https://main--content-filter-hub--rusmeenkhan1.aem.page/en/projects"
+      },
+      "source_pattern": {
+        "css_selectors": [".c-filter", ".c-filter__dropdown", ".c-filter__checkbox", ".c-filter__results", ".c-event-listing"],
+        "html_pattern": "<div class='c-filter'><select class='c-filter__dropdown'>...</select><div class='c-filter__results'>...</div></div>"
+      },
+      "variants": [
+        {
+          "name": "content-filter (events)",
+          "description": "Event listing with filters for date range, location, division/service area. 928 event pages in manifest.",
+          "used_by_archetypes": ["events"]
+        },
+        {
+          "name": "content-filter (news)",
+          "description": "News listing with filters for division, date, category. 679 news posts in manifest.",
+          "used_by_archetypes": ["news"]
+        },
+        {
+          "name": "content-filter (knowledge)",
+          "description": "Knowledge library listing with filters for content type (whitepaper, webinar, etc.), topic area, expert. 723 items in manifest.",
+          "used_by_archetypes": ["knowledge", "knowledge-library"]
+        }
+      ],
+      "content_model": {
+        "type": "configuration",
+        "structure": "Configuration block specifying which query-index sheet to use and which metadata fields to expose as filters. Row 1: Col1 = 'source', Col2 = query-index sheet name. Row 2+: Col1 = filter field name, Col2 = filter type (dropdown/checkbox/daterange).",
+        "rows": [
+          {"col1": "source", "col2": "events"},
+          {"col1": "division", "col2": "dropdown"},
+          {"col1": "date", "col2": "daterange"},
+          {"col1": "location", "col2": "dropdown"}
+        ],
+        "max_cells_per_row": 2,
+        "notes": "Most complex custom block. Reads from query-index.json, applies client-side filtering, renders card results with pagination. Block Party's Content Filter Hub provides a reference architecture. Must support URL-based filter state for shareability."
+      },
+      "archetype_usage": ["events", "news", "knowledge", "knowledge-library"],
+      "page_count_estimate": 3,
+      "complexity": "complex",
+      "complexity_notes": "Significant JS required: query-index fetching, client-side filtering, result rendering, pagination, URL state management. The Block Party Content Filter Hub can serve as a reference implementation.",
+      "priority": "critical"
+    },
+    {
+      "name": "sidebar",
+      "description": "Sidebar layout with navigation links, category filters, or related content. Used on detail pages (news articles, product pages, career stories) to provide contextual navigation.",
+      "source": "custom",
+      "source_pattern": {
+        "css_selectors": [".c-sidebar", ".c-news__sidebar", ".c-sidebar__nav", ".c-sidebar__widget"],
+        "html_pattern": "<aside class='c-sidebar'><nav class='c-sidebar__nav'><ul><li><a href='...'>Category</a></li></ul></nav></aside>"
+      },
+      "variants": [
+        {
+          "name": "sidebar (navigation)",
+          "description": "Vertical navigation menu for sub-page hierarchy. Used on product detail and sub-service pages.",
+          "used_by_archetypes": ["api-chemical-product", "careers"]
+        },
+        {
+          "name": "sidebar (article)",
+          "description": "Article sidebar with related posts, share buttons, and category links. Used on news posts and career stories.",
+          "used_by_archetypes": ["news-post", "careers-story", "careers-news"]
+        }
+      ],
+      "content_model": {
+        "type": "standalone",
+        "structure": "Implemented as a section style rather than a block. Use Section Metadata with 'style: sidebar' to create a two-column layout where the sidebar section sits alongside the main content section.",
+        "rows": [],
+        "max_cells_per_row": 0,
+        "notes": "In EDS, sidebars are best implemented as section styles using CSS Grid, not as blocks. The main content and sidebar are separate sections on the page; Section Metadata with 'style: sidebar' triggers the layout. Sidebar content is authored as normal blocks/default content within that section."
+      },
+      "archetype_usage": ["api-chemical-product", "news-post", "careers-story", "careers", "expert-profile", "clinical-services"],
+      "page_count_estimate": 800,
+      "complexity": "simple",
+      "complexity_notes": "CSS-only section style using CSS Grid for the two-column layout. No JS needed. The challenge is content authoring — authors must understand section boundaries.",
+      "priority": "high"
+    },
+    {
+      "name": "modal",
+      "description": "Popup overlay for video playback, form display, or content previews. The source site uses modals for video playback and gated content forms. EDS Block Collection includes Modal as an autoblock.",
+      "source": "block-collection",
+      "block_collection_url": "https://main--aem-block-collection--adobe.aem.live/block-collection/modal",
+      "source_pattern": {
+        "css_selectors": [".c-modal", ".c-modal__content", ".c-modal__close", ".modal-overlay"],
+        "html_pattern": "<div class='c-modal'><div class='c-modal__content'><button class='c-modal__close'>×</button><iframe>...</iframe></div></div>"
+      },
+      "variants": [
+        {
+          "name": "modal (video)",
+          "description": "Video playback in overlay",
+          "used_by_archetypes": ["api-chemical", "clinical-services", "diagnostics", "knowledge-expert"]
+        },
+        {
+          "name": "modal (form)",
+          "description": "Gated content form in overlay",
+          "used_by_archetypes": ["knowledge-expert", "knowledge-library"]
+        }
+      ],
+      "content_model": {
+        "type": "auto-blocked",
+        "structure": "Auto-blocked: any link to a #hash that matches a fragment ID triggers a modal. The modal content lives in a Fragment page.",
+        "rows": [],
+        "max_cells_per_row": 0,
+        "notes": "Block Collection Modal is an autoblock — it automatically works when a link points to a fragment with a hash. Authors create a Fragment page with the modal content, then link to it with #fragment-id."
+      },
+      "archetype_usage": ["api-chemical", "clinical-services", "diagnostics", "knowledge-expert", "knowledge-library"],
+      "page_count_estimate": 200,
+      "complexity": "simple",
+      "complexity_notes": "Block Collection Modal autoblock handles everything. No custom code needed.",
+      "priority": "medium"
+    },
+    {
+      "name": "contact-locations",
+      "description": "Contact page layout with a contact form on one side and office location cards on the other. Each location card shows office image, address, phone number, and map link.",
+      "source": "custom",
+      "source_pattern": {
+        "css_selectors": [".c-contact", ".c-contact__form", ".c-contact__locations", ".c-location-card"],
+        "html_pattern": "<div class='c-contact'><div class='c-contact__form'>...</div><div class='c-contact__locations'><div class='c-location-card'><img/><h3>Office Name</h3><p>Address</p><p>Phone</p></div></div></div>"
+      },
+      "variants": [
+        {
+          "name": "contact-locations (default)",
+          "description": "Two-column layout: contact form (HubSpot) on left, 3 office location cards on right",
+          "used_by_archetypes": ["contact"]
+        }
+      ],
+      "content_model": {
+        "type": "standalone",
+        "structure": "Can be achieved using Columns block: Col1 = HubSpot Form fragment, Col2 = location cards (or Cards block). Alternatively, dedicated block with: Row 1 = form config, Rows 2-4 = location cards (image | name, address, phone, link).",
+        "rows": [
+          {"col1": "Office image", "col2": "Office name (h3), Address (p), Phone (p), Map link"}
+        ],
+        "max_cells_per_row": 2,
+        "notes": "Rather than building a custom block, compose from existing blocks: use a Columns block where one column contains a Fragment (HubSpot form) and the other contains Cards with office details. This follows the EDS philosophy of composition over custom blocks."
+      },
+      "archetype_usage": ["contact"],
+      "page_count_estimate": 1,
+      "complexity": "simple",
+      "complexity_notes": "Achievable through composition of Columns + Fragment + Cards blocks. No custom JS.",
+      "priority": "low"
+    },
+    {
+      "name": "icon-grid",
+      "description": "Grid of service/feature icons with labels. Used on the Clinical Technologies page to showcase technology capabilities. Can be implemented as a Cards variant with icon images.",
+      "source": "custom",
+      "source_pattern": {
+        "css_selectors": [".c-icon-grid", ".c-icon-grid__item", ".c-icon-grid__icon", ".c-icon-grid__label"],
+        "html_pattern": "<div class='c-icon-grid'><div class='c-icon-grid__item'><img class='c-icon-grid__icon'/><p class='c-icon-grid__label'>Capability Name</p></div></div>"
+      },
+      "variants": [
+        {
+          "name": "icon-grid (default)",
+          "description": "Grid of small icons with text labels, used for feature/capability lists",
+          "used_by_archetypes": ["clinical-technologies"]
+        }
+      ],
+      "content_model": {
+        "type": "collection",
+        "structure": "Implement as Cards (icon) variant. Each row: Col1 = icon image (small SVG/PNG), Col2 = label text.",
+        "rows": [
+          {"col1": "Icon image", "col2": "Label text"}
+        ],
+        "max_cells_per_row": 2,
+        "notes": "Rather than a dedicated block, use the Cards block with a variant class 'cards (icon)' and CSS to render small icons in a grid. This keeps the block palette minimal."
+      },
+      "archetype_usage": ["clinical-technologies"],
+      "page_count_estimate": 10,
+      "complexity": "simple",
+      "complexity_notes": "CSS-only variant of Cards block.",
+      "priority": "low"
+    },
+    {
+      "name": "table",
+      "description": "Data table for structured information like product specifications, comparison charts, or regulatory data. EDS Block Collection includes a Table block.",
+      "source": "block-collection",
+      "block_collection_url": "https://main--aem-block-collection--adobe.aem.live/block-collection/table",
+      "source_pattern": {
+        "css_selectors": ["table", ".c-table", ".c-specs-table"],
+        "html_pattern": "<table><thead><tr><th>Property</th><th>Value</th></tr></thead><tbody><tr><td>MW</td><td>...</td></tr></tbody></table>"
+      },
+      "variants": [
+        {
+          "name": "table (default)",
+          "description": "Standard data table with headers, used for product specifications",
+          "used_by_archetypes": ["api-chemical-product"]
+        }
+      ],
+      "content_model": {
+        "type": "collection",
+        "structure": "Row 1 = header row. Subsequent rows = data rows. Column count matches data structure.",
+        "rows": [
+          {"col1": "Header 1", "col2": "Header 2", "col3": "Header 3"},
+          {"col1": "Data 1", "col2": "Data 2", "col3": "Data 3"}
+        ],
+        "max_cells_per_row": 4,
+        "notes": "Block Collection Table handles responsive display. First row is treated as header."
+      },
+      "archetype_usage": ["api-chemical-product"],
+      "page_count_estimate": 71,
+      "complexity": "simple",
+      "complexity_notes": "Block Collection Table is CSS-only with optional responsive JS.",
+      "priority": "medium"
+    }
+  ],
+  "section_styles": [
+    {
+      "name": "sidebar",
+      "description": "Two-column layout with main content (wide) and sidebar (narrow). Applied via Section Metadata 'style: sidebar'.",
+      "css_approach": "CSS Grid with 2fr 1fr columns on desktop, stack on mobile",
+      "used_by_archetypes": ["api-chemical-product", "news-post", "careers-story", "careers", "expert-profile", "clinical-services"]
+    },
+    {
+      "name": "full-width-image",
+      "description": "Section with full-width background image and optional text/CTA overlay. Applied via Section Metadata 'style: full-width-image' with 'background' property for the image URL.",
+      "css_approach": "Background image with cover sizing, text overlay positioned center/bottom",
+      "used_by_archetypes": ["clinical-services", "commercial-services", "pharma-drug"]
+    },
+    {
+      "name": "cta-band",
+      "description": "Colored background section with centered heading and CTA button. Used for call-to-action sections between content blocks.",
+      "css_approach": "Accent background color, centered text, button styling",
+      "used_by_archetypes": ["knowledge", "homepage", "clinical-technologies"]
+    },
+    {
+      "name": "dark",
+      "description": "Dark background section for contrast. Used for stats, testimonials, and featured content areas.",
+      "css_approach": "Dark background with light text colors",
+      "used_by_archetypes": ["homepage", "analytical", "api-chemical"]
+    },
+    {
+      "name": "grey",
+      "description": "Light grey background for alternating section contrast.",
+      "css_approach": "Light grey background (#f5f5f5 or similar)",
+      "used_by_archetypes": ["about", "clinical-services", "commercial-services", "pharma-drug"]
+    }
+  ],
+  "default_content_patterns": [
+    {
+      "type": "body-text",
+      "description": "Paragraphs, headings (h1-h5), lists (ul/ol), and inline images. The majority of article/detail page content is default content.",
+      "eds_treatment": "Standard <p>, <h1>-<h5>, <ul>/<ol>, <picture>/<img> tags — no block needed",
+      "archetypes": ["all"]
+    },
+    {
+      "type": "cta-buttons",
+      "description": "Call-to-action buttons rendered as bold/emphasized links. 'Find out more', 'Learn more', 'Contact us', 'Download' patterns.",
+      "eds_treatment": "Links styled as buttons: <p><strong><a href='...'>CTA Text</a></strong></p> for primary, <p><em><a href='...'>CTA Text</a></em></p> for secondary",
+      "archetypes": ["all"]
+    },
+    {
+      "type": "section-headings",
+      "description": "Section introduction headings (h2) with optional subtitle paragraph. Used to introduce each content section.",
+      "eds_treatment": "Default content — h2 heading + paragraph at the start of each section",
+      "archetypes": ["all"]
+    },
+    {
+      "type": "blockquotes",
+      "description": "Pull quotes and highlighted text passages within article content.",
+      "eds_treatment": "Default content — <blockquote> tags styled via CSS",
+      "archetypes": ["analytical", "api-chemical"]
+    }
+  ],
+  "summary": {
+    "total_blocks": 18,
+    "from_block_collection": 12,
+    "from_block_party_reference": 2,
+    "custom_blocks": 5,
+    "section_styles": 5,
+    "blocks_by_priority": {
+      "critical": ["hero", "cards", "columns", "breadcrumbs", "hubspot-form", "fragment", "content-filter"],
+      "high": ["carousel", "video", "embed", "profile", "search", "sidebar"],
+      "medium": ["quote", "accordion", "tabs", "stats", "modal", "table"],
+      "low": ["contact-locations", "icon-grid"]
+    },
+    "blocks_by_complexity": {
+      "simple": ["hero", "columns", "quote", "accordion", "tabs", "breadcrumbs", "fragment", "modal", "contact-locations", "icon-grid", "profile", "sidebar", "table"],
+      "medium": ["cards", "carousel", "video", "embed", "hubspot-form", "stats", "search"],
+      "complex": ["content-filter"]
+    },
+    "key_decisions": [
+      "Sidebar is a section style, not a block — avoids authoring complexity",
+      "Cards has 5 variants rather than 5 separate blocks — minimizes palette while covering all patterns",
+      "News/resource/event/related card variants auto-populate from query-index — reduces manual authoring",
+      "HubSpot form block is custom since Block Collection Form is deprecated",
+      "Site-wide HubSpot form should be a Fragment to avoid duplication across 3500+ pages",
+      "Icon grid is a Cards variant, not a separate block",
+      "Contact-locations page uses Columns + Fragment + Cards composition rather than custom block",
+      "Breadcrumbs are auto-blocked from URL hierarchy, not manually authored",
+      "Content-filter is the single most complex custom block — serves events (928), news (679), and knowledge (723) listings"
+    ]
+  }
+}
