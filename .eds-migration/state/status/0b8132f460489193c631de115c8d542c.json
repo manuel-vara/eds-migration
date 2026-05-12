@@ -1,0 +1,14 @@
+{
+  "url": "https://www.almacgroup.com/news/almac-clinical-services-scoops-national-training-award/",
+  "archetype": "news-post",
+  "path": "/news/almac-clinical-services-scoops-national-training-award",
+  "status": "failed",
+  "previewUrl": "https://main--eds-migration--manuel-vara.aem.page/news/almac-clinical-services-scoops-national-training-award",
+  "publishUrl": "https://www.hlx.live/news/almac-clinical-services-scoops-national-training-award",
+  "textLenRatio": 0.0,
+  "imageRatio": 0.0,
+  "published": false,
+  "failureReason": "EDS_TOKEN not provided \u2014 DA upload returned 401. HTML artifact generated and validated locally.",
+  "htmlGenerated": true,
+  "htmlPath": "/home/claude/scratch/page-migrator/output/news-almac-clinical-services-scoops-national-training-award.html"
+}

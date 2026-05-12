@@ -1,0 +1,14 @@
+{
+  "url": "https://www.almacgroup.com/knowledge/experts/abi-pesun/",
+  "archetype": "knowledge-expert",
+  "path": "/knowledge/experts/abi-pesun",
+  "status": "failed",
+  "previewUrl": "https://main--eds-migration--manuel-vara.aem.page/knowledge/experts/abi-pesun",
+  "publishUrl": "https://www.hlx.live/knowledge/experts/abi-pesun",
+  "textLenRatio": 0.0,
+  "imageRatio": 0.0,
+  "published": false,
+  "failureReason": "EDS_TOKEN not provided \u2014 DA upload returned 401. HTML artifact generated and validated locally.",
+  "htmlGenerated": true,
+  "htmlPath": "/home/claude/scratch/page-migrator/output/knowledge-experts-abi-pesun.html"
+}
