@@ -1,0 +1,14 @@
+{
+  "url": "https://www.almacgroup.com/clinical-services/",
+  "da_path": "clinical-services",
+  "status": "migrated",
+  "previewUrl": "https://main--eds-migration--manuel-vara.aem.page/clinical-services",
+  "publishUrl": "https://main--eds-migration--manuel-vara.hlx.live/clinical-services",
+  "textLenRatio": 0.70,
+  "imageRatio": 0.75,
+  "published": false,
+  "failureReason": "EDS_TOKEN not available — HTML generated and committed to content-staging/clinical-services/index.html. Upload pending EDS_TOKEN.",
+  "timestamp": "2026-05-12T16:00:00.000000Z",
+  "stagedAt": ".eds-migration/state/content-staging/clinical-services/index.html",
+  "archetype": "clinical-services"
+}

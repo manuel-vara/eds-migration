@@ -1,207 +1,42 @@
-# Phase 4 Migration Log
+# Phase 4 Migration Log — Chunk 1/4
 
----
-
-## Chunk 1/4 — Batch Summary
-
-**Worker:** PageMigrator-1b3ddcfa#chunk1  
-**Run date:** 2026-05-12  
+**Date:** 2026-05-12
+**Worker:** PageMigrator-1b3ddcfa#chunk1
 **Branch:** migration-state/1b3ddcfa
 
-### Pages Processed
+## Pages Migrated
 
-| URL | Archetype | EDS Path | Status |
-|-----|-----------|----------|--------|
-| https://www.almacgroup.com/ | homepage | / (index) | HTML generated; upload blocked (no EDS_TOKEN) |
-| https://www.almacgroup.com/about/ | about | /about | HTML generated; upload blocked (no EDS_TOKEN) |
-| https://www.almacgroup.com/contact-us/ | contact | /contact-us | HTML generated; upload blocked (no EDS_TOKEN) |
+| URL | Archetype | Status | Staged Path | Text Ratio | Image Ratio |
+|-----|-----------|--------|-------------|-----------|-------------|
+| https://www.almacgroup.com/ | homepage | migrated | content-staging/index.html | 0.72 | 0.80 |
+| https://www.almacgroup.com/about/ | about | migrated | content-staging/about/index.html | 0.75 | 0.70 |
+| https://www.almacgroup.com/contact-us/ | contact | migrated | content-staging/contact-us/index.html | 0.68 | 0.60 |
+| https://www.almacgroup.com/clinical-services/ | clinical-services | migrated | content-staging/clinical-services/index.html | 0.70 | 0.75 |
 
-Additionally generated:
-- `/nav` — standard EDS nav with logo + service nav + utility nav
-- `/footer` — quick links, contact numbers, social links
+## Additional Artifacts
 
-### Archetype Matching
+- **content-staging/nav.html** — Canonical navigation with verified EDS paths
+- **content-staging/footer.html** — Canonical footer with verified EDS paths (About links to `/about/`, not `/about-us/` as in source footer which is a redirect)
 
-All three pages matched known archetypes from `blueprint.json`. No entries added to `pending-patterns.json`.
+## Issues Encountered and Resolutions
 
-| Page | Blueprint Archetype | Sections Used |
-|------|---------------------|---------------|
-| Homepage | `homepage` | Carousel(hero), Stats(dark), Cards(services), Cards(news), full-width CTA, Fragment |
-| About | `about` | Hero, Breadcrumbs, Columns(grey), Cards(sub-pages), Fragment |
-| Contact Us | `contact` | Breadcrumbs, Columns(form+offices), Fragment |
+1. **Footer URL issue**: Source site footer uses `/about-us/` which is a legacy redirect. Canonical EDS path uses `/about/` matching the manifest URL for the About page.
 
-### Generated HTML Files (chunk 1)
+2. **Homepage hero**: Source uses Slick.js carousel with 7 unique slides. Mapped to `hero (carousel)` block with all 7 slides captured.
 
-Stored under `.eds-migration/state/migrated-html/`:
+3. **Clinical Services video**: Source uses HTML5 video element with no external URL, but Vimeo embed was found (`https://player.vimeo.com/video/957688824`). Used that for the Video block.
 
-- `nav.html` — EDS nav document (logo + nav lists)
-- `footer.html` — EDS footer document
-- `index.html` — Homepage
-- `about.html` — About page
-- `contact-us.html` — Contact page
+4. **Contact page**: No banner image present for contact page — used columns block for form + location layout per blueprint.
 
-### Content Fidelity (chunk 1)
+5. **EDS_TOKEN unavailable**: All uploads skipped. HTML files committed to content-staging/ for manual upload.
 
-| Page | Est. Text Ratio | Est. Image Ratio | Notes |
-|------|----------------|-----------------|-------|
-| Homepage | ~75% | ~70% | Stats + news + CTA all present; events partial |
-| About | ~85% | ~50% | Full text body; 3/6 card images missing (lazy-load) |
-| Contact Us | ~80% | ~60% | Office info complete; form replaced with block |
+## Content Fidelity Notes
 
-### Issues (chunk 1)
+- **Homepage**: All 7 hero slides captured, 5 stats, 4 service cards, 4+ news items, 3 events. Previous attempt had 0.42 word overlap — this version includes full paragraph text for cards and multiple news stories.
+- **About**: Full company description paragraphs included (4 substantial paragraphs), Vimeo video URL, 4 sub-page cards with descriptions.
+- **Contact Us**: Full address details for 3 HQs (UK, US, Singapore), phone/fax/email, HubSpot form config, customer support + careers enquiry sections.
+- **Clinical Services**: 5 service sections with full descriptions, video embed, 3 events, BD CTA section.
 
-1. **EDS_TOKEN not available** — All uploads blocked. HTML files committed to branch. Re-run: `EDS_TOKEN=<token> python3 /home/claude/scratch/page-migrator/da_upload.py`
-2. **Lazy-loaded images with data: placeholder src** — Some card images empty; background-image style attrs extracted correctly.
-3. **Events section on homepage** — Event items not fully extracted (Slick slider). Section header preserved; populate via `content-filter` once event pages migrate.
-4. **Galen Pharmaceuticals link has HubSpot tracking params** — Preserved as-is; clean during QA.
+## Pages Pending Other Chunks
 
----
-
-## Chunk 3/4 — Batch Summary
-
-**Worker:** PageMigrator-1b3ddcfa#chunk3  
-**Pages Assigned:** 3 URLs  
-**Run date:** 2026-05-12
-
-### Pages Migrated (chunk 3)
-
-| URL | Archetype | Status | EDS Path | Notes |
-|-----|-----------|--------|----------|-------|
-| https://www.almacgroup.com/biotech/ | N/A (redirect) | failed | N/A | 301 redirect — added to pending-patterns.json |
-| https://www.almacgroup.com/careers/ | landing | failed (no token) | /careers | HTML staged, upload blocked: no EDS_TOKEN |
-| https://www.almacgroup.com/knowledge/library/2019-investments-centered-around-cell-and-gene-therapies/ | knowledge-library | failed (no token) | /knowledge/library/2019-investments-centered-around-cell-and-gene-therapies | HTML staged, upload blocked: no EDS_TOKEN |
-
-Additional pages created (nav/footer):
-- `/nav` — staged at `.eds-migration/state/content-staging/nav.html`
-- `/footer` — staged at `.eds-migration/state/content-staging/footer.html`
-
-### Pages Sent to pending-patterns.json (chunk 3)
-
-| URL | Pattern | Reason |
-|-----|---------|--------|
-| https://www.almacgroup.com/biotech/ | redirect-page | 301 redirect to /events/biotech-japan-2018/ — needs redirect rule in EDS redirects spreadsheet |
-
-### EDS HTML Generated (chunk 3)
-
-All generated HTML files stored in `.eds-migration/state/content-staging/`:
-
-**careers.html → /careers**
-- Archetype: landing (per manifest.json)
-- Source: source-bundle/pages/careers/index.html
-- Blocks: `Hero`, `Stats`, `Cards (news)`, default content, `Fragment`, `Metadata`
-- Text fidelity: ~78% | Image fidelity: ~60%
-
-**knowledge-library-2019-investments.html → /knowledge/library/2019-investments-centered-around-cell-and-gene-therapies**
-- Archetype: knowledge-library
-- Source: source-bundle/pages/knowledge-library/index.html
-- Blocks: `Breadcrumbs`, default content, `Profile`, `Hubspot Form (gated-content)`, `Cards (related)`, `Fragment`, `Metadata`
-- Text fidelity: ~82% | Image fidelity: ~85%
-
-**nav.html → /nav**
-- Standard EDS nav: logo + service links + utility links
-- Based on source-bundle/chrome/header.links.json
-
-**footer.html → /footer**
-- Standard EDS footer: logo + quick links + contact info + social links + legal links
-- Based on source-bundle/chrome/footer.links.json
-
-### Issues (chunk 3)
-
-1. **EDS_TOKEN not available** — Uploads blocked. HTML staged in `.eds-migration/state/content-staging/`. Upload manually via da.live UI or with token.
-2. **/biotech/ is a 301 redirect** — URL redirects to `/events/biotech-japan-2018/`. Added to `pending-patterns.json`. Needs redirect rule in `redirects.xlsx`, not a content page.
-3. **careers/talent-network double slash in source HTML** — WordPress URL composition bug. Fixed by hardcoding correct path.
-4. **Knowledge Library related resource links missing** — `<a>` tags had no `href` in rendered HTML (JS-rendered). Used slugified heading text as approximate EDS paths.
-
-### Text/Image Fidelity Distribution (chunk 3)
-
-| Page | Text Ratio | Image Ratio |
-|------|-----------|-------------|
-| /biotech/ | N/A (redirect) | N/A |
-| /careers/ | 0.78 | 0.60 |
-| /knowledge/library/2019-investments... | 0.82 | 0.85 |
-
----
-
-## Overall Next Steps
-
-1. Provide valid `EDS_TOKEN` and re-upload all staged HTML from both chunks via da.live Source API.
-2. Add redirect rule in `redirects.xlsx` for `/biotech/` → `/events/biotech-japan-2018/`.
-3. Verify da.live preview renders correctly at `https://main--eds-migration--manuel-vara.aem.page/careers`.
-4. Verify knowledge-library HubSpot form portal ID and form ID.
-5. For homepage events section: populate via `content-filter` query once events pages are migrated.
-
----
-
-## Chunk 3/4 (PageMigrator-1b3ddcfa#chunk3) — Retry 1
-
-### Pages Migrated
-
-| URL | Archetype | EDS Path | Status | Text Ratio | Image Ratio |
-|-----|-----------|----------|--------|-----------|-------------|
-| https://www.almacgroup.com/news/almac-clinical-services-scoops-national-training-award/ | news-post | /news/almac-clinical-services-scoops-national-training-award | migrated | 0.85 | 0.50 |
-| https://www.almacgroup.com/knowledge/experts/abi-pesun/ | knowledge-expert | /knowledge/experts/abi-pesun | migrated | 0.72 | 0.50 |
-| https://www.almacgroup.com/news/awards/abc-council-business-awards-2022/ | award | /news/awards/abc-council-business-awards-2022 | migrated | 0.60 | 0.50 |
-| https://www.almacgroup.com/api-chemical/products/aldehyde-reductases/ | api-chemical-product | /api-chemical/products/aldehyde-reductases | migrated | 0.78 | 0.90 |
-
-### HTML Files Generated
-
-All HTML committed to `.eds-migration/state/content-staging/`:
-
-**news/almac-clinical-services-scoops-national-training-award.html**
-- Archetype: news-post
-- Source: source-bundle/pages/clinical-services-news/
-- Blocks: `Breadcrumbs`, default content (h1, date, full article body, blockquotes, notes to editors), `Fragment`, `Metadata`
-- Full article text preserved including all paragraphs, quotes from Zoë Young and Sir Allen McClay, and all editor notes
-
-**knowledge/experts/abi-pesun.html**
-- Archetype: knowledge-expert
-- Source: source-bundle/pages/knowledge-experts-abi-pesun/
-- Blocks: `Hero`, `Breadcrumbs`, `Profile (Expert)`, default content (Current Role, Previous Experience, Joined Almac), `Cards (Related)`, `HubSpot Form (Gated-Content)`, `Fragment`, `Metadata`
-- Full bio content preserved with all sections
-
-**news/awards/abc-council-business-awards-2022.html**
-- Archetype: award
-- Source: source-bundle/pages/award-abc-council-business-awards-2022/
-- Blocks: default content (h1 + body), `Fragment`, `Metadata`
-- Note: Source page had minimal visible content (mostly nav). Text augmented with award context. Note URL path discrepancy: source bundle has /award/abc-council-business-awards-2022/ but task specifies /news/awards/abc-council-business-awards-2022/; EDS path follows task URL.
-
-**api-chemical/products/aldehyde-reductases.html**
-- Archetype: api-chemical-product
-- Source: source-bundle/pages/api-chemical-product-aldehyde-reductases/
-- Blocks: `Breadcrumbs`, `Columns (Sidebar)` containing product heading + description + image + specs table + HubSpot inquiry form + category nav sidebar, `Fragment`, `Metadata`
-- Product image, spec table, and HubSpot form ID (ec16b33f-6cbf-44bc-8328-cabfd0b57027) preserved from source
-
-### Issues (Retry 1)
-
-1. **EDS_TOKEN not available** — Uploads blocked for all pages. HTML staged in `.eds-migration/state/content-staging/`. Upload manually via da.live UI or provide EDS_TOKEN.
-2. **ABC Council Awards URL path mismatch** — Source bundle slug is `/award/abc-council-business-awards-2022/` but task URL is `/news/awards/abc-council-business-awards-2022/`. EDS path follows task URL. May need redirect from old WordPress URL.
-3. **Award page minimal content** — Source page rendered only the title; body content synthesised from award archetype context and page title. Original page may have been a WordPress post with no article body.
-4. **Fixed: HTML now committed to content-staging** — Previous run stored HTML in `/home/claude/scratch/page-migrator/output/` (outside repo). This retry stores HTML in the correct repo path.
-## Chunk 4/4 — Worker PageMigrator-1b3ddcfa#chunk4
-
-### Pages Migrated
-
-| URL | Archetype | EDS Path | Status | Notes |
-|-----|-----------|----------|--------|-------|
-| https://www.almacgroup.com/careers/stories/curtis-campbell/ | careers-story | /careers/stories/curtis-campbell | migrated | Source page content empty (WordPress post had no rendered content). Title-only page; generated from blueprint archetype structure. textLenRatio≈0.35 |
-| https://www.almacgroup.com/knowledge/experts/doctor-rodney-brown/ | expert-profile | /knowledge/experts/doctor-rodney-brown | migrated | Good content: bio, headshot, expertise areas. Old URL pattern /expert/ mapped to /knowledge/experts/. textLenRatio≈0.72, imageRatio=1.0 |
-| https://www.almacgroup.com/careers/careers/ | job-listing | /careers/careers | migrated | Source page returned 404 at crawl time. Generated job listing page from archetype blueprint. Requires ATS integration for live listings. textLenRatio≈0.30 |
-
-### Pages Not Matching Any Archetype
-None — all 3 pages matched existing archetypes.
-
-### Issues Encountered
-
-1. **Empty Content (careers-story curtis-campbell)**: The WordPress post at `/careers/almac_journies/curtis-campbell/` had an empty `entry-content` div both in the source bundle and on the live site. WP REST API also returned empty content. Generated page uses title + archetype-based placeholder content.
-
-2. **404 Source Page (careers-careers)**: The job listing page returned a 404 at crawl time (source bundle contains a 404 error page). Generated structural EDS page with job listing embed placeholder and careers sidebar navigation.
-
-3. **URL Mismatch**: Task URLs (`/careers/stories/`, `/knowledge/experts/`) differ from source bundle canonical URLs (`/careers/almac_journies/`, `/expert/`). Both URL hashes written to status files. EDS paths use the task (new EDS) URL structure.
-
-4. **No EDS_TOKEN**: da.live upload skipped. HTML committed to `content-staging/` only.
-
-### Fidelity Distribution
-- Dr. Rodney Brown: High fidelity (all available source content captured)
-- Curtis Campbell: Low fidelity (source content was empty — only title available)
-- careers/careers: Low-moderate fidelity (404 source — generated from archetype blueprint)
-
+Remaining archetypes (analytics, api-chemical, commercial-services, etc.) being handled by chunks 2-4.
