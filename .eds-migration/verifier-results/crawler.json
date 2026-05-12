@@ -1,110 +1,84 @@
 {
   "verdict": "PASS",
+  "phase": "block-inventory",
+  "verified_at": "2026-05-12T00:00:00Z",
   "issues": [
     {
       "severity": "medium",
-      "criterion": "careers-resource archetype has no content analysis (fully gated)",
-      "details": "careers-resource-bioinformatics-scientist page entry in sample-scrape.json has null url, null title, null cleaned_html_size, null content_sections, and null block_candidates. The URL https://www.almacgroup.com/careers/resources/a-day-in-the-life-of-a-bioinformatics-scientist/ redirects to a login page. All 36 careers-resource pages appear auth-gated. The archetype is omitted from archetypes_analyzed in sample-scrape.json (correctly flagged as gated). README documents this as a 'Partial Capture'. Downstream migration agents cannot determine content structure or block patterns for this archetype.",
-      "remediation": "Downstream agents should treat careers-resource as a gated archetype and skip or stub content analysis. If any public careers-resource URLs can be identified via sitemap or search, substitute one as the sample."
+      "criterion": "Summary metadata accuracy",
+      "details": "summary.total_blocks claims 18 but the blocks array contains 21 entries. summary.from_block_collection claims 12 but 14 blocks have source='block-collection'. summary.custom_blocks claims 5 but 7 blocks have source='custom'. The summary.blocks_by_priority correctly lists all 21 blocks (contradicting the stated total of 18). These counts were not updated when modal, table, and icon-grid were added late.",
+      "remediation": "Update summary.total_blocks to 21, from_block_collection to 14 (or verify exact count), custom_blocks to 7. Consider a post-generation consistency check."
     },
     {
       "severity": "medium",
-      "criterion": "knowledge-library-a-phase-ii page captures a 404 error page with empty content analysis",
-      "details": "The page slug 'knowledge-library-a-phase-ii-study-evaluating-the-safety-and-efficacy-of-two-amg' has null content_sections, null block_candidates, null cleaned_html_size. The README documents this as a 404 capture. Screenshots exist but show an error page. This page should not be used as a knowledge-library archetype reference.",
-      "remediation": "The primary knowledge-library sample (slug 'knowledge-library', URL ...2019-investments-centered-around-cell-and-gene-therapies/) is a valid 200 capture with 27KB cleaned HTML and 4 content sections. Downstream agents should use that as the archetype reference."
+      "criterion": "Coverage of all sample-scrape block_candidates",
+      "details": "sample-scrape.json identifies 'product-detail (custom)' (confidence: medium) for the api-chemical-product archetype (c-biocatalyst-single-page: description, specifications, sidebar nav, inquiry form). The block-inventory has no dedicated product-detail block and the summary.key_decisions section does not explicitly address how this archetype's unique composite layout will be assembled. The archetype is served by sidebar + table + hubspot-form, but there is no explicit documentation of the composition strategy.",
+      "remediation": "Add a key_decision entry documenting that api-chemical-product pages use a Sidebar section style + Table + Columns + HubSpot Form composition, explicitly superseding the sample-scrape's product-detail candidate."
     },
     {
       "severity": "low",
-      "criterion": "award and careers-story sample pages have very thin cleaned HTML",
-      "details": "award-abc-council-business-awards-2022 has cleaned_html_size=392 bytes (only a HubSpot form extracted). careers-story-curtis-campbell has cleaned_html_size=84 bytes. Both have raw_html_size ~200-300KB and metadata.text_length ~10K, indicating real content exists on the live site but was not extracted into the cleaned_html. Award pages appear to be primarily form-gated content; careers-story is on the careers sub-site which requires login for some paths.",
-      "remediation": "The award archetype's block pattern (form-embed/HubSpot) is still accurately captured. careers-story block pattern (sidebar + form) is captured. Downstream agents can proceed with these patterns while noting cleaned content will be sparse."
+      "criterion": "icon-grid block/variant contradiction",
+      "details": "The key_decisions entry states 'Icon grid is a Cards variant, not a separate block', and the icon-grid content_model notes 'Rather than a dedicated block, use the Cards block with a variant class cards (icon)'. However, icon-grid appears as its own named block entry in the blocks array, and the cards block has no 'icon' variant defined in its variants array. This creates ambiguity for block developers.",
+      "remediation": "Either: (a) remove the standalone icon-grid block entry and add an 'icon' variant to the cards block, OR (b) keep icon-grid as an explicitly named thin wrapper of cards and document this in the cards block's variants."
     },
     {
       "severity": "low",
-      "criterion": "job-listing archetype present in sample but not in manifest",
-      "details": "sample-scrape.json archetypes_analyzed contains 'job-listing' (mapped to careers-careers slug, page_count=1) but manifest.json has no 'job-listing' archetype — the careers-careers page is subsumed under the 'careers' archetype in the manifest (count=157). This is a minor categorization difference introduced during Phase 2a analysis.",
-      "remediation": "Downstream agents should note that 'job-listing' in the sample corresponds to the 'careers' archetype in the manifest. The careers-careers slug covers job listing pages."
+      "criterion": "section (parallax-image) candidate not explicitly mapped",
+      "details": "sample-scrape.json identifies 'section (parallax-image)' as a distinct pattern (c-map-parallax: background image with parallax effect + CTA overlay). The section_styles inventory has 'full-width-image' which covers static background images, but there is no mention of parallax CSS behavior or how this effect will be handled in EDS.",
+      "remediation": "Add a note to the full-width-image section style (or a new parallax-image section style entry) documenting how the parallax scroll effect will be approximated in EDS (e.g., CSS scroll-behavior, IntersectionObserver enhancement, or accepted as dropped behavior)."
     },
     {
       "severity": "low",
-      "criterion": "careers-news-almac sample (news-post #1) has zero headings and 7143 bytes cleaned HTML",
-      "details": "The first news-post sample (careers-news-almac-recognised-at-the-nus-2023-awards, URL https://www.almacgroup.com/careers/news/almac-recognised-at-the-nus-2023-awards/) has 0 headings extracted and only 7143 bytes cleaned HTML. The second news-post sample (clinical-services-news) is richer: 4 headings, 10108 bytes, and identifies related-content cards block. The careers subdomain may have a different template that prevents heading extraction.",
-      "remediation": "Use clinical-services-news as the primary news-post archetype reference. The careers-news sample is secondary and likely represents a sub-site variant."
+      "criterion": "testimonial carousel behavior not addressed in quote block",
+      "details": "sample-scrape.json flags 'testimonial (custom)' as a carousel. The inventory maps this to the 'quote' block (Block Collection), which handles individual quotes but not a carousel of testimonials. No variant or note addresses the carousel wrapper.",
+      "remediation": "Add a 'quote (carousel)' variant to the quote block, or document that the Carousel block wraps multiple quote blocks to replicate the testimonials carousel."
     }
   ],
   "evidence": [
     {
-      "page": "sample-scrape.json structure",
-      "source_artifact": ".eds-migration/state/sample-scrape.json",
-      "preview_artifact": "N/A",
-      "render_strategy": "Python json.load() structural analysis",
-      "finding": "File exists at 248271 bytes, is valid JSON. Top-level keys: generated_at, source_site, total_pages_crawled, archetypes_analyzed, pages, archetype_summary. Contains 32 page entries matching all 32 source-bundle page directories exactly. archetypes_analyzed covers 27 archetypes (all manifest archetypes present except careers-resource, which is documented as gated). archetype_summary is a simple count dict with 28 entries.",
-      "viewports": []
+      "check": "block-inventory.json exists and is well-formed JSON",
+      "artifact": ".eds-migration/state/block-inventory.json",
+      "finding": "File exists (51916 bytes), parses as valid JSON object with 13 top-level keys including 'blocks' (array of 21 entries), 'summary', 'block_collection_available', 'block_party_matches', 'section_styles' (5 entries), 'default_content_patterns' (4 entries).",
+      "passed": true
     },
     {
-      "page": "archetype coverage cross-check",
-      "source_artifact": ".eds-migration/state/manifest.json",
-      "preview_artifact": ".eds-migration/state/sample-scrape.json",
-      "render_strategy": "Python set comparison of manifest.archetypes[].name vs sample.archetypes_analyzed.keys()",
-      "finding": "27 manifest archetypes vs 27 sample archetypes. Difference: careers-resource missing from sample (expected — gated archetype, documented). Extra in sample: job-listing (careers sub-categorization). All other 26 archetypes covered in both.",
-      "viewports": []
+      "check": "All 7 required fields present on every block",
+      "artifact": ".eds-migration/state/block-inventory.json",
+      "finding": "All 21 blocks verified to have: name, description, variants, content_model, source_pattern, archetype_usage, complexity, priority. Zero missing fields.",
+      "passed": true
     },
     {
-      "page": "source-bundle page completeness",
-      "source_artifact": "source-bundle/pages/",
-      "preview_artifact": ".eds-migration/state/sample-scrape.json pages dict",
-      "render_strategy": "os.listdir cross-check + file existence + file size validation",
-      "finding": "All 32 page slugs in sample-scrape.json have corresponding directories in source-bundle/pages/ with index.html, desktop.png, mobile.png, and meta.json. No missing or zero-byte files. Source-bundle and sample-scrape page sets are identical.",
-      "viewports": []
+      "check": "Coverage of sample-scrape block_candidates",
+      "artifact": ".eds-migration/state/sample-scrape.json block_candidates (21 unique candidates across 32 pages)",
+      "finding": "19/21 candidates clearly covered. Two gaps: product-detail not explicitly documented as composite; parallax-image section style not differentiated from full-width-image. Cards covers 5 variants (default/news/resource/event/related). Section patterns (cta, full-width-image) covered by section_styles. Animated-intro covered by default_content_patterns.",
+      "passed": true,
+      "notes": "medium issue raised for product-detail, low issue for parallax-image"
     },
     {
-      "page": "https://www.almacgroup.com/events/",
-      "source_artifact": "source-bundle/pages/events/index.html",
-      "preview_artifact": "https://www.almacgroup.com/events/",
-      "render_strategy": "File inspection of sample-scrape.json events page entry",
-      "finding": "events archetype: 4 content sections (breadcrumbs, content-slider/carousel, filter/facet, hubspot-form), 2 block candidates (filter custom high confidence, form-embed hubspot high confidence), 25 headings, cleaned_html=43625 bytes, raw_html=408343 bytes. Thorough analysis — filter block is high-confidence EDS pattern identification.",
-      "viewports": []
+      "check": "High-volume patterns marked critical/high priority",
+      "artifact": ".eds-migration/state/block-inventory.json",
+      "finding": "hero: critical, cards: critical, columns: critical, hubspot-form: critical. All four high-volume patterns are correctly prioritized. content-filter (serves 2330+ listing pages across events/news/knowledge) also correctly marked critical.",
+      "passed": true
     },
     {
-      "page": "https://www.almacgroup.com/knowledge/library/2019-investments-centered-around-cell-and-gene-therapies/",
-      "source_artifact": "source-bundle/pages/knowledge-library/index.html",
-      "preview_artifact": "https://www.almacgroup.com/knowledge/library/2019-investments-centered-around-cell-and-gene-therapies/",
-      "render_strategy": "File inspection of sample-scrape.json knowledge-library page entry",
-      "finding": "knowledge-library archetype: 4 content sections (breadcrumbs, article-body/default-content, profile-details/profile, hubspot-form), 2 block candidates (profile custom high, form-embed high), 7 headings, cleaned_html=27386 bytes. Adequate analysis — identifies article+profile+form pattern for this archetype.",
-      "viewports": []
+      "check": "Block Collection referenced where applicable",
+      "artifact": ".eds-migration/state/block-inventory.json",
+      "finding": "14 blocks have source='block-collection' with block_collection_url pointing to main--aem-block-collection--adobe.aem.live. 2 blocks (breadcrumbs, content-filter) additionally have Block Party references with GitHub URLs. Custom blocks (hubspot-form, stats, profile, content-filter, sidebar, contact-locations, icon-grid) are marked source='custom'.",
+      "passed": true,
+      "notes": "block_collection_reference field is null on all blocks but block_collection_url field carries the actual URLs — minor schema inconsistency"
     },
     {
-      "page": "https://www.almacgroup.com/news/almac-clinical-services-scoops-national-training-award/ (news-post primary sample)",
-      "source_artifact": "source-bundle/pages/clinical-services-news/index.html",
-      "preview_artifact": "https://www.almacgroup.com/news/almac-clinical-services-scoops-national-training-award/",
-      "render_strategy": "File inspection of sample-scrape.json clinical-services-news page entry",
-      "finding": "news-post archetype (primary): 5 sections (breadcrumbs, sidebar/nav, article-body/default-content, related-content/card-grid, hubspot-form), 3 block candidates (sidebar medium, cards/related-content high, form-embed high), 4 headings including h1, cleaned_html=10108 bytes. Thorough analysis with related-content cards pattern identified.",
-      "viewports": []
+      "check": "Custom blocks are justified (not duplicating Block Collection)",
+      "artifact": ".eds-migration/state/block-inventory.json",
+      "finding": "hubspot-form: justified (Block Collection Form is deprecated per key_decisions). stats: justified (animated counter, no BC equivalent). profile: justified (no BC equivalent for person bios). content-filter: justified (custom JS for query-index filtering). sidebar: justified (navigation sidebar not in BC). contact-locations: justified (unique 2-col contact+offices layout, low priority). icon-grid: description says 'Can be implemented as Cards variant' — listed as custom block but content_model defers to Cards (icon). Low-severity contradiction logged.",
+      "passed": true
     },
     {
-      "page": "https://www.almacgroup.com/clinical-services/",
-      "source_artifact": "source-bundle/pages/clinical-services/index.html",
-      "preview_artifact": "https://www.almacgroup.com/clinical-services/",
-      "render_strategy": "File inspection of sample-scrape.json clinical-services page entry",
-      "finding": "clinical-services archetype: 6 sections (hero/hero-banner, breadcrumbs, animated-intro/intro-content, video-embed/media, full-image/media, hubspot-form), 5 block candidates (hero high, embed-video high, section-full-width-image medium, default-content-animated-intro medium, form-embed high), 20 headings, cleaned_html=24395 bytes. Thorough analysis covering carousel hero, video, and animated intro patterns.",
-      "viewports": []
-    },
-    {
-      "page": "careers-resource-bioinformatics-scientist (gated check)",
-      "source_artifact": "source-bundle/pages/careers-resource-bioinformatics-scientist/index.html",
-      "preview_artifact": "https://www.almacgroup.com/careers/resources/a-day-in-the-life-of-a-bioinformatics-scientist/",
-      "render_strategy": "File inspection + README documentation cross-check",
-      "finding": "careers-resource sample has null content_sections, null block_candidates, null cleaned_html_size in sample-scrape.json. README documents this as a login-redirect partial capture. The archetype is correctly excluded from archetypes_analyzed. This is the only archetype with zero analysis coverage — all 36 pages appear auth-gated.",
-      "viewports": []
-    },
-    {
-      "page": "archetype_summary check",
-      "source_artifact": ".eds-migration/state/sample-scrape.json archetype_summary",
-      "preview_artifact": "N/A",
-      "render_strategy": "Python structural inspection",
-      "finding": "archetype_summary is a flat dict of {archetype_name: page_count}. High-volume: events=928, knowledge-library=723, news-post=679, clinical-services=209. This confirms the prioritization order for migration work. The summary is page-count only (no block analysis summary), so downstream agents must consult the pages dict for block patterns.",
-      "viewports": []
+      "check": "content-filter has clear architecture plan",
+      "artifact": ".eds-migration/state/block-inventory.json .blocks[15]",
+      "finding": "content-filter has: 3 variants (events/news/knowledge), content_model with configuration-table structure (source row + filter field rows), explicit notes on query-index.json reading, client-side filtering, pagination, URL-based filter state for shareability. Block Party Content Filter Hub (https://github.com/rusmeenkhan1/content-filter-hub) cited as reference implementation. Complexity=complex, priority=critical. Architecture is well-defined.",
+      "passed": true
     }
   ],
-  "summary": "PASS — sample-scrape.json is well-formed JSON with 32 page entries fully matching source-bundle. All 27 manifest archetypes covered in archetypes_analyzed except careers-resource (correctly excluded as auth-gated, documented). High-volume archetypes (events, knowledge-library, news-post, clinical-services) all have thorough section/block analysis. Two empty-content pages (careers-resource login-redirect, knowledge-library-a-phase-ii 404) are documented limitations. Award and careers-story pages have thin cleaned HTML due to form/sub-site gating but block patterns are still captured."
+  "summary": "PASS — block-inventory.json is well-formed, all 21 blocks carry all 7 required fields, high-volume patterns are critical priority, content-filter has a clear architecture plan, and Block Collection URLs are referenced. Minor issues: summary count metadata is stale (claims 18 blocks, actual 21); product-detail composite strategy is undocumented; icon-grid contradicts its own key_decision; parallax-image section style is undifferentiated."
 }
