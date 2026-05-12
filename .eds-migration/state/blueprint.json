@@ -1,0 +1,1240 @@
+{
+  "version": "2c-v1",
+  "generated_at": "2026-05-12",
+  "source_site": "https://www.almacgroup.com",
+  "total_pages": 3605,
+  "total_archetypes": 27,
+
+  "blockPalette": [
+    {
+      "name": "hero",
+      "source": "block-collection",
+      "buildAction": "adapt",
+      "contentModel": "standalone",
+      "usedByArchetypes": ["homepage", "about", "landing", "analytical", "api-chemical", "clinical-services", "clinical-technologies", "commercial-services", "diagnostics", "discovery", "pharma-drug", "knowledge", "knowledge-expert", "bd-team-profile", "client-portal", "careers"],
+      "variants": ["default", "carousel"],
+      "files": ["blocks/hero/hero.css", "blocks/hero/hero.js"],
+      "contentModelDetail": {
+        "rows": [{"col1": "Background image", "col2": "Heading (h1) + subtitle (p) + CTA link (bold = button)"}],
+        "maxCellsPerRow": 2,
+        "notes": "Block Collection hero. Adapt CSS for Almac brand gradient overlays. Carousel variant wraps multiple hero rows in a carousel block for homepage."
+      },
+      "sourceSelectors": [".c-banner", ".c-banner-blank--wrap", ".c-banner__content"],
+      "complexity": "simple",
+      "buildOrder": 1,
+      "dependencies": []
+    },
+    {
+      "name": "cards",
+      "source": "block-collection",
+      "buildAction": "adapt",
+      "contentModel": "collection",
+      "usedByArchetypes": ["homepage", "about", "landing", "analytical", "api-chemical", "clinical-services", "clinical-technologies", "commercial-services", "diagnostics", "discovery", "pharma-drug", "knowledge-expert", "bd-team-profile", "contact"],
+      "variants": ["default", "news", "resource", "event", "related", "icon"],
+      "files": ["blocks/cards/cards.css", "blocks/cards/cards.js"],
+      "contentModelDetail": {
+        "rows": [{"col1": "Card image", "col2": "Heading (h3/h4) + paragraph (description) + link (CTA)"}],
+        "maxCellsPerRow": 2,
+        "notes": "Block Collection cards. Add variant CSS for news (date+title), resource (overlay gradient), event (date+location+CTA), related (compact row), icon (small icon grid). Each card = 1 row."
+      },
+      "sourceSelectors": [".c-link-box", ".c-box-link-title-image", ".c-news-panels", ".c-resources", ".c-event-listing__item"],
+      "complexity": "medium",
+      "buildOrder": 2,
+      "dependencies": []
+    },
+    {
+      "name": "columns",
+      "source": "block-collection",
+      "buildAction": "reuse",
+      "contentModel": "standalone",
+      "usedByArchetypes": ["about", "clinical-services", "clinical-technologies", "commercial-services", "pharma-drug", "landing", "contact"],
+      "variants": ["default", "video"],
+      "files": ["blocks/columns/columns.css", "blocks/columns/columns.js"],
+      "contentModelDetail": {
+        "rows": [{"col1": "Image or video poster", "col2": "Heading + paragraph(s) + CTA link"}],
+        "maxCellsPerRow": 2,
+        "notes": "Block Collection columns used as-is for media-text split layouts. Video variant has thumbnail + play icon that triggers modal."
+      },
+      "sourceSelectors": [".c-half-media-text", ".c-half-media-text--wrap"],
+      "complexity": "simple",
+      "buildOrder": 3,
+      "dependencies": []
+    },
+    {
+      "name": "carousel",
+      "source": "block-collection",
+      "buildAction": "reuse",
+      "contentModel": "collection",
+      "usedByArchetypes": ["homepage", "events"],
+      "variants": ["default"],
+      "files": ["blocks/carousel/carousel.css", "blocks/carousel/carousel.js"],
+      "contentModelDetail": {
+        "rows": [{"col1": "Slide content (varies: hero content or card content)"}],
+        "maxCellsPerRow": 2,
+        "notes": "Block Collection Carousel wraps each row as a slide. Homepage hero slides use carousel(hero) with nested hero content. Events page uses carousel for featured events. Replaces Slick.js."
+      },
+      "sourceSelectors": [".slick-slider", ".slick-track", ".slick-slide"],
+      "complexity": "medium",
+      "buildOrder": 5,
+      "dependencies": ["hero", "cards"]
+    },
+    {
+      "name": "video",
+      "source": "block-collection",
+      "buildAction": "reuse",
+      "contentModel": "standalone",
+      "usedByArchetypes": ["about", "clinical-services", "commercial-services", "pharma-drug", "diagnostics"],
+      "variants": ["inline", "modal"],
+      "files": ["blocks/video/video.css", "blocks/video/video.js"],
+      "contentModelDetail": {
+        "rows": [{"col1": "Video URL (https://vimeo.com/... or https://youtube.com/watch?v=...)"}],
+        "maxCellsPerRow": 1,
+        "notes": "Block Collection Video for direct video playback. Vimeo is primary provider. Modal variant triggers overlay playback."
+      },
+      "sourceSelectors": [".c-video", ".c-video-wrapper", "iframe[src*='vimeo']"],
+      "complexity": "simple",
+      "buildOrder": 6,
+      "dependencies": []
+    },
+    {
+      "name": "embed",
+      "source": "block-collection",
+      "buildAction": "reuse",
+      "contentModel": "standalone",
+      "usedByArchetypes": ["about", "clinical-services", "diagnostics", "contact"],
+      "variants": ["video", "map"],
+      "files": ["blocks/embed/embed.css", "blocks/embed/embed.js"],
+      "contentModelDetail": {
+        "rows": [{"col1": "URL to embed"}],
+        "maxCellsPerRow": 1,
+        "notes": "Block Collection Embed auto-detects provider. Acts as autoblock for bare URLs on their own line. Used for Google Maps on contact page and Vimeo/YouTube fallbacks."
+      },
+      "sourceSelectors": ["iframe[src*='vimeo']", "iframe[src*='youtube']", "iframe[src*='maps.google']"],
+      "complexity": "simple",
+      "buildOrder": 7,
+      "dependencies": []
+    },
+    {
+      "name": "quote",
+      "source": "block-collection",
+      "buildAction": "reuse",
+      "contentModel": "standalone",
+      "usedByArchetypes": ["analytical", "diagnostics", "clinical-services"],
+      "variants": ["default"],
+      "files": ["blocks/quote/quote.css", "blocks/quote/quote.js"],
+      "contentModelDetail": {
+        "rows": [
+          {"col1": "Quote text (paragraph)"},
+          {"col1": "Attribution: Name, Title (paragraph)"}
+        ],
+        "maxCellsPerRow": 1,
+        "notes": "Block Collection Quote for individual testimonials. For testimonial carousels, wrap multiple quote blocks inside a carousel block."
+      },
+      "sourceSelectors": [".c-testimonials", ".c-testimonial-item", ".c-testimonial__quote"],
+      "complexity": "simple",
+      "buildOrder": 8,
+      "dependencies": []
+    },
+    {
+      "name": "accordion",
+      "source": "block-collection",
+      "buildAction": "reuse",
+      "contentModel": "collection",
+      "usedByArchetypes": ["clinical-services", "api-chemical", "knowledge-library"],
+      "variants": ["default"],
+      "files": ["blocks/accordion/accordion.css", "blocks/accordion/accordion.js"],
+      "contentModelDetail": {
+        "rows": [{"col1": "Question / heading", "col2": "Answer / content"}],
+        "maxCellsPerRow": 2,
+        "notes": "Block Collection Accordion. Each row = one expandable panel. Light usage across site."
+      },
+      "sourceSelectors": [".c-accordion", ".c-accordion__item"],
+      "complexity": "simple",
+      "buildOrder": 12,
+      "dependencies": []
+    },
+    {
+      "name": "tabs",
+      "source": "block-collection",
+      "buildAction": "reuse",
+      "contentModel": "collection",
+      "usedByArchetypes": ["clinical-services", "api-chemical"],
+      "variants": ["default"],
+      "files": ["blocks/tabs/tabs.css", "blocks/tabs/tabs.js"],
+      "contentModelDetail": {
+        "rows": [{"col1": "Tab label", "col2": "Tab content (text, images, or fragment reference)"}],
+        "maxCellsPerRow": 2,
+        "notes": "Block Collection Tabs. Used on some service pages for grouping capabilities by phase/category."
+      },
+      "sourceSelectors": [".c-tabs", ".c-tab__nav", ".c-tab__content"],
+      "complexity": "simple",
+      "buildOrder": 13,
+      "dependencies": []
+    },
+    {
+      "name": "breadcrumbs",
+      "source": "block-collection",
+      "buildAction": "adapt",
+      "contentModel": "auto-blocked",
+      "usedByArchetypes": ["about", "analytical", "api-chemical", "api-chemical-product", "clinical-services", "clinical-technologies", "commercial-services", "diagnostics", "discovery", "pharma-drug", "knowledge", "knowledge-expert", "knowledge-library", "bd-team-profile", "expert-profile", "events", "news", "news-post", "careers", "careers-story", "award", "client-portal"],
+      "variants": [],
+      "files": ["blocks/breadcrumbs/breadcrumbs.css", "blocks/breadcrumbs/breadcrumbs.js"],
+      "contentModelDetail": {
+        "rows": [],
+        "maxCellsPerRow": 0,
+        "notes": "Auto-blocked: injected via scripts.js based on URL path hierarchy. No author table needed. Generate breadcrumb from URL segments, mapping slug to human-readable labels via metadata or a lookup."
+      },
+      "sourceSelectors": [".c-breadcrumbs", ".breadcrumb"],
+      "complexity": "simple",
+      "buildOrder": 4,
+      "dependencies": []
+    },
+    {
+      "name": "hubspot-form",
+      "source": "custom",
+      "buildAction": "build",
+      "contentModel": "configuration",
+      "usedByArchetypes": ["homepage", "about", "landing", "analytical", "api-chemical", "api-chemical-product", "clinical-services", "clinical-technologies", "commercial-services", "diagnostics", "discovery", "pharma-drug", "knowledge", "knowledge-expert", "knowledge-library", "careers", "news-post", "award", "expert-profile", "bd-team-profile", "events", "news", "contact", "client-portal", "blog-category"],
+      "variants": ["site-wide", "gated-content", "product-inquiry"],
+      "files": ["blocks/hubspot-form/hubspot-form.css", "blocks/hubspot-form/hubspot-form.js"],
+      "contentModelDetail": {
+        "rows": [{"col1": "Portal ID", "col2": "Form ID"}],
+        "maxCellsPerRow": 2,
+        "notes": "Custom block. Loads HubSpot Forms JS API (lazy-loaded in delayed.js for performance). Portal ID + Form ID per instance. Site-wide 8-field form should be a Fragment (/fragments/hubspot-cta) included on most pages to avoid repetition."
+      },
+      "sourceSelectors": [".c-hubspot-form", ".hbspt-form", ".hs-form", "script[src*='hsforms']"],
+      "complexity": "medium",
+      "buildOrder": 9,
+      "dependencies": ["fragment"],
+      "fragmentStrategy": {
+        "siteWideForm": "/fragments/hubspot-cta",
+        "portalId": "extracted-from-source",
+        "formIdSiteWide": "extracted-from-source",
+        "notes": "The 8-field site-wide form is identical across ~3500 pages. Author it once as a Fragment. Page-specific forms (gated-content, product-inquiry) are authored inline."
+      }
+    },
+    {
+      "name": "stats",
+      "source": "custom",
+      "buildAction": "build",
+      "contentModel": "collection",
+      "usedByArchetypes": ["homepage"],
+      "variants": ["default"],
+      "files": ["blocks/stats/stats.css", "blocks/stats/stats.js"],
+      "contentModelDetail": {
+        "rows": [
+          {"col1": "6000+", "col2": "employees worldwide"},
+          {"col1": "50+", "col2": "years of experience"},
+          {"col1": "19", "col2": "global sites"}
+        ],
+        "maxCellsPerRow": 2,
+        "notes": "Custom block. Each row = one stat (number + label). Animated counter on scroll is a progressive enhancement in JS (IntersectionObserver). CSS handles responsive row layout."
+      },
+      "sourceSelectors": [".c-stats", ".c-stats__item", ".c-stats__number"],
+      "complexity": "medium",
+      "buildOrder": 10,
+      "dependencies": []
+    },
+    {
+      "name": "profile",
+      "source": "custom",
+      "buildAction": "build",
+      "contentModel": "standalone",
+      "usedByArchetypes": ["knowledge-expert", "expert-profile", "bd-team-profile", "knowledge-library"],
+      "variants": ["expert", "bd-team"],
+      "files": ["blocks/profile/profile.css", "blocks/profile/profile.js"],
+      "contentModelDetail": {
+        "rows": [{"col1": "Profile photo", "col2": "Name (h2) + Title (p) + Credentials (p)"}],
+        "maxCellsPerRow": 2,
+        "notes": "Custom block for the profile header. Bio text, expertise lists, and related content sections below the profile block are default content. BD-team variant adds region/territory field. Expert variant adds credentials."
+      },
+      "sourceSelectors": [".c-knowledge-expert", ".c-expert-profile", ".c-bd-profile", ".c-profile__photo"],
+      "complexity": "simple",
+      "buildOrder": 11,
+      "dependencies": []
+    },
+    {
+      "name": "fragment",
+      "source": "block-collection",
+      "buildAction": "reuse",
+      "contentModel": "configuration",
+      "usedByArchetypes": ["all"],
+      "variants": [],
+      "files": ["blocks/fragment/fragment.css", "blocks/fragment/fragment.js"],
+      "contentModelDetail": {
+        "rows": [{"col1": "/fragments/hubspot-cta"}],
+        "maxCellsPerRow": 1,
+        "notes": "Block Collection Fragment. References a separate page whose content is inlined. Key fragments to create: /fragments/hubspot-cta (site-wide form), /fragments/footer-cta (if common CTA differs from form)."
+      },
+      "sourceSelectors": [],
+      "complexity": "simple",
+      "buildOrder": 4,
+      "dependencies": []
+    },
+    {
+      "name": "search",
+      "source": "block-collection",
+      "buildAction": "adapt",
+      "contentModel": "auto-blocked",
+      "usedByArchetypes": ["all"],
+      "variants": [],
+      "files": ["blocks/search/search.css", "blocks/search/search.js"],
+      "contentModelDetail": {
+        "rows": [],
+        "maxCellsPerRow": 0,
+        "notes": "Block Collection Search. Integrated in header and/or a dedicated search results page. Works with query-index.json."
+      },
+      "sourceSelectors": [".c-search", "input[type='search']", ".c-header__search"],
+      "complexity": "medium",
+      "buildOrder": 14,
+      "dependencies": []
+    },
+    {
+      "name": "content-filter",
+      "source": "custom",
+      "buildAction": "build",
+      "blockPartyReference": {
+        "title": "Content Filter Hub",
+        "url": "https://github.com/rusmeenkhan1/content-filter-hub",
+        "showcase": "https://main--content-filter-hub--rusmeenkhan1.aem.page/en/projects"
+      },
+      "contentModel": "configuration",
+      "usedByArchetypes": ["events", "news", "knowledge"],
+      "variants": ["events", "news", "knowledge"],
+      "files": ["blocks/content-filter/content-filter.css", "blocks/content-filter/content-filter.js"],
+      "contentModelDetail": {
+        "rows": [
+          {"col1": "source", "col2": "events"},
+          {"col1": "division", "col2": "dropdown"},
+          {"col1": "date", "col2": "daterange"},
+          {"col1": "location", "col2": "dropdown"}
+        ],
+        "maxCellsPerRow": 2,
+        "notes": "Most complex custom block. Configuration table specifies query-index sheet and filter fields. JS fetches from query-index.json, applies client-side filtering, renders card results with pagination. Block Party Content Filter Hub is the reference starting point. Must support URL-based filter state for bookmarkable/shareable filtered views."
+      },
+      "sourceSelectors": [".c-filter", ".c-filter__dropdown", ".c-filter__checkbox", ".c-filter__results"],
+      "complexity": "complex",
+      "buildOrder": 15,
+      "dependencies": ["cards"],
+      "riskLevel": "high",
+      "riskNotes": "Serves 2,330+ listing pages (events+news+knowledge). Requires well-structured query-index with correct metadata columns. Performance risk with large datasets. Build and test with events archetype first, then extend to news and knowledge."
+    },
+    {
+      "name": "modal",
+      "source": "block-collection",
+      "buildAction": "reuse",
+      "contentModel": "auto-blocked",
+      "usedByArchetypes": ["clinical-services", "commercial-services", "pharma-drug", "diagnostics"],
+      "variants": ["video", "form"],
+      "files": ["blocks/modal/modal.css", "blocks/modal/modal.js"],
+      "contentModelDetail": {
+        "rows": [],
+        "maxCellsPerRow": 0,
+        "notes": "Block Collection Modal autoblock. Links to #hash trigger modal overlay. Video modals link to fragment page with embedded video. Form modals link to fragment with HubSpot form."
+      },
+      "sourceSelectors": [".c-modal", ".c-modal__content"],
+      "complexity": "simple",
+      "buildOrder": 16,
+      "dependencies": ["fragment"]
+    },
+    {
+      "name": "table",
+      "source": "block-collection",
+      "buildAction": "reuse",
+      "contentModel": "collection",
+      "usedByArchetypes": ["api-chemical-product", "analytical"],
+      "variants": ["default"],
+      "files": ["blocks/table/table.css", "blocks/table/table.js"],
+      "contentModelDetail": {
+        "rows": [
+          {"col1": "Header 1", "col2": "Header 2", "col3": "Header 3"},
+          {"col1": "Data 1", "col2": "Data 2", "col3": "Data 3"}
+        ],
+        "maxCellsPerRow": 4,
+        "notes": "Block Collection Table. First row = headers. Used for product specifications on api-chemical-product pages."
+      },
+      "sourceSelectors": ["table", ".c-table", ".c-specs-table"],
+      "complexity": "simple",
+      "buildOrder": 17,
+      "dependencies": []
+    }
+  ],
+
+  "eliminatedBlocks": [
+    {
+      "name": "contact-locations",
+      "reason": "Compose from Columns + Fragment (HubSpot form) + Cards (location cards). Only 1 page (contact). Not worth a dedicated block.",
+      "composedFrom": ["columns", "cards", "fragment"]
+    },
+    {
+      "name": "icon-grid",
+      "reason": "Implement as Cards (icon) variant with CSS. Only ~10 pages on clinical-technologies. Keeps palette minimal.",
+      "composedFrom": ["cards"]
+    },
+    {
+      "name": "sidebar",
+      "reason": "Implemented as a section style ('style: sidebar') using CSS Grid, not as a block. The sidebar content is authored as normal blocks/default content within a sidebar-styled section.",
+      "implementedAs": "section-style"
+    }
+  ],
+
+  "sectionStyles": [
+    {
+      "name": "sidebar",
+      "css": "CSS Grid 2fr 1fr desktop, stack on mobile",
+      "usedByArchetypes": ["api-chemical-product", "news-post", "careers-story", "careers", "expert-profile", "clinical-services", "job-listing", "news"]
+    },
+    {
+      "name": "full-width-image",
+      "css": "Background image cover, text overlay center/bottom",
+      "usedByArchetypes": ["clinical-services", "commercial-services", "pharma-drug"]
+    },
+    {
+      "name": "cta-band",
+      "css": "Accent background, centered text, button styling",
+      "usedByArchetypes": ["knowledge", "homepage", "clinical-technologies"]
+    },
+    {
+      "name": "dark",
+      "css": "Dark background with light text",
+      "usedByArchetypes": ["homepage", "analytical", "api-chemical"]
+    },
+    {
+      "name": "grey",
+      "css": "Light grey background (#f5f5f5)",
+      "usedByArchetypes": ["about", "clinical-services", "commercial-services", "pharma-drug"]
+    }
+  ],
+
+  "archetypeBlueprints": {
+    "homepage": {
+      "pageCount": 1,
+      "pilotUrl": "https://www.almacgroup.com/",
+      "description": "Site homepage with hero carousel, stats, cards grids, parallax image, and HubSpot form",
+      "sections": [
+        {"style": "default", "sequences": ["hero (carousel)"]},
+        {"style": "dark", "sequences": ["stats"]},
+        {"style": "default", "sequences": ["default content (heading)", "cards (default)"]},
+        {"style": "default", "sequences": ["default content (heading)", "cards (news)"]},
+        {"style": "default", "sequences": ["default content (heading)", "cards (event)"]},
+        {"style": "default", "sequences": ["default content (heading)", "cards (resource)"]},
+        {"style": "full-width-image", "sequences": ["default content (heading + CTA)"]},
+        {"style": "default", "sequences": ["cards (related)"]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "og:image"],
+      "migrationNotes": "Hero carousel replaces Slick.js. Stats block has animated counters. Multiple card grids filtered by type (news, events, resources). Parallax map section becomes full-width-image section style with CTA overlay."
+    },
+    "about": {
+      "pageCount": 15,
+      "pilotUrl": "https://www.almacgroup.com/about/",
+      "description": "Corporate information pages with hero, media-text columns, video, cards, and form",
+      "sections": [
+        {"style": "default", "sequences": ["hero"]},
+        {"style": "default", "sequences": ["breadcrumbs"]},
+        {"style": "grey", "sequences": ["columns", "default content (paragraphs)"]},
+        {"style": "default", "sequences": ["video"]},
+        {"style": "default", "sequences": ["cards (default)"]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "og:image", "og:type"],
+      "migrationNotes": "Standard division landing pattern. Some about pages have deeper content with multiple columns sections."
+    },
+    "landing": {
+      "pageCount": 99,
+      "pilotUrl": "https://www.almacgroup.com/almac-clinical-technologies-response-to-coronavirus-covid-19-outbreak/",
+      "description": "Campaign/response landing pages with flexible content structure",
+      "sections": [
+        {"style": "default", "sequences": ["hero"]},
+        {"style": "default", "sequences": ["breadcrumbs"]},
+        {"style": "default", "sequences": ["default content (heading + paragraphs + images)", "columns"]},
+        {"style": "default", "sequences": ["cards (default)"]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "og:image"],
+      "migrationNotes": "Highly variable structure. Some pages have video embeds, some have cards. Migration should extract what's present and skip missing sections."
+    },
+    "events": {
+      "pageCount": 928,
+      "pilotUrl": "https://www.almacgroup.com/events/",
+      "description": "Event listing hub with content-filter and event archive. Individual event detail pages with date, location, description.",
+      "sections": [
+        {"style": "default", "sequences": ["breadcrumbs"]},
+        {"style": "default", "sequences": ["default content (heading)", "carousel"]},
+        {"style": "default", "sequences": ["content-filter (events)"]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "event-date", "event-location", "division", "event-type", "og:image"],
+      "migrationNotes": "928 pages: ~5 are listing/archive pages using content-filter, ~923 are individual event detail pages. Detail pages are primarily default content with date/location metadata. Listing pages are the complex ones needing content-filter block. Individual event pages follow a simpler pattern: hero + breadcrumbs + default content (date, location, description, link) + form."
+    },
+    "knowledge-library": {
+      "pageCount": 721,
+      "pilotUrl": "https://www.almacgroup.com/knowledge/library/2019-investments-centered-around-cell-and-gene-therapies/",
+      "description": "Knowledge resource detail pages (whitepapers, webinars, publications) with gated content form and expert profile",
+      "sections": [
+        {"style": "default", "sequences": ["breadcrumbs"]},
+        {"style": "default", "sequences": ["default content (heading + body text + inline images)"]},
+        {"style": "default", "sequences": ["profile"]},
+        {"style": "default", "sequences": ["hubspot-form (gated-content)"]},
+        {"style": "default", "sequences": ["cards (related)"]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "content-type", "topic", "expert", "division", "og:image", "publication-date"],
+      "migrationNotes": "Many pages are gated — require form submission to view content. Expert profile section links to knowledge-expert page. ~200 pages have internationalized (CJK) URL slugs requiring careful slug handling."
+    },
+    "news-post": {
+      "pageCount": 677,
+      "pilotUrl": "https://www.almacgroup.com/news/2018-19-figures-show-almac-groups-turnover-increased-by-85m-to-634m/",
+      "description": "Individual news articles with sidebar navigation",
+      "sections": [
+        {"style": "sidebar", "sequences": [
+          "breadcrumbs",
+          "default content (heading + date + body text + images)",
+          "| sidebar: default content (navigation links + category filters)"
+        ]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "publish-date", "division", "category", "author", "og:image"],
+      "migrationNotes": "Two-column layout with article body and sidebar. Sidebar contains sub-site navigation and category links. News articles span all business units — the division metadata field identifies which unit."
+    },
+    "clinical-services": {
+      "pageCount": 210,
+      "pilotUrl": "https://www.almacgroup.com/clinical-services/",
+      "description": "Clinical supply chain service pages with hero, animated intro, video, full-width images, and cards",
+      "sections": [
+        {"style": "default", "sequences": ["hero"]},
+        {"style": "default", "sequences": ["breadcrumbs"]},
+        {"style": "default", "sequences": ["default content (heading + animated typewriter text)"]},
+        {"style": "default", "sequences": ["video"]},
+        {"style": "default", "sequences": ["columns"]},
+        {"style": "full-width-image", "sequences": ["default content (heading)"]},
+        {"style": "default", "sequences": ["cards (default)"]},
+        {"style": "default", "sequences": ["cards (news)"]},
+        {"style": "default", "sequences": ["cards (resource)"]},
+        {"style": "default", "sequences": ["cards (related)"]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "service-area", "division", "og:image"],
+      "migrationNotes": "Sub-site with own WP install. Animated typewriter intro becomes default content (animation dropped or reimplemented as CSS animation). Full-width image sections use section style. 210 pages include sub-service detail pages."
+    },
+    "diagnostics": {
+      "pageCount": 175,
+      "pilotUrl": "https://www.almacgroup.com/diagnostics/almac-diagnostic-services-global-biopharma-partners/",
+      "description": "Diagnostic services pages with hero, video, testimonials",
+      "sections": [
+        {"style": "default", "sequences": ["hero"]},
+        {"style": "default", "sequences": ["breadcrumbs"]},
+        {"style": "default", "sequences": ["default content (heading + body)"]},
+        {"style": "default", "sequences": ["video"]},
+        {"style": "default", "sequences": ["carousel", "quote"]},
+        {"style": "default", "sequences": ["cards (default)"]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "service-area", "division", "og:image"],
+      "migrationNotes": "Sub-site. Testimonial carousel with quote blocks wrapped in carousel. Some pages have deep sub-navigation."
+    },
+    "careers": {
+      "pageCount": 157,
+      "pilotUrl": "https://www.almacgroup.com/careers/all4health-employee-health-well-being-programme/",
+      "description": "Careers pages with hero, sidebar navigation, and career content",
+      "sections": [
+        {"style": "default", "sequences": ["hero"]},
+        {"style": "sidebar", "sequences": [
+          "default content (heading + body text + images)",
+          "| sidebar: default content (careers navigation links)"
+        ]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "og:image"],
+      "migrationNotes": "Careers section has its own sidebar navigation. Content is primarily default content with images. Job listings are a separate archetype."
+    },
+    "knowledge-expert": {
+      "pageCount": 96,
+      "pilotUrl": "https://www.almacgroup.com/knowledge/experts/abi-pesun/",
+      "description": "Knowledge Centre expert profile pages",
+      "sections": [
+        {"style": "default", "sequences": ["hero"]},
+        {"style": "default", "sequences": ["breadcrumbs"]},
+        {"style": "default", "sequences": ["profile (expert)"]},
+        {"style": "default", "sequences": ["default content (bio + expertise lists)"]},
+        {"style": "default", "sequences": ["cards (related)"]},
+        {"style": "default", "sequences": ["hubspot-form (gated-content)"]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "expert-name", "expertise-area", "division", "og:image"],
+      "migrationNotes": "Profile block for photo+name+title header. Bio and expertise are default content below. Related content cards auto-populated from query-index. Gated content form for expert-specific resources."
+    },
+    "clinical-technologies": {
+      "pageCount": 80,
+      "pilotUrl": "https://www.almacgroup.com/clinical-technologies/accelerating-outcomes-with-a-pancreatic-cancer-adaptive-platform/",
+      "description": "Clinical technology service pages with icon grid, cards, and content sections",
+      "sections": [
+        {"style": "default", "sequences": ["hero"]},
+        {"style": "default", "sequences": ["breadcrumbs"]},
+        {"style": "default", "sequences": ["columns"]},
+        {"style": "default", "sequences": ["cards (icon)"]},
+        {"style": "default", "sequences": ["cards (default)"]},
+        {"style": "default", "sequences": ["cards (news)"]},
+        {"style": "default", "sequences": ["cards (event)"]},
+        {"style": "default", "sequences": ["cards (resource)"]},
+        {"style": "default", "sequences": ["cards (related)"]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "technology", "division", "og:image"],
+      "migrationNotes": "Sub-site. Icon grid for capabilities becomes cards(icon) variant. Multiple card grids for news, events, resources. Hub page has many sections; detail pages are simpler."
+    },
+    "api-chemical": {
+      "pageCount": 77,
+      "pilotUrl": "https://www.almacgroup.com/api-chemical-development/ai-assisted-enzyme-design/",
+      "description": "API/chemical development service pages",
+      "sections": [
+        {"style": "default", "sequences": ["hero"]},
+        {"style": "default", "sequences": ["breadcrumbs"]},
+        {"style": "default", "sequences": ["default content (heading + body)"]},
+        {"style": "default", "sequences": ["columns"]},
+        {"style": "dark", "sequences": ["quote"]},
+        {"style": "default", "sequences": ["cards (default)"]},
+        {"style": "default", "sequences": ["cards (news)"]},
+        {"style": "default", "sequences": ["cards (resource)"]},
+        {"style": "default", "sequences": ["cards (related)"]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "service-area", "division", "og:image"],
+      "migrationNotes": "Sub-site. Service pages follow standard division pattern. Some pages have testimonial quotes in dark sections."
+    },
+    "api-chemical-product": {
+      "pageCount": 70,
+      "pilotUrl": "https://www.almacgroup.com/api-chemical-development/biocatalyst_product/aldehyde-reductases-sub-set-of-cesk-6000-standard-format/",
+      "description": "Biocatalyst product detail pages with sidebar, specs table, and inquiry form",
+      "sections": [
+        {"style": "default", "sequences": ["breadcrumbs"]},
+        {"style": "sidebar", "sequences": [
+          "default content (heading + product description)",
+          "table",
+          "hubspot-form (product-inquiry)",
+          "| sidebar: default content (product category navigation)"
+        ]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "product-name", "product-category", "cas-number", "og:image"],
+      "migrationNotes": "Product detail pages with sidebar navigation for product categories. Table block for product specifications. 19-field HubSpot inquiry form. No hero banner on these pages."
+    },
+    "award": {
+      "pageCount": 50,
+      "pilotUrl": "https://www.almacgroup.com/award/abc-council-business-awards-2022/",
+      "description": "Award recognition pages — minimal structure",
+      "sections": [
+        {"style": "default", "sequences": ["default content (heading + body text + image)"]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "award-name", "award-year", "og:image"],
+      "migrationNotes": "Simple pages. Primarily default content with award description and image. No hero, no complex blocks. Most minimal archetype."
+    },
+    "commercial-services": {
+      "pageCount": 42,
+      "pilotUrl": "https://www.almacgroup.com/commercial-services/almac-pharma-services-state-of-the-art-commercial-manufacturing-expansion/",
+      "description": "Commercial/pharma manufacturing service pages",
+      "sections": [
+        {"style": "default", "sequences": ["hero"]},
+        {"style": "default", "sequences": ["breadcrumbs"]},
+        {"style": "default", "sequences": ["columns"]},
+        {"style": "default", "sequences": ["video"]},
+        {"style": "default", "sequences": ["cards (default)"]},
+        {"style": "full-width-image", "sequences": ["default content (heading)"]},
+        {"style": "default", "sequences": ["cards (news)"]},
+        {"style": "default", "sequences": ["cards (resource)"]},
+        {"style": "default", "sequences": ["cards (related)"]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "service-area", "division", "og:image"],
+      "migrationNotes": "Sub-site. Same pattern as clinical-services/pharma-drug. Full-width image parallax section."
+    },
+    "analytical": {
+      "pageCount": 39,
+      "pilotUrl": "https://www.almacgroup.com/analytical-solid-state/almac-sciences-analytical-laboratories/",
+      "description": "Analytical & solid-state service pages with testimonials",
+      "sections": [
+        {"style": "default", "sequences": ["hero"]},
+        {"style": "default", "sequences": ["breadcrumbs"]},
+        {"style": "default", "sequences": ["cards (default)"]},
+        {"style": "default", "sequences": ["cards (news)"]},
+        {"style": "default", "sequences": ["cards (resource)"]},
+        {"style": "dark", "sequences": ["carousel", "quote"]},
+        {"style": "default", "sequences": ["cards (related)"]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "service-area", "division", "og:image"],
+      "migrationNotes": "Sub-site. Testimonial section uses quote blocks in a carousel. Some pages have gated content (11-field) HubSpot forms."
+    },
+    "careers-story": {
+      "pageCount": 39,
+      "pilotUrl": "https://www.almacgroup.com/careers/almac_journies/curtis-campbell/",
+      "description": "Almac Journeys employee story pages with sidebar",
+      "sections": [
+        {"style": "sidebar", "sequences": [
+          "default content (heading + employee story text + images)",
+          "| sidebar: default content (careers navigation + share links)"
+        ]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "employee-name", "department", "og:image"],
+      "migrationNotes": "Simple article-style pages with sidebar. No hero. Default content dominates. Sidebar has careers section navigation."
+    },
+    "careers-resource": {
+      "pageCount": 36,
+      "pilotUrl": "https://www.almacgroup.com/careers/resources/a-day-in-the-life-of-a-bioinformatics-scientist/",
+      "description": "Gated careers resource pages — fully gated content",
+      "sections": [
+        {"style": "default", "sequences": ["default content (heading)"]},
+        {"style": "default", "sequences": ["hubspot-form (gated-content)"]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "resource-type", "og:image"],
+      "migrationNotes": "FULLY GATED — all content behind HubSpot form. Sample scrape returned empty media. Migrate with stub content (title + gating form). Actual content may need manual review post-migration.",
+      "gated": true
+    },
+    "bd-team-profile": {
+      "pageCount": 32,
+      "pilotUrl": "https://www.almacgroup.com/business-development-team/aidan-kelly/",
+      "description": "Business development team member profiles",
+      "sections": [
+        {"style": "default", "sequences": ["hero"]},
+        {"style": "default", "sequences": ["breadcrumbs"]},
+        {"style": "default", "sequences": ["profile (bd-team)"]},
+        {"style": "default", "sequences": ["default content (bio text)"]},
+        {"style": "default", "sequences": ["cards (event)"]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "person-name", "region", "division", "og:image"],
+      "migrationNotes": "Profile block for photo+name+region header. Bio is default content. Events cards show upcoming events for this BD rep."
+    },
+    "pharma-drug": {
+      "pageCount": 24,
+      "pilotUrl": "https://www.almacgroup.com/pharmaceutical-drug-product-development/bioavailability-enhancement-solutions/",
+      "description": "Pharmaceutical drug product development service pages",
+      "sections": [
+        {"style": "default", "sequences": ["hero"]},
+        {"style": "default", "sequences": ["breadcrumbs"]},
+        {"style": "default", "sequences": ["columns"]},
+        {"style": "default", "sequences": ["video"]},
+        {"style": "default", "sequences": ["cards (default)"]},
+        {"style": "full-width-image", "sequences": ["default content (heading)"]},
+        {"style": "default", "sequences": ["cards (news)"]},
+        {"style": "default", "sequences": ["cards (resource)"]},
+        {"style": "default", "sequences": ["cards (related)"]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "service-area", "division", "og:image"],
+      "migrationNotes": "Sub-site. Identical layout pattern to clinical-services and commercial-services."
+    },
+    "discovery": {
+      "pageCount": 20,
+      "pilotUrl": "https://www.almacgroup.com/discovery/about/",
+      "description": "Discovery research/services pages",
+      "sections": [
+        {"style": "default", "sequences": ["hero"]},
+        {"style": "default", "sequences": ["breadcrumbs"]},
+        {"style": "default", "sequences": ["default content (heading + body)"]},
+        {"style": "default", "sequences": ["cards (news)"]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "division", "og:image"],
+      "migrationNotes": "Sub-site. Smaller division with fewer content sections. Simpler layout than other divisions."
+    },
+    "expert-profile": {
+      "pageCount": 12,
+      "pilotUrl": "https://www.almacgroup.com/expert/doctor-rodney-brown/",
+      "description": "Expert profile pages (older URL pattern /expert/)",
+      "sections": [
+        {"style": "default", "sequences": ["breadcrumbs"]},
+        {"style": "sidebar", "sequences": [
+          "profile (expert)",
+          "default content (bio + expertise + publications)",
+          "| sidebar: default content (expert navigation)"
+        ]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "expert-name", "expertise-area", "og:image"],
+      "migrationNotes": "Older URL pattern for experts. Same content as knowledge-expert but different URL structure. Set up redirects from /expert/* to /knowledge/experts/* if consolidating. Uses sidebar section style."
+    },
+    "contact": {
+      "pageCount": 1,
+      "pilotUrl": "https://www.almacgroup.com/contact-us/",
+      "description": "Contact page with HubSpot form and office locations",
+      "sections": [
+        {"style": "default", "sequences": ["breadcrumbs"]},
+        {"style": "default", "sequences": ["columns"]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description"],
+      "migrationNotes": "Compose contact layout from Columns block: col1 = HubSpot form (inline or fragment), col2 = office location cards authored as default content (image, name, address, phone). No dedicated contact-locations block needed."
+    },
+    "knowledge": {
+      "pageCount": 1,
+      "pilotUrl": "https://www.almacgroup.com/knowledge/meet-the-experts/",
+      "description": "Knowledge Centre hub page with expert listing and CTA",
+      "sections": [
+        {"style": "default", "sequences": ["hero"]},
+        {"style": "default", "sequences": ["breadcrumbs"]},
+        {"style": "cta-band", "sequences": ["default content (heading + CTA button)"]},
+        {"style": "default", "sequences": ["content-filter (knowledge)"]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "og:image"],
+      "migrationNotes": "Hub page for Knowledge Centre. Content-filter block lists all knowledge resources with faceted filtering."
+    },
+    "news": {
+      "pageCount": 1,
+      "pilotUrl": "https://www.almacgroup.com/news/",
+      "description": "News listing hub with sidebar and filtered news",
+      "sections": [
+        {"style": "default", "sequences": ["breadcrumbs"]},
+        {"style": "sidebar", "sequences": [
+          "content-filter (news)",
+          "| sidebar: default content (news categories + media resources)"
+        ]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description"],
+      "migrationNotes": "News listing hub. Content-filter block for news with sidebar for category navigation and media pack downloads."
+    },
+    "blog-category": {
+      "pageCount": 1,
+      "pilotUrl": "https://www.almacgroup.com/category/uncategorized/",
+      "description": "Blog category archive page",
+      "sections": [
+        {"style": "default", "sequences": ["default content (heading)"]},
+        {"style": "default", "sequences": ["cards (news)"]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description", "category"],
+      "migrationNotes": "Single page. WordPress category archive. Minimal content. Could redirect to news hub."
+    },
+    "client-portal": {
+      "pageCount": 1,
+      "pilotUrl": "https://www.almacgroup.com/client-login/almac-returns-waybill-generator/",
+      "description": "Client login portal page",
+      "sections": [
+        {"style": "default", "sequences": ["hero"]},
+        {"style": "default", "sequences": ["breadcrumbs"]},
+        {"style": "default", "sequences": ["default content (login instructions)"]},
+        {"style": "default", "sequences": ["hubspot-form"]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description"],
+      "migrationNotes": "Single page. Gated client portal. May need special handling or external redirect to actual client portal system."
+    },
+    "job-listing": {
+      "pageCount": 1,
+      "pilotUrl": "https://www.almacgroup.com/careers/careers/",
+      "description": "Job listing page with sidebar",
+      "sections": [
+        {"style": "sidebar", "sequences": [
+          "default content (heading + job listing embed/iframe)",
+          "| sidebar: default content (careers navigation)"
+        ]},
+        {"style": "default", "sequences": ["fragment (/fragments/hubspot-cta)"]}
+      ],
+      "metadataFields": ["title", "description"],
+      "migrationNotes": "Job listings likely pulled from external ATS (applicant tracking system). May need iframe embed or custom integration. Sidebar has careers navigation."
+    }
+  },
+
+  "siteConventions": {
+    "sectionStyles": ["sidebar", "full-width-image", "cta-band", "dark", "grey"],
+    "ctaPattern": "Bold link = primary CTA button (EDS convention: **[Link text](url)** renders as button). Almac uses 'Find out more', 'Learn more', 'Contact us', 'Download', 'Event Details' as CTA labels.",
+    "imageStrategy": "download-and-convert",
+    "imageNotes": "Download all images from wp-content/uploads and smushcdn.com CDN. Convert to WebP where possible. Preserve alt text. Images served from /_media/ or /media/ path in EDS. Background images in hero blocks use picture element.",
+    "fontStrategy": "System fonts with Google Fonts fallback. Source site uses custom fonts loaded via Google Fonts. EDS should load fonts in head.html for performance.",
+    "colorPalette": {
+      "primary": "#00263e (dark navy blue — Almac brand)",
+      "secondary": "#0072ce (Almac blue)",
+      "accent": "#7ab648 (Almac green)",
+      "dark": "#1a1a1a",
+      "grey": "#f5f5f5",
+      "notes": "Extract exact brand colors from source site CSS during block development."
+    }
+  },
+
+  "configurationPlan": {
+    "navigation": {
+      "structure": "Mega-menu with 7 top-level items: Services (dropdown per business unit), Discovery, Diagnostics, API/Chemical, Clinical Services, Clinical Technologies, Pharma Drug, Commercial Services, Analytical. Plus utility links: About, Sustainability, Careers, Contact, Client Login, Search.",
+      "topLevelItems": [
+        {"text": "Diagnostic Services", "href": "/diagnostics/", "hasDropdown": true},
+        {"text": "Clinical Services", "href": "/clinical-services/", "hasDropdown": true},
+        {"text": "Clinical Technologies", "href": "/clinical-technologies/", "hasDropdown": true},
+        {"text": "API & Chemical Development", "href": "/api-chemical-development/", "hasDropdown": true},
+        {"text": "Pharma Drug Product Development", "href": "/pharmaceutical-drug-product-development/", "hasDropdown": true},
+        {"text": "Commercial Services", "href": "/commercial-services/", "hasDropdown": true},
+        {"text": "Analytical & Solid State", "href": "/analytical-solid-state/", "hasDropdown": true},
+        {"text": "Discovery", "href": "/discovery/", "hasDropdown": true}
+      ],
+      "utilityLinks": [
+        {"text": "About us", "href": "/about/"},
+        {"text": "Sustainability", "href": "/about/sustainability/"},
+        {"text": "Careers", "href": "/careers/"},
+        {"text": "Contact us", "href": "/contact-us/"},
+        {"text": "Client login", "href": "/client-login/"},
+        {"text": "Knowledge Centre", "href": "/knowledge/"}
+      ],
+      "languageSwitcher": ["JP", "KR", "US"],
+      "sourceHeaderLinkCount": 60,
+      "edsImplementation": "Author nav in /nav page using standard EDS navigation structure. Mega-menu dropdowns authored as nested lists. Mobile hamburger menu via EDS header JS."
+    },
+    "footer": {
+      "structure": "3-column footer: col1 = quick links (Careers, About, Locations, News, Knowledge), col2 = business unit links (Discovery, Diagnostics), col3 = legal links (Privacy, Terms, Modern Slavery, Company Info) + phone numbers + social icons",
+      "links": [
+        {"text": "Careers", "href": "/careers/"},
+        {"text": "About Us", "href": "/about/"},
+        {"text": "Our Locations", "href": "/our-locations/"},
+        {"text": "Latest News", "href": "/news/"},
+        {"text": "Knowledge Centre", "href": "/knowledge/"},
+        {"text": "Almac Discovery", "href": "/discovery/"},
+        {"text": "Almac Diagnostic Services", "href": "/diagnostics/"},
+        {"text": "Privacy Policy", "href": "/privacy-cookie-policy/"},
+        {"text": "Terms and Conditions", "href": "/terms-conditions/"},
+        {"text": "Modern Slavery Statement", "href": "/about/compliance-statement/"},
+        {"text": "Company Information", "href": "/company-information/"}
+      ],
+      "phoneNumbers": ["+44 (0) 28 3833 2200", "+1 (215) 660 8500", "+65 6309 0720"],
+      "socialLinks": ["LinkedIn", "Twitter/X", "YouTube"],
+      "edsImplementation": "Author footer in /footer page. Use default content sections with links."
+    },
+    "metadataSpreadsheet": {
+      "columns": ["title", "description", "og:image", "archetype", "division", "publish-date", "content-type", "topic", "expert", "event-date", "event-location", "product-category", "person-name", "template"],
+      "sheets": {
+        "default": "Standard metadata for all pages",
+        "events": "Extended metadata for events (date, location, type)",
+        "knowledge": "Extended metadata for knowledge resources (content-type, topic, expert)",
+        "products": "Extended metadata for products (category, CAS number)"
+      }
+    },
+    "queryIndex": {
+      "sheets": [
+        {"name": "default", "columns": ["path", "title", "description", "image", "archetype", "division", "lastModified"]},
+        {"name": "events", "columns": ["path", "title", "description", "image", "event-date", "event-location", "division", "event-type"]},
+        {"name": "news", "columns": ["path", "title", "description", "image", "publish-date", "division", "category", "author"]},
+        {"name": "knowledge", "columns": ["path", "title", "description", "image", "content-type", "topic", "expert", "division"]},
+        {"name": "experts", "columns": ["path", "title", "image", "expert-name", "expertise-area", "division"]},
+        {"name": "products", "columns": ["path", "title", "description", "image", "product-name", "product-category"]}
+      ],
+      "notes": "Multiple query-index sheets needed for content-filter block variants. Each sheet corresponds to a major content collection."
+    },
+    "redirects": {
+      "strategy": "Spreadsheet-based redirects via /.helix/redirects.xlsx",
+      "knownRedirects": [
+        {"from": "/expert/*", "to": "/knowledge/experts/*", "reason": "Consolidate expert profiles to single URL pattern"},
+        {"from": "/category/uncategorized/", "to": "/news/", "reason": "WordPress blog category archive → news hub"},
+        {"from": "/events-archive/", "to": "/events/", "reason": "Archive URL → main events page"}
+      ],
+      "internationalizedUrls": "~200 URLs with CJK percent-encoded slugs. Preserve original paths with redirects from encoded to decoded versions if needed.",
+      "notes": "Full redirect mapping should be generated during Phase 4 as pages are migrated. Track all old WordPress URLs that change."
+    },
+    "robotsTxt": {
+      "strategy": "Standard EDS robots.txt. Disallow /drafts/. Allow all crawlers for public content.",
+      "notes": "Copy source site crawl directives where applicable. Ensure sitemap reference points to EDS sitemap."
+    },
+    "sitemap": {
+      "strategy": "Auto-generated EDS sitemap from published pages. Replace 11 sub-site sitemaps with unified sitemap.",
+      "sources": [
+        "https://www.almacgroup.com/sitemap_index.xml",
+        "https://www.almacgroup.com/discovery/sitemap_index.xml",
+        "https://www.almacgroup.com/diagnostics/sitemap_index.xml",
+        "https://www.almacgroup.com/api-chemical-development/sitemap_index.xml",
+        "https://www.almacgroup.com/pharmaceutical-drug-product-development/sitemap_index.xml",
+        "https://www.almacgroup.com/analytical-solid-state/sitemap_index.xml",
+        "https://www.almacgroup.com/clinical-services/sitemap_index.xml",
+        "https://www.almacgroup.com/clinical-technologies/sitemap_index.xml",
+        "https://www.almacgroup.com/commercial-services/sitemap_index.xml",
+        "https://www.almacgroup.com/knowledge/sitemap_index.xml",
+        "https://www.almacgroup.com/careers/sitemap_index.xml"
+      ]
+    }
+  },
+
+  "migrationPriorityOrder": {
+    "rationale": "Priority based on: (1) structural complexity for testing blocks, (2) page volume for maximum impact, (3) content-filter dependency chain. Start with simple high-volume archetypes to validate core blocks, then tackle complex listing pages.",
+    "phases": [
+      {
+        "batch": 1,
+        "name": "Foundation — Core blocks + simple archetypes",
+        "archetypes": ["homepage", "about", "award", "contact", "blog-category", "client-portal"],
+        "totalPages": 69,
+        "blocksRequired": ["hero", "cards", "columns", "breadcrumbs", "hubspot-form", "fragment", "stats", "video", "embed"],
+        "notes": "Build and validate all core Block Collection blocks. Homepage is the showcase page. Award pages are the simplest content archetype."
+      },
+      {
+        "batch": 2,
+        "name": "Division landing pages",
+        "archetypes": ["clinical-services", "commercial-services", "pharma-drug", "analytical", "diagnostics", "clinical-technologies", "discovery", "api-chemical"],
+        "totalPages": 719,
+        "blocksRequired": ["quote", "carousel", "modal", "table"],
+        "notes": "All 8 division sub-sites share similar layouts. Build remaining Block Collection blocks (quote, carousel, modal, table). Full-width-image and dark section styles."
+      },
+      {
+        "batch": 3,
+        "name": "Profile pages",
+        "archetypes": ["knowledge-expert", "expert-profile", "bd-team-profile"],
+        "totalPages": 140,
+        "blocksRequired": ["profile"],
+        "notes": "Build custom profile block. Expert-profile → knowledge-expert redirects. BD-team variant."
+      },
+      {
+        "batch": 4,
+        "name": "Article/detail pages with sidebar",
+        "archetypes": ["news-post", "careers-story", "careers", "api-chemical-product", "landing", "job-listing"],
+        "totalPages": 1003,
+        "blocksRequired": ["sidebar (section style)"],
+        "notes": "Sidebar section style is the key new capability. High volume — news-post alone is 677 pages."
+      },
+      {
+        "batch": 5,
+        "name": "Content collections (highest risk)",
+        "archetypes": ["events", "knowledge-library", "knowledge", "news"],
+        "totalPages": 1651,
+        "blocksRequired": ["content-filter", "search"],
+        "notes": "Content-filter is the #1 risk block. Requires query-index to be populated first. Test with events (928 pages), then extend to knowledge-library (721) and news (677). Build search block."
+      },
+      {
+        "batch": 6,
+        "name": "Gated content + edge cases",
+        "archetypes": ["careers-resource"],
+        "totalPages": 36,
+        "blocksRequired": [],
+        "notes": "Fully gated content. Stub migration — title + gating form only. Manual content review required post-migration."
+      }
+    ],
+    "pilotPages": [
+      {"archetype": "homepage", "url": "https://www.almacgroup.com/", "reason": "Showcase page, tests hero, stats, cards, fragment"},
+      {"archetype": "about", "url": "https://www.almacgroup.com/about/", "reason": "Standard division layout with columns, video, cards"},
+      {"archetype": "award", "url": "https://www.almacgroup.com/award/abc-council-business-awards-2022/", "reason": "Simplest archetype — validates default content"},
+      {"archetype": "clinical-services", "url": "https://www.almacgroup.com/clinical-services/", "reason": "Full division hub with all section types"},
+      {"archetype": "diagnostics", "url": "https://www.almacgroup.com/diagnostics/almac-diagnostic-services-global-biopharma-partners/", "reason": "Testimonial carousel, video embed"},
+      {"archetype": "knowledge-expert", "url": "https://www.almacgroup.com/knowledge/experts/abi-pesun/", "reason": "Profile block test, related content cards"},
+      {"archetype": "bd-team-profile", "url": "https://www.almacgroup.com/business-development-team/aidan-kelly/", "reason": "Profile variant, event cards"},
+      {"archetype": "news-post", "url": "https://www.almacgroup.com/news/2018-19-figures-show-almac-groups-turnover-increased-by-85m-to-634m/", "reason": "Sidebar layout, article content"},
+      {"archetype": "api-chemical-product", "url": "https://www.almacgroup.com/api-chemical-development/biocatalyst_product/aldehyde-reductases-sub-set-of-cesk-6000-standard-format/", "reason": "Sidebar + table + product inquiry form"},
+      {"archetype": "events", "url": "https://www.almacgroup.com/events/", "reason": "Content-filter block — critical risk"},
+      {"archetype": "knowledge-library", "url": "https://www.almacgroup.com/knowledge/library/2019-investments-centered-around-cell-and-gene-therapies/", "reason": "Gated content form, expert profile section"},
+      {"archetype": "careers-story", "url": "https://www.almacgroup.com/careers/almac_journies/curtis-campbell/", "reason": "Sidebar article layout"},
+      {"archetype": "contact", "url": "https://www.almacgroup.com/contact-us/", "reason": "Composed layout (columns + form + locations)"},
+      {"archetype": "landing", "url": "https://www.almacgroup.com/almac-clinical-technologies-response-to-coronavirus-covid-19-outbreak/", "reason": "Flexible/variable structure"},
+      {"archetype": "careers-resource", "url": "https://www.almacgroup.com/careers/resources/a-day-in-the-life-of-a-bioinformatics-scientist/", "reason": "Gated content stub test"}
+    ]
+  },
+
+  "pageMigrationRules": {
+    "global": {
+      "imageHandling": {
+        "downloadFrom": ["wp-content/uploads", "smushcdn.com", "b1738808.smushcdn.com"],
+        "namingConvention": "kebab-case slug derived from original filename, preserving meaningful names",
+        "formats": "Convert to WebP where possible; keep original format for SVGs and animated GIFs",
+        "altText": "Preserve source alt text; flag empty alt attributes for review"
+      },
+      "metadataExtraction": {
+        "title": "meta[property='og:title'] || document.title || h1 text",
+        "description": "meta[name='description'] || meta[property='og:description']",
+        "ogImage": "meta[property='og:image']",
+        "canonical": "link[rel='canonical']",
+        "archetype": "from manifest.json mapping",
+        "division": "inferred from URL path prefix (/clinical-services/ → Clinical Services)"
+      },
+      "htmlCleanup": [
+        "Remove WordPress admin bar markup",
+        "Remove HubSpot tracking scripts (replaced by hubspot-form block)",
+        "Remove Slick.js carousel markup (replaced by EDS carousel)",
+        "Strip inline styles except essential ones (display:none for hidden content)",
+        "Remove data-* attributes except data-src for lazy images",
+        "Convert relative URLs to absolute, then to EDS-relative paths",
+        "Normalize heading hierarchy (ensure single h1 per page)"
+      ]
+    },
+    "perArchetype": {
+      "homepage": {
+        "heroSelector": ".c-banner .slick-slider .slick-slide",
+        "statsSelector": ".c-stats .c-stats__item",
+        "cardsSelector": ".c-link-box, .c-news-panels .c-news-panel, .c-resources .c-resource-item",
+        "transformNotes": "Hero carousel: each .slick-slide → one carousel row. Stats: each .c-stats__item → one stats row (number + label). Cards: grouped by parent container into separate card blocks."
+      },
+      "division-landing": {
+        "applies_to": ["clinical-services", "diagnostics", "api-chemical", "clinical-technologies", "commercial-services", "pharma-drug", "analytical", "discovery"],
+        "heroSelector": ".c-banner",
+        "columnsSelector": ".c-half-media-text",
+        "videoSelector": ".c-video iframe, .c-video-wrapper",
+        "cardsSelector": ".c-link-box, .c-news-panels, .c-resources",
+        "transformNotes": "All division pages share same WP template. Extract hero, columns, video, and card sections. Full-width image sections: extract background-image URL from inline style."
+      },
+      "news-post": {
+        "articleSelector": ".c-news__content, .c-article__content, main .entry-content",
+        "sidebarSelector": ".c-sidebar, .c-news__sidebar",
+        "dateSelector": ".c-news__date, .entry-date, time[datetime]",
+        "transformNotes": "Extract article body as default content. Sidebar navigation becomes default content in sidebar section. Preserve date metadata."
+      },
+      "knowledge-library": {
+        "bodySelector": ".c-knowledge__content, .entry-content",
+        "expertSelector": ".c-knowledge-expert, .c-expert-profile",
+        "gatedFormSelector": ".c-hubspot-form:not(.c-footer-form)",
+        "transformNotes": "Article body → default content. Expert section → profile block. Gated form → hubspot-form block with specific form ID. Related content cards auto-populated."
+      },
+      "profile-pages": {
+        "applies_to": ["knowledge-expert", "expert-profile", "bd-team-profile"],
+        "photoSelector": ".c-profile__photo, .c-expert-profile img:first-child",
+        "nameSelector": "h1, .c-profile__name",
+        "titleSelector": ".c-profile__title, h2:first-of-type",
+        "bioSelector": ".c-profile__bio, .entry-content",
+        "transformNotes": "Photo + name + title → profile block row. Bio text → default content below block."
+      },
+      "api-chemical-product": {
+        "productSelector": ".c-product-detail",
+        "tableSelector": "table, .c-specs-table",
+        "sidebarSelector": ".c-sidebar",
+        "formSelector": ".c-hubspot-form.c-product-form",
+        "transformNotes": "Product description → default content. Specs table → table block. Inquiry form → hubspot-form(product-inquiry). Sidebar nav → default content in sidebar section."
+      },
+      "events": {
+        "listingSelector": ".c-filter, .c-event-listing",
+        "eventDetailSelector": ".c-event__content, .entry-content",
+        "dateSelector": ".c-event__date, time[datetime]",
+        "locationSelector": ".c-event__location",
+        "transformNotes": "Listing pages (events/, events-archive/) → content-filter block + heading. Detail pages → default content with date/location metadata. Carousel featured events → carousel block."
+      }
+    }
+  },
+
+  "riskRegister": [
+    {
+      "id": "RISK-001",
+      "severity": "critical",
+      "title": "content-filter block complexity",
+      "description": "The content-filter block serves 2,330+ listing pages across events (928), news (677), and knowledge (721). It requires fetching from query-index, client-side filtering, pagination, and URL state management. This is the most complex custom block.",
+      "mitigation": "Use Block Party Content Filter Hub as reference architecture. Build iteratively: events first, then extend. Have fallback plan: static card lists without filtering if dynamic filtering proves too complex.",
+      "affectedArchetypes": ["events", "knowledge-library", "knowledge", "news"],
+      "affectedPageCount": 2330
+    },
+    {
+      "id": "RISK-002",
+      "severity": "high",
+      "title": "Gated careers-resource content",
+      "description": "36 careers-resource pages are fully gated behind HubSpot forms. Sample scrape returned no content. Actual page content is invisible to migration tooling.",
+      "mitigation": "Stub migration with title + gating form. Post-migration manual content review required. Flag these pages in qa-report for human verification.",
+      "affectedArchetypes": ["careers-resource"],
+      "affectedPageCount": 36
+    },
+    {
+      "id": "RISK-003",
+      "severity": "high",
+      "title": "HubSpot form integration dependency",
+      "description": "HubSpot forms appear on ~3,500 of 3,605 pages. Forms require external HubSpot JS API and specific portal/form IDs. Forms must render correctly and submit data to HubSpot CRM.",
+      "mitigation": "Extract portal ID and form IDs from source site during migration. Build hubspot-form block with lazy-loading in delayed.js. Site-wide form as Fragment to reduce duplication. Test form submission in staging.",
+      "affectedArchetypes": ["all"],
+      "affectedPageCount": 3500
+    },
+    {
+      "id": "RISK-004",
+      "severity": "medium",
+      "title": "Slick.js carousel → EDS carousel conversion",
+      "description": "Source site uses Slick.js for hero carousel (homepage), testimonial rotation, and event featured carousel. EDS Block Collection carousel has different markup and behavior.",
+      "mitigation": "Block Collection Carousel is well-tested. Map each Slick slide to a carousel row. May lose some animations/transitions but core functionality preserved. Test autoplay, touch swipe, accessibility.",
+      "affectedArchetypes": ["homepage", "events", "analytical", "diagnostics"],
+      "affectedPageCount": 10
+    },
+    {
+      "id": "RISK-005",
+      "severity": "medium",
+      "title": "WordPress multisite URL structure",
+      "description": "11 sub-sites with separate WordPress installs. Some URLs have sub-site path prefixes that may not map cleanly to EDS flat structure. Image URLs reference sub-site wp-content paths.",
+      "mitigation": "Maintain existing URL structure in EDS (e.g., /clinical-services/*, /diagnostics/*). Rewrite image URLs to EDS media paths. Generate comprehensive redirect spreadsheet.",
+      "affectedArchetypes": ["clinical-services", "diagnostics", "api-chemical", "clinical-technologies", "commercial-services", "pharma-drug", "analytical", "discovery", "knowledge", "careers"],
+      "affectedPageCount": 3000
+    },
+    {
+      "id": "RISK-006",
+      "severity": "medium",
+      "title": "Internationalized URLs (CJK characters)",
+      "description": "~200 URLs contain percent-encoded CJK characters (Chinese, Japanese, Korean). These are localized content pages, primarily in clinical-services and knowledge-library.",
+      "mitigation": "Preserve percent-encoded URLs as-is in EDS slugs. Test that EDS routing handles encoded characters correctly. Add redirects for any URLs that need normalization.",
+      "affectedArchetypes": ["clinical-services", "knowledge-library"],
+      "affectedPageCount": 200
+    },
+    {
+      "id": "RISK-007",
+      "severity": "low",
+      "title": "404 pages in sitemap",
+      "description": "Phase 1 found stale/removed URLs in WordPress sitemaps returning 404. These are ghost entries from deleted content.",
+      "mitigation": "Skip 404 pages during migration. Log them in qa-report. Add redirects to closest valid page or 404 handler.",
+      "affectedArchetypes": ["knowledge-library"],
+      "affectedPageCount": "unknown — flagged during Phase 1"
+    },
+    {
+      "id": "RISK-008",
+      "severity": "medium",
+      "title": "Mega-menu navigation complexity",
+      "description": "Header has 60+ deduped links in a mega-menu with multi-level dropdowns per business unit. EDS navigation structure may not support the same depth/complexity natively.",
+      "mitigation": "Author nav in EDS using nested list structure. May need custom header JS for mega-menu dropdown behavior. Test mobile hamburger menu for all levels.",
+      "affectedArchetypes": ["all"],
+      "affectedPageCount": 3605
+    },
+    {
+      "id": "RISK-009",
+      "severity": "low",
+      "title": "Client portal and job listing external dependencies",
+      "description": "Client portal (/client-login/) and job listing (/careers/careers/) pages likely embed external systems (client portal app, ATS job board) via iframes or custom integration.",
+      "mitigation": "Preserve iframe embeds or redirect to external systems. These pages may need manual post-migration setup.",
+      "affectedArchetypes": ["client-portal", "job-listing"],
+      "affectedPageCount": 2
+    }
+  ],
+
+  "blockBuildPlan": {
+    "buildOrder": [
+      {"order": 1, "block": "hero", "action": "adapt", "files": ["blocks/hero/hero.css", "blocks/hero/hero.js"], "dependencies": [], "complexity": "simple", "notes": "Adapt Block Collection hero. Brand gradient overlay CSS. Single-image default variant."},
+      {"order": 2, "block": "cards", "action": "adapt", "files": ["blocks/cards/cards.css", "blocks/cards/cards.js"], "dependencies": [], "complexity": "medium", "notes": "Adapt Block Collection cards. Add 6 variant CSS: default, news, resource, event, related, icon."},
+      {"order": 3, "block": "columns", "action": "reuse", "files": ["blocks/columns/columns.css", "blocks/columns/columns.js"], "dependencies": [], "complexity": "simple", "notes": "Block Collection columns as-is. Minor CSS for brand styling."},
+      {"order": 4, "block": "breadcrumbs", "action": "adapt", "files": ["blocks/breadcrumbs/breadcrumbs.css", "blocks/breadcrumbs/breadcrumbs.js"], "dependencies": [], "complexity": "simple", "notes": "Auto-blocked. Build URL→label mapping logic. Inject in scripts.js."},
+      {"order": 4, "block": "fragment", "action": "reuse", "files": ["blocks/fragment/fragment.css", "blocks/fragment/fragment.js"], "dependencies": [], "complexity": "simple", "notes": "Block Collection fragment as-is."},
+      {"order": 5, "block": "carousel", "action": "reuse", "files": ["blocks/carousel/carousel.css", "blocks/carousel/carousel.js"], "dependencies": ["hero", "cards"], "complexity": "medium", "notes": "Block Collection carousel. Test with hero slides and testimonials."},
+      {"order": 6, "block": "video", "action": "reuse", "files": ["blocks/video/video.css", "blocks/video/video.js"], "dependencies": [], "complexity": "simple", "notes": "Block Collection video. Vimeo primary."},
+      {"order": 7, "block": "embed", "action": "reuse", "files": ["blocks/embed/embed.css", "blocks/embed/embed.js"], "dependencies": [], "complexity": "simple", "notes": "Block Collection embed autoblock."},
+      {"order": 8, "block": "quote", "action": "reuse", "files": ["blocks/quote/quote.css", "blocks/quote/quote.js"], "dependencies": [], "complexity": "simple", "notes": "Block Collection quote. Brand styling."},
+      {"order": 9, "block": "hubspot-form", "action": "build", "files": ["blocks/hubspot-form/hubspot-form.css", "blocks/hubspot-form/hubspot-form.js"], "dependencies": ["fragment"], "complexity": "medium", "notes": "Custom block. Lazy-load HubSpot Forms API in delayed.js. Portal ID + Form ID config. Create /fragments/hubspot-cta for site-wide form."},
+      {"order": 10, "block": "stats", "action": "build", "files": ["blocks/stats/stats.css", "blocks/stats/stats.js"], "dependencies": [], "complexity": "medium", "notes": "Custom block. Animated counter as progressive enhancement. IntersectionObserver."},
+      {"order": 11, "block": "profile", "action": "build", "files": ["blocks/profile/profile.css", "blocks/profile/profile.js"], "dependencies": [], "complexity": "simple", "notes": "Custom block. Photo + name + title layout. Expert and BD-team variants via CSS class."},
+      {"order": 12, "block": "accordion", "action": "reuse", "files": ["blocks/accordion/accordion.css", "blocks/accordion/accordion.js"], "dependencies": [], "complexity": "simple", "notes": "Block Collection accordion."},
+      {"order": 13, "block": "tabs", "action": "reuse", "files": ["blocks/tabs/tabs.css", "blocks/tabs/tabs.js"], "dependencies": [], "complexity": "simple", "notes": "Block Collection tabs."},
+      {"order": 14, "block": "search", "action": "adapt", "files": ["blocks/search/search.css", "blocks/search/search.js"], "dependencies": [], "complexity": "medium", "notes": "Block Collection search. Integrate with query-index."},
+      {"order": 15, "block": "content-filter", "action": "build", "files": ["blocks/content-filter/content-filter.css", "blocks/content-filter/content-filter.js"], "dependencies": ["cards"], "complexity": "complex", "notes": "CRITICAL. Custom block. Reference: Block Party Content Filter Hub. Query-index fetch, client-side filtering, pagination, URL state. Build events variant first."},
+      {"order": 16, "block": "modal", "action": "reuse", "files": ["blocks/modal/modal.css", "blocks/modal/modal.js"], "dependencies": ["fragment"], "complexity": "simple", "notes": "Block Collection modal autoblock."},
+      {"order": 17, "block": "table", "action": "reuse", "files": ["blocks/table/table.css", "blocks/table/table.js"], "dependencies": [], "complexity": "simple", "notes": "Block Collection table. Product specs."}
+    ],
+    "sharedUtilities": [
+      {"file": "scripts/delayed.js", "purpose": "Lazy-load HubSpot Forms API, Google Analytics, other third-party scripts"},
+      {"file": "scripts/scripts.js", "purpose": "Auto-block breadcrumbs, load header/footer, LCP optimization, section style application"},
+      {"file": "styles/styles.css", "purpose": "Global Almac brand styles: colors, typography, button patterns, section styles (sidebar, dark, grey, cta-band, full-width-image)"}
+    ],
+    "fragments": [
+      {"path": "/fragments/hubspot-cta", "purpose": "Site-wide 8-field HubSpot contact/inquiry form. Referenced via Fragment block on ~3,500 pages."},
+      {"path": "/fragments/footer-social", "purpose": "Social media links if reused across footer sections."}
+    ]
+  },
+
+  "summary": {
+    "totalBlocks": 18,
+    "fromBlockCollection": 14,
+    "customBlocks": 4,
+    "eliminatedBlocks": 3,
+    "sectionStylesCount": 5,
+    "migrationBatches": 6,
+    "criticalPath": "hero → cards → carousel → hubspot-form → profile → sidebar(style) → content-filter",
+    "estimatedFragments": 2,
+    "queryIndexSheets": 6,
+    "keyDecisions": [
+      "Eliminated contact-locations block — compose from columns + cards + fragment",
+      "Eliminated icon-grid block — implement as cards(icon) variant",
+      "Eliminated sidebar block — implement as section style using CSS Grid",
+      "Site-wide HubSpot form as Fragment to avoid 3,500× duplication",
+      "Content-filter uses Block Party reference, not built from scratch",
+      "Breadcrumbs auto-blocked from URL hierarchy, no author input needed",
+      "careers-resource (36 pages) stub-migrated due to full gating"
+    ]
+  }
+}
