@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/almac-clinical-technologies-response-to-coronavirus-covid-19-outbreak/",
+  "slug": "almac-clinical-technologies-response-to-coronavirus-covid-19-outbreak",
+  "archetype": "news-post",
+  "captured_at": "2026-05-12T11:04:46.325310+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms x2",
+  "errors": [],
+  "title": "Almac Clinical Technologies\u2019 response to Coronavirus (COVID-19) Outbreak - Almac",
+  "meta_description": "",
+  "canonical": "https://www.almacgroup.com/almac-clinical-technologies-response-to-coronavirus-covid-19-outbreak/",
+  "text_length": 12691
+}

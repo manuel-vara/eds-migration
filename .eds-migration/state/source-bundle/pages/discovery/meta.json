@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/discovery/",
+  "slug": "discovery",
+  "archetype": "discovery",
+  "captured_at": "2026-05-12T10:53:06.683029+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms x2",
+  "errors": [],
+  "title": "Discovery - Almac",
+  "meta_description": "Almac Discovery enjoys the challenge of first-in-class and best-in-class projects. Click here to discover more about Almac Discovery.\u00a0",
+  "canonical": "https://www.almacgroup.com/discovery/",
+  "text_length": 1953
+}

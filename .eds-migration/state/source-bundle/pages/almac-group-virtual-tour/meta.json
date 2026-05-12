@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/almac-group-virtual-tour/",
+  "slug": "almac-group-virtual-tour",
+  "archetype": "landing",
+  "captured_at": "2026-05-12T11:03:23.355187+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms x2",
+  "errors": [],
+  "title": "Almac Group Virtual Tour - Almac",
+  "meta_description": "",
+  "canonical": "https://www.almacgroup.com/almac-group-virtual-tour/",
+  "text_length": 10401
+}

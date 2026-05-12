@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/news/",
+  "slug": "news",
+  "archetype": "news",
+  "captured_at": "2026-05-12T11:04:08.017023+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms x2",
+  "errors": [],
+  "title": "News Items - Almac",
+  "meta_description": "",
+  "canonical": "https://www.almacgroup.com/news/",
+  "text_length": 79050
+}

@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/about/",
+  "slug": "about",
+  "archetype": "about",
+  "captured_at": "2026-05-12T10:52:02.711002+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms x2",
+  "errors": [],
+  "title": "About Us - Almac",
+  "meta_description": "",
+  "canonical": "https://www.almacgroup.com/about/",
+  "text_length": 12674
+}

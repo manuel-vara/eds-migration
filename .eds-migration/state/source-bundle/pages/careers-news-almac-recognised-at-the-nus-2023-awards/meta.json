@@ -1,0 +1,14 @@
+{
+  "url": "https://www.almacgroup.com/careers/news/almac-recognised-at-the-nus-2023-awards/",
+  "slug": "careers-news-almac-recognised-at-the-nus-2023-awards",
+  "archetype": "news-post",
+  "captured_at": "2026-05-12T11:07:12.919371+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms",
+  "errors": [],
+  "title": "- Almac",
+  "meta_description": ""
+}

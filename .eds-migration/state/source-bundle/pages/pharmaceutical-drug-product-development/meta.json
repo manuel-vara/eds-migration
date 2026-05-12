@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/pharmaceutical-drug-product-development/",
+  "slug": "pharmaceutical-drug-product-development",
+  "archetype": "pharma-drug",
+  "captured_at": "2026-05-12T10:54:03.727871+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms x2",
+  "errors": [],
+  "title": "Pharmaceutical Development - Almac",
+  "meta_description": "Almac Pharma Services provides expert pharmaceutical drug product development and manufacturing solutions for all stages of clinical trials.",
+  "canonical": "https://www.almacgroup.com/pharmaceutical-drug-product-development/",
+  "text_length": 12558
+}

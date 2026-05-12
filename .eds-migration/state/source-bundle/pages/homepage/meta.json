@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/",
+  "slug": "homepage",
+  "archetype": "homepage",
+  "captured_at": "2026-05-12T10:51:30.614759+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms x2",
+  "errors": [],
+  "title": "Partnering to Advance Human Health - Almac",
+  "meta_description": "Partnering to Advance Human Health. Providing a range of contract pharmaceutical development and manufacturing services globally.",
+  "canonical": "https://www.almacgroup.com/",
+  "text_length": 13482
+}

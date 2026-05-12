@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/knowledge/experts/abi-pesun/",
+  "slug": "knowledge-experts-abi-pesun",
+  "archetype": "knowledge-expert",
+  "captured_at": "2026-05-12T11:07:56.540419+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms",
+  "errors": [],
+  "title": "Abi Pesun - Almac",
+  "meta_description": "Abi Pesun",
+  "canonical": "https://www.almacgroup.com/knowledge/experts/abi-pesun/",
+  "text_length": 11010
+}

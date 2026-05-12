@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/careers/careers/",
+  "slug": "careers-careers",
+  "archetype": "job-listing",
+  "captured_at": "2026-05-12T11:03:07.093765+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms x2",
+  "errors": [],
+  "title": "- Almac",
+  "meta_description": "",
+  "canonical": "",
+  "text_length": 10238
+}

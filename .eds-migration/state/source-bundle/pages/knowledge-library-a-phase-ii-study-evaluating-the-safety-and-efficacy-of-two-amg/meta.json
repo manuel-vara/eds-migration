@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/knowledge/library/a-phase-ii-study-evaluating-the-safety-and-efficacy-of-two-amg-386-dose-schedules/",
+  "slug": "knowledge-library-a-phase-ii-study-evaluating-the-safety-and-efficacy-of-two-amg",
+  "archetype": "knowledge-library-item",
+  "captured_at": "2026-05-12T10:55:49.824529+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms x2",
+  "errors": [],
+  "title": "Page not found - Almac",
+  "meta_description": "",
+  "canonical": "",
+  "text_length": 9619
+}

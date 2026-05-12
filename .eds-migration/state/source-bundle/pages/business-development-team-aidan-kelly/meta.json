@@ -1,0 +1,14 @@
+{
+  "url": "https://www.almacgroup.com/business-development-team/aidan-kelly/",
+  "slug": "business-development-team-aidan-kelly",
+  "archetype": "bd-team-profile",
+  "captured_at": "2026-05-12T11:06:46.254815+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms",
+  "errors": [],
+  "title": "Aidan Kelly - Almac",
+  "meta_description": ""
+}

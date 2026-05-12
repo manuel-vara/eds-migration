@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/clinical-services/",
+  "slug": "clinical-services",
+  "archetype": "clinical-services",
+  "captured_at": "2026-05-12T10:54:35.926494+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms x2",
+  "errors": [],
+  "title": "Clinical Services - Almac",
+  "meta_description": "One of the leading, multi-faceted, global solution providers within the niche and complex market of global clinical trial supply",
+  "canonical": "https://www.almacgroup.com/clinical-services/",
+  "text_length": 11469
+}

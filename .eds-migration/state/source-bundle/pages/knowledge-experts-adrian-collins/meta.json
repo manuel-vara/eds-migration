@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/knowledge/experts/adrian-collins/",
+  "slug": "knowledge-experts-adrian-collins",
+  "archetype": "abi-expert-2",
+  "captured_at": "2026-05-12T11:08:14.575825+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms",
+  "errors": [],
+  "title": "Adrian Collins - Almac",
+  "meta_description": "Adrian Collins",
+  "canonical": "https://www.almacgroup.com/knowledge/experts/adrian-collins/",
+  "text_length": 10793
+}

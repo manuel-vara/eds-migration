@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/knowledge/library/",
+  "slug": "knowledge-library",
+  "archetype": "knowledge-library",
+  "captured_at": "2026-05-12T11:08:27.186595+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms",
+  "errors": [],
+  "title": "Page not found - Almac",
+  "meta_description": "",
+  "canonical": "",
+  "text_length": 9619
+}

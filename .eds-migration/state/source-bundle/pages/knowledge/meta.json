@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/knowledge/",
+  "slug": "knowledge",
+  "archetype": "knowledge",
+  "captured_at": "2026-05-12T10:55:36.999670+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms x2",
+  "errors": [],
+  "title": "Knowledge Centre - Almac",
+  "meta_description": "Explore Almac's Knowledge Centre for the latest insights, research, and innovations in clinical trials and pharmaceutical development.",
+  "canonical": "https://www.almacgroup.com/knowledge/",
+  "text_length": 10951
+}

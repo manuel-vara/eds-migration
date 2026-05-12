@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/contact-us/",
+  "slug": "contact-us",
+  "archetype": "contact",
+  "captured_at": "2026-05-12T10:52:28.915311+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms x2",
+  "errors": [],
+  "title": "Contact Us - Almac",
+  "meta_description": "",
+  "canonical": "https://www.almacgroup.com/contact-us/",
+  "text_length": 11270
+}

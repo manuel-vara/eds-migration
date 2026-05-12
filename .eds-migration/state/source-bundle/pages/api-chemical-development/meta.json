@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/api-chemical-development/",
+  "slug": "api-chemical-development",
+  "archetype": "api-chemical",
+  "captured_at": "2026-05-12T10:53:45.704380+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms x2",
+  "errors": [],
+  "title": "API Services & Chemical Development - Almac",
+  "meta_description": "Almac Sciences API Services & Chemical Development. We provide a range of services for small molecules (including highly potent) & peptides.",
+  "canonical": "https://www.almacgroup.com/api-chemical-development/",
+  "text_length": 11962
+}

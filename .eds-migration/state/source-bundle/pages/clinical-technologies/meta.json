@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/clinical-technologies/",
+  "slug": "clinical-technologies",
+  "archetype": "clinical-technologies",
+  "captured_at": "2026-05-12T10:55:05.061975+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms x2",
+  "errors": [],
+  "title": "Clinical Technologies - Almac",
+  "meta_description": "Almac Clinical Technologies group has been leading the Interactive Response Technology (IRT) industry, bringing together the most innovative technology and our unparalleled expertise to empower biopharmaceutical industry and help bring new therapies to patients.",
+  "canonical": "https://www.almacgroup.com/clinical-technologies/",
+  "text_length": 15657
+}

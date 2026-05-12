@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/analytical-solid-state/",
+  "slug": "analytical-solid-state",
+  "archetype": "analytical",
+  "captured_at": "2026-05-12T10:54:20.086480+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms x2",
+  "errors": [],
+  "title": "Analytical & Solid State Services - Almac",
+  "meta_description": "Our state-of-the-art analytical testing labs support drug substance (API) and drug product (finished product) analytics across all phases of clinical development and into commercial release.",
+  "canonical": "https://www.almacgroup.com/analytical-solid-state/",
+  "text_length": 14389
+}

@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/diagnostics/",
+  "slug": "diagnostics",
+  "archetype": "diagnostics",
+  "captured_at": "2026-05-12T10:53:17.418538+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms x2",
+  "errors": [],
+  "title": "Diagnostic Services - Almac",
+  "meta_description": "Almac Diagnostic Services is a stratified medicine company specialising in biomarker driven clinical trials.",
+  "canonical": "https://www.almacgroup.com/diagnostics/",
+  "text_length": 17708
+}

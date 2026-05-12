@@ -1,0 +1,16 @@
+{
+  "url": "https://www.almacgroup.com/careers/",
+  "slug": "careers",
+  "archetype": "careers",
+  "captured_at": "2026-05-12T10:52:53.584727+00:00",
+  "viewport_sizes": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "settle_strategy": "networkidle + body.innerText stable 500ms x2",
+  "errors": [],
+  "title": "Almac Careers - Let's be exceptional together",
+  "meta_description": "We have a range of exciting and innovative roles here at Almac. To view our careers section with our current jobs click here.",
+  "canonical": "https://www.almacgroup.com/careers/",
+  "text_length": 11876
+}
