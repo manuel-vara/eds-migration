@@ -1,0 +1,12 @@
+{
+  "url": "https://www.almacgroup.com/about/",
+  "da_path": "about",
+  "status": "failed",
+  "previewUrl": "https://main--eds-migration--manuel-vara.aem.page/about",
+  "publishUrl": "https://www.manuel-vara.aem.live/about",
+  "textLenRatio": 0.0,
+  "imageRatio": 0.0,
+  "published": false,
+  "failureReason": "EDS_TOKEN not set; cannot upload to da.live",
+  "timestamp": "2026-05-12T14:02:35.479634Z"
+}
